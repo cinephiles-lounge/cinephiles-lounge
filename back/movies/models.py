@@ -5,18 +5,20 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Genre(models.Model):
+    genre_id = models.IntegerField()
     name = models.CharField(max_length=50)
 
 
 class Movie(models.Model):
+    movie_id = models.IntegerField()
     title = models.CharField(max_length=100)
-    overview = models.TextField()
+    overview = models.TextField(blank=True)
     popularity = models.FloatField()
-    release_date = models.DateField()
+    release_date = models.DateField(blank=True)
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
     poster_path = models.CharField(max_length=200)
-    trailer_path = models.CharField(max_length=200, blank=True)
+    trailer_key = models.CharField(max_length=200, blank=True)
     genres = models.ManyToManyField(Genre)
     liked_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_movies')
 
