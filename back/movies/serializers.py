@@ -20,27 +20,13 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    liked_users = UserSerializer(many=True, read_only=True)
 
-    # {
-    #     "genres": [
-    #         {
-    #             "non_field_errors": [
-    #                 "Invalid data. Expected a dictionary, but got int."
-    #             ]
-    #         },
-    #         {
-    #             "non_field_errors": [
-    #                 "Invalid data. Expected a dictionary, but got int."
-    #             ]
-    #         },
-    #         {
-    #             "non_field_errors": [
-    #                 "Invalid data. Expected a dictionary, but got int."
-    #             ]
-    #         }
-    #     ]
-    # }
+    class GenreSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Genre
+            fields = ('genre_id', )
+
+    liked_users = UserSerializer(many=True, read_only=True)
     genres = GenreSerializer(many=True, allow_null=True)
 
     class Meta:
