@@ -22,10 +22,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.url')),
-    path('movies/', include('movies.url')),
-    path('articles/', include('articles.url')),
-    path('lounges/', include('lounges.url')),
+    path('accounts/', include('accounts.urls')),
+    path('movies/', include('movies.urls')),
+    path('articles/', include('articles.urls')),
+    path('lounges/', include('lounges.urls')),
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/registration/', include('dj_rest_auth.registration.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
