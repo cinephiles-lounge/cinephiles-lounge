@@ -17,7 +17,7 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     lounge = models.ForeignKey(Lounge, on_delete=models.CASCADE, blank=True)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_articles')
+    liked_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_articles')
 
 
 class Comment(models.Model):
@@ -26,4 +26,4 @@ class Comment(models.Model):
     content = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments')
+    liked_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments')
