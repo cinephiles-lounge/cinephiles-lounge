@@ -119,6 +119,7 @@ def get_genre(request):
 
 # 영화 DB 저장 함수
 def save_movies(result_arr):
+    # 줄거리, 트레일러 없으면 저장 안되게
     for movie_data in result_arr:
     # 현재 영화가 이미 DB에 저장되어 있다면 변동 가능성 있는 popularity, vote_average, vote_count를 업데이트 후 수정
         if Movie.objects.filter(movie_id=movie_data.get('id')).exists():
@@ -130,15 +131,26 @@ def save_movies(result_arr):
         # 현재 영화가 DB에 저장되어있지 않은 새 영화라면 인스턴스 생성 후 저장
         else:
             new_movie = Movie()
+
+            overview = movie_data.get('overview')
+            if not overview:
+                continue
+
+            trailer_key = get_trailer_key(movie_data.get('id'))
+            if not trailer_key:
+                continue
+            
+            new_movie.overview = overview
+            new_movie.trailer_key = trailer_key
+
             new_movie.movie_id = movie_data.get('id')
             new_movie.title = movie_data.get('title')
-            new_movie.overview = movie_data.get('overview')
             new_movie.popularity = movie_data.get('popularity')
             new_movie.release_date = movie_data.get('release_date')
             new_movie.vote_average = movie_data.get('vote_average')
             new_movie.vote_count = movie_data.get('vote_count')
             new_movie.poster_path = movie_data.get('poster_path')
-            new_movie.trailer_key = get_trailer_key(new_movie.movie_id)
+
             new_movie.save()
             
             genres = movie_data.get('genre_ids')
