@@ -1,7 +1,6 @@
 import requests
 from django.conf import settings
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -14,6 +13,23 @@ from .utils.recommend import recommend
 
 
 
+# 한 페이지 당 영화 20개씩 리턴
+# 초당 요청 max: around 50
+@api_view(['POST'])
+def set_db(request):
+    if request.method == 'POST':
+
+        # 1~50 페이지 요청 == 1000개 영화 저장
+        for i in range(1, 51):
+            url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
+            response = requests.get(url, headers=headers).json()
+            did_create = save_movies(response.get('results'))
+
+        if did_create:
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_200_OK)
+    
+
 # 전체 영화 조회
 @api_view(['GET'])
 def get_list(request):
@@ -21,7 +37,6 @@ def get_list(request):
         movies = Movie.objects.all()
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 # 현재 상영작 조회 (3위까지)
@@ -42,7 +57,6 @@ def get_playing(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 # 상영 예정작 20개 조회
 @api_view(['GET'])
 def get_upcoming(request):
@@ -61,23 +75,6 @@ def get_upcoming(request):
         serializer = MovieSerializer(upcoming_movies, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-# 한 페이지 당 영화 20개씩 리턴
-# 초당 요청 max: around 50
-@api_view(['POST'])
-def set_db(request):
-    if request.method == 'POST':
-
-        # 1~50 페이지 요청 == 1000개 영화 저장
-        for i in range(1, 51):
-            url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
-            response = requests.get(url, headers=headers).json()
-            save_movies(response.get('results'))
-
-        return Response(status=status.HTTP_200_OK)
-
 
 
 # 장르 정보 불러오기
@@ -108,22 +105,20 @@ def get_genre(request):
             return Response(data=message)
 
 
-
 # 영화 상세 조회
 @api_view(['GET'])
-def get_movie_detail(request, movie_pk):
+def get_movie_detail(request, movie_id):
     if request.method == 'GET':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = Movie.objects.get(movie_id=movie_id)
         serializer = MovieSerializer(movie)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 # 영화 좋아요
 @api_view(['POST'])
-def like_movie(request, movie_pk):
+def like_movie(request, movie_id):
     if request.method == 'POST':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = Movie.objects.get(movie_id=movie_id)
         
         if movie.like_users.filter(pk=request.user.pk).exists():
             movie.liked_users.remove(request.user)
@@ -135,18 +130,20 @@ def like_movie(request, movie_pk):
         }
         return Response(data, status=status.HTTP_200_OK)
         
-        
 
 @api_view(['POST'])
-def create_short_review(request):
-    pass
-
+def create_short_review(request, movie_id):
+    if request.method == 'POST':
+        movie = Movie.objects.get(movie_id=movie_id)
+        serializer = ShortReviewSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, movie=movie)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
-def update_short_review(request, short_review_pk):
+def update_short_review(request, movie_pk, short_review_pk):
     pass
-
 
 
 # 미완성
