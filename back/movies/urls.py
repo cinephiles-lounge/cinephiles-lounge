@@ -9,5 +9,7 @@ urlpatterns = [
     path('upcoming/', views.get_upcoming),
     path('recommend/like/', views.get_recommendation_like),
     path('<int:movie_pk>/', views.get_movie_detail),
-    path('<int:movie_pk>/like/', views.movie_like),
+    path('<int:movie_pk>/like/', views.like_movie),
+    path('short_review/create/', views.create_short_review),
+    path('short_review/<int:short_review_pk>/', views.update_short_review),
 ]

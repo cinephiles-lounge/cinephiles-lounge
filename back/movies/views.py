@@ -121,7 +121,7 @@ def get_movie_detail(request, movie_pk):
 
 # 영화 좋아요
 @api_view(['POST'])
-def movie_like(request, movie_pk):
+def like_movie(request, movie_pk):
     if request.method == 'POST':
         movie = Movie.objects.get(pk=movie_pk)
         
@@ -136,6 +136,17 @@ def movie_like(request, movie_pk):
         return Response(data, status=status.HTTP_200_OK)
         
         
+
+@api_view(['POST'])
+def create_short_review(request):
+    pass
+
+
+
+@api_view(['POST'])
+def update_short_review(request, short_review_pk):
+    pass
+
 
 
 # 미완성
