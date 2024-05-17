@@ -2,24 +2,24 @@
   <main>
     <div class="signup-container">
       <h1>회원 가입</h1>
-      <form class="signup-form">
-        <label for="name">
+      <form @submit.prevent="signUp" class="signup-form">
+        <label for="username">
           <input
-            @input="nameCheck"
-            v-model="name"
-            id="name"
+            @input="usernameCheck"
+            v-model.trim="username"
+            id="username"
             type="text"
             placeholder="이름 (2자 이상)"
             :style="{
-              border: nameState ? '1px solid #48484b' : '1px solid #e73e3e',
+              border: usernameState ? '1px solid #48484b' : '1px solid #e73e3e',
             }"
-            autocomplete="name"
+            autocomplete="username"
           />
         </label>
-        <label class="email-wrapper" for="email">
+        <!-- <label class="email-wrapper" for="email">
           <input
             @input="emailCheck"
-            v-model="email"
+            v-model.trim="email"
             id="email"
             type="text"
             placeholder="이메일 (example@gmail.com)"
@@ -28,11 +28,11 @@
             }"
             autocomplete="email"
           />
-        </label>
+        </label> -->
         <label class="pwd-wrapper" for="password">
           <input
             @input="passwordCheck"
-            v-model="password"
+            v-model.trim="password"
             id="password"
             type="password"
             placeholder="비밀번호 (8자 이상)"
@@ -45,7 +45,7 @@
         <label class="pwd2-wrapper" for="password2">
           <input
             @input="password2Check"
-            v-model="password2"
+            v-model.trim="password2"
             id="password2"
             type="password"
             placeholder="비밀번호 확인 (8자 이상)"
@@ -71,10 +71,11 @@
           </div>
         </div>
         <div
+        
           :style="{ opacity: buttonActive ? '1' : '0.3' }"
           class="btn-wrapper"
         >
-          <button><span>가입하기</span></button>
+          <button :disabled="!buttonActive"><span>가입하기</span></button>
         </div>
       </form>
     </div>
@@ -83,35 +84,36 @@
 
 <script setup>
 import { ref, computed } from "vue";
-const name = ref("");
-const email = ref("");
+import axios from 'axios'
+const username = ref("");
+// const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const firstCheckBox = ref(false);
 const secondCheckBox = ref(false);
 
-const nameState = ref(false);
-const emailState = ref(false);
+const usernameState = ref(false);
+// const emailState = ref(false);
 const passwordState = ref(false);
 const password2State = ref(false);
 
 // 이름 2글자 이상 입력 -> border #e73e3e -> #48484b
-const nameCheck = () => {
-  if (name.value.length >= 2) {
-    nameState.value = true;
+const usernameCheck = () => {
+  if (username.value.length >= 2) {
+    usernameState.value = true;
   } else {
-    nameState.value = false;
+    usernameState.value = false;
   }
 };
 
 // 이메일 @, . 포함 입력 -> border #e73e3e -> #48484b
-const emailCheck = () => {
-  if (email.value.includes("@") && email.value.includes(".")) {
-    emailState.value = true;
-  } else {
-    emailState.value = false;
-  }
-};
+// const emailCheck = () => {
+//   if (email.value.includes("@") && email.value.includes(".")) {
+//     emailState.value = true;
+//   } else {
+//     emailState.value = false;
+//   }
+// };
 
 // 비밀번호 8글자 이상 입력 -> border #e73e3e -> #48484b
 const passwordCheck = () => {
@@ -134,14 +136,37 @@ const password2Check = () => {
 // 이름, 이메일, 비밀번호, 체크박스 모두 형식에 맞으면 로그인 버튼 활성화
 const buttonActive = computed(() => {
   return (
-    nameState &&
-    emailState.value &&
+    usernameState &&
+    // emailState.value &&
     passwordState.value &&
     password2State.value &&
     firstCheckBox.value &&
     secondCheckBox.value
   );
 });
+
+
+const signUp = ()=>{
+  const payload = {
+    username : username.value,
+    password1: password.value,
+    password2: password2.value
+  }
+  axios({
+    method:'post',
+    url:'http://127.0.0.1:8000/auth/registration/',
+    data:{
+    username:payload.username,
+    password1:payload.password1,
+    password2 : payload.password2,
+    }
+  })
+  .then((res)=>{
+    console.log('회원가입 성공')
+  })
+  .catch((err)=>{console.log('회원가입 실패')})
+}
+
 </script>
 
 <style scoped>
