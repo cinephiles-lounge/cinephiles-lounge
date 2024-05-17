@@ -22,8 +22,10 @@
           />
         </form>
         <ul class="nav-links">
-          <li><RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink></li>
-          <li><RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink></li>
+          <li v-if="!accountStore.isLogin"><RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink></li>
+          <li v-if="!accountStore.isLogin"><RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink></li>
+          <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
+          <li v-if="accountStore.isLogin"><a href="#">마이페이지</a></li>
         </ul>
       </div>
     </div>
@@ -34,6 +36,12 @@
 // 로그인하면 회원가입버튼 안보이고 마이페이지랑 알람 뜨도록
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+import { useAccountStore } from "@/stores/account";
+import {useRouter} from 'vue-router'
+import axios from "axios";
+
+const accountStore = useAccountStore()
+const router = useRouter()
 
 const isSticky = ref(false);
 const isSearch = ref(false);
@@ -52,6 +60,21 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
 });
+
+const logOut = ()=>{
+  axios({
+        method:'post',
+        url:`${accountStore.API_URL}/auth/logout/`,
+      }).then((res)=>{
+        console.log('로그아웃 성공')
+        accountStore.token = null; // 토큰 초기화
+        router.push({name:'HomeView'})
+      })
+      .catch((err)=>{
+        console.log('로그아웃 실패')
+        console.log(err)
+      })
+}
 </script>
 
 <style scoped>
@@ -100,7 +123,10 @@ nav .nav-content .nav-right {
   margin: 0 16px;
   font-size: 15px;
   padding: 10px 4px;
+  color: #fff;
+  cursor: pointer;
 }
+
 .nav-content .nav-links li a {
   color: #fff;
   text-decoration: none;
@@ -115,6 +141,7 @@ nav .nav-content .nav-right {
 
 .nav-content .nav-right form i {
   color: #fff;
+  cursor: pointer;
 }
 
 .nav-content .nav-right form input {
