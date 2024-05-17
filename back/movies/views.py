@@ -17,6 +17,15 @@ headers = {
     "Authorization": f"Bearer {tmdb_access_token}"
 }
 
+@api_view(['GET'])
+def get_list(request):
+    if request.method == 'GET':
+        movies = Movie.objects.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 def get_trailer_key(movie_id):
     languages = ['ko-KR', 'en-US']
     trailer_key = ''
@@ -25,7 +34,6 @@ def get_trailer_key(movie_id):
     for language in languages:
         url = f'https://api.themoviedb.org/3/movie/{movie_id}/videos?language={language}'
         videos = requests.get(url, headers=headers).json().get('results')
-        print(videos)
 
         # 해당 영화의 비디오 검색 결과가 존재하면
         if videos:
@@ -82,18 +90,24 @@ def set_db(request):
 @api_view(['POST'])
 def get_genre(request):
     if request.method == 'POST':
-        url = 'https://api.themoviedb.org/3/genre/movie/list?language=ko'
-        response = requests.get(url, headers=headers).json()
-        
-        for genre in response.get('genres'):
-            data = {
-                'genre_id': genre.get('id'),
-                'name': genre.get('name')
-            }
+        if not Genre.objects.filter(id=1).exists():
+            url = 'https://api.themoviedb.org/3/genre/movie/list?language=ko'
+            response = requests.get(url, headers=headers).json()
             
-            serializer = GenreSerializer(data=data)
-
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
+            for genre in response.get('genres'):
+                data = {
+                    'genre_id': genre.get('id'),
+                    'name': genre.get('name')
+                }
                 
-        return Response(status=status.HTTP_201_CREATED)
+                serializer = GenreSerializer(data=data)
+
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            message = {
+                'message': '장르 데이터가 이미 존재합니다.'
+            }
+            return Response(data=message)
