@@ -108,6 +108,16 @@ def get_genre(request):
         
 
 
+
+@api_view(['GET'])
+def get_movie_detail(request, movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    serializer = MovieSerializer(movie)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+# 미완성
 @api_view(['GET'])
 def get_recommendation_like(request):
     recommend()

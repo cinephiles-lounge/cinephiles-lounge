@@ -20,8 +20,16 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    
+    class ShortReviewSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = ShortReview
+            fields = '__all__'
+            read_only_fields = ('user', 'movie', )
+
     liked_users = UserSerializer(many=True, read_only=True)
     genres = GenreSerializer(many=True)
+    shortreview_set = ShortReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
