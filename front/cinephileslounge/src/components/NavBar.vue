@@ -90,6 +90,7 @@ nav {
   width: 100%;
   height: 70px;
   transition: all 0.4s ease;
+  z-index: 99999;
 }
 nav.sticky {
   background-color: #0b1010;
