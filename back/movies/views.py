@@ -1,6 +1,7 @@
 import requests
 from django.conf import settings
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -105,9 +106,50 @@ def get_genre(request):
                 'message': '장르 데이터가 이미 존재합니다.'
             }
             return Response(data=message)
+
+
+
+# 영화 상세 조회
+@api_view(['GET'])
+def get_movie_detail(request, movie_pk):
+    if request.method == 'GET':
+        movie = Movie.objects.get(pk=movie_pk)
+        serializer = MovieSerializer(movie)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+# 영화 좋아요
+@api_view(['POST'])
+def like_movie(request, movie_pk):
+    if request.method == 'POST':
+        movie = Movie.objects.get(pk=movie_pk)
+        
+        if movie.like_users.filter(pk=request.user.pk).exists():
+            movie.liked_users.remove(request.user)
+        else:
+            movie.liked_users.add(request.user)
+        
+        data = {
+            'like_count': movie.like_users.count()
+        }
+        return Response(data, status=status.HTTP_200_OK)
+        
         
 
+@api_view(['POST'])
+def create_short_review(request):
+    pass
 
+
+
+@api_view(['POST'])
+def update_short_review(request, short_review_pk):
+    pass
+
+
+
+# 미완성
 @api_view(['GET'])
 def get_recommendation_like(request):
     recommend()
