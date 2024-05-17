@@ -9,6 +9,7 @@ from .models import *
 from .serializers import *
 from datetime import date
 from .utils.load import save_movies, headers
+from .utils.recommend import recommend
 
 
 
@@ -107,3 +108,7 @@ def get_genre(request):
         
 
 
+@api_view(['GET'])
+def get_recommendation_like(request):
+    recommend()
+    return Response({'실행': 'O'})
