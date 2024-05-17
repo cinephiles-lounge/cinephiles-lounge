@@ -98,11 +98,15 @@ REST_FRAMEWORK = {
     ],
 }
 
+
+# 회원가입 커스텀 환경설정
+###################################################################################
 REST_AUTH = {
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
 }
 
 ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
+###################################################################################
 
 
 ROOT_URLCONF = 'cinephileslounge.urls'
