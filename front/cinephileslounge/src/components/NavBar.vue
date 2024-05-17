@@ -6,7 +6,7 @@
           <a href="#">CinePhile Lounge</a>
         </div>
         <ul class="nav-links">
-          <li><RouterLink :to="{ name: 'home' }">홈</RouterLink></li>
+          <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
           <li><a href="#">피드</a></li>
           <li><a href="#">라운지</a></li>
           <li><a href="#">검색</a></li>
@@ -22,8 +22,8 @@
           />
         </form>
         <ul class="nav-links">
-          <li><RouterLink :to="{ name: 'login' }">로그인</RouterLink></li>
-          <li><RouterLink :to="{ name: 'registration' }">회원가입</RouterLink></li>
+          <li><RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink></li>
+          <li><RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink></li>
         </ul>
       </div>
     </div>

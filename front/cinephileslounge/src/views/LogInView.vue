@@ -5,17 +5,18 @@
         <span>로그인</span>
         <a href="#">비밀번호를 잊어버리셨나요?</a>
       </div>
-      <form class="sign-in-form">
-        <div class="email-box">
+      <form @submit.prevent="logIn" class="sign-in-form">
+        <div class="username-box">
           <input
-            @input="validateEmail"
-            class="email-wrapper"
+            @input="validateUsername"
+            
+            class="username-wrapper"
             type="text"
-            placeholder="이메일 (example@gmail.com)"
+            placeholder="아이디"
           />
-          <i v-if="showEmailIcon && !emailSuccess" class="bx bxs-x-circle"></i>
+          <i v-if="showUsernameIcon && !usernameSuccess" class="bx bxs-x-circle"></i>
           <i
-            v-if="showEmailIcon && emailSuccess"
+            v-if="showUsernameIcon && usernameSuccess"
             class="bx bxs-chevron-down-circle"
           ></i>
         </div>
@@ -23,7 +24,7 @@
           <input
             @input="validatePwd"
             class="pwd-wrapper"
-            type="text"
+            type="password"
             placeholder="비밀번호"
           />
           <i v-if="showPwdIcon && !pwdSuccess" class="bx bxs-x-circle"></i>
@@ -57,33 +58,46 @@
 // 더 해야할거 : form제출 이벤트막고 다른 함수 넣기, 비밀번호 찾기 기능, 소셜로그인, icon이랑 link넣기
 
 import { ref, computed } from "vue";
-const email = ref("");
+import {useAccountStore} from '@/stores/account.js'
+const username = ref("");
 const password = ref("");
-const emailSuccess = ref(false);
-const showEmailIcon = ref(false);
+const usernameSuccess = ref(false);
+const showUsernameIcon = ref(false);
 const pwdSuccess = ref(false);
 const showPwdIcon = ref(false);
+const accountStore = useAccountStore()
 
-// 이메일 입력 시작 -> failed icon show
-// 이메일 @, . 포함 입력 -> failed icon hide && success icon show
-const validateEmail = (e) => {
-  email.value = e.target.value;
-  if (email.value.length > 0) {
-    showEmailIcon.value = true; //입력이 있을때만 아이콘 표시
-    emailSuccess.value = email.value.includes("@") && email.value.includes(".");
+// 로그인
+const logIn = ()=>{
+  const payload = {
+    username:username.value,
+    password:password.value,
+  }
+  accountStore.logIn(payload)
+}
+
+// 유저네임 입력 시작 -> failed icon -> show
+// 유저네임 5글자 이상 입력 -> failed icon hide && success icon show
+// 5 <= 유저네임 <= 15, 영어, 숫자만 가능
+const validateUsername = (e) => {
+  username.value = e.target.value;
+  if (username.value.length > 0) {
+    showUsernameIcon.value = true; //입력이 있을때만 아이콘 표시
+    // usernameSuccess.value = username.value.includes("@") && username.value.includes(".");
+    usernameSuccess.value = (5<= username.value.length && username.value.length <= 15 && /^[a-zA-Z0-9]+$/.test(username.value))  
     // 이메일형식 @, dot이 있을때만 success아이콘 표시
   } else {
-    showEmailIcon.value = false;
+    showUsernameIcon.value = false;
   }
 };
 
 // 비밀번호 입력 시작 -> failed icon show
-// 비밀번호 6자리 이상 입력 -> failed icon hide && success icon show
+// 비밀번호 8자리 이상 입력 -> failed icon hide && success icon show
 const validatePwd = (e) => {
   password.value = e.target.value;
   if (password.value.length > 0) {
     showPwdIcon.value = true; //입력이 있을때만 아이콘 표시
-    pwdSuccess.value = password.value.length >= 6;
+    pwdSuccess.value = password.value.length >= 8;
   } else {
     showPwdIcon.value = false;
   }
@@ -91,7 +105,7 @@ const validatePwd = (e) => {
 
 // 이메일, 비밀번호 모두 형식에 맞으면 로그인 버튼 활성화
 const buttonActive = computed(() => {
-  return emailSuccess.value && pwdSuccess.value;
+  return usernameSuccess.value && pwdSuccess.value;
 });
 </script>
 
@@ -135,7 +149,7 @@ main {
   margin-top: 16px;
 }
 
-.sign-in-container .sign-in-form .email-box {
+.sign-in-container .sign-in-form .username-box {
   position: relative;
 }
 .sign-in-container .sign-in-form .pwd-box {
@@ -185,7 +199,7 @@ main {
   outline: none;
 }
 
-.sign-in-container .sign-in-form .email-wrapper {
+.sign-in-container .sign-in-form .username-wrapper {
   border-bottom: 1px solid #ebeaec;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
