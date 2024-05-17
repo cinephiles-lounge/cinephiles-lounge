@@ -138,13 +138,18 @@ def like_movie(request, movie_pk):
         
 
 @api_view(['POST'])
-def create_short_review(request):
-    pass
+def create_short_review(request, movie_pk):
+    if request.method == 'POST':
+        movie = Movie.objects.get(pk=movie_pk)
+        serializer = ShortReviewSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, movie=movie)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
 @api_view(['POST'])
-def update_short_review(request, short_review_pk):
+def update_short_review(request, movie_pk, short_review_pk):
     pass
 
 
