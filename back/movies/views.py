@@ -55,17 +55,20 @@ def get_trailer_key(movie_id):
 def set_db(request):
     if request.method == 'POST':
 
+        # 1~50 페이지 요청 == 1000개 영화 저장
         for i in range(1, 51):
             url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
             response = requests.get(url, headers=headers).json()
             
             for movie_data in response.get('results'):
+                # 현재 영화가 이미 DB에 저장되어 있다면 변동 가능성 있는 popularity, vote_average, vote_count를 업데이트 후 수정
                 if Movie.objects.filter(movie_id=movie_data.get('id')).exists():
                     movie = Movie.objects.get(movie_id=movie_data.get('id'))
                     movie.popularity = movie_data.get('popularity')
                     movie.vote_average = movie_data.get('vote_average')
                     movie.vote_count = movie_data.get('vote_count')
                     movie.save()
+                # 현재 영화가 DB에 저장되어있지 않은 새 영화라면 인스턴스 생성 후 저장
                 else:
                     new_movie = Movie()
                     new_movie.movie_id = movie_data.get('id')
@@ -89,6 +92,8 @@ def set_db(request):
 
 
 
+# 장르 정보 불러오기
+# DB에 장르 데이터가 없을때만 저장함
 @api_view(['POST'])
 def get_genre(request):
     if request.method == 'POST':
