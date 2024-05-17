@@ -55,11 +55,15 @@ export const useAccountStore = defineStore(
       })
       .catch((err)=>{
         console.log('로그인 실패')
-        console.log(err)
+        console.log(err.response.status)
+        if (err.response.status === 400){
+          window.alert('아이디 또는 비밀번호가 잘못되었습니다.')
+          router.go(0)
+        }
       })
     }
 
-    return {signUp, logIn, token, isLogin};
+    return {signUp, logIn, API_URL, token, isLogin};
   },
   { persist: true }
 );
