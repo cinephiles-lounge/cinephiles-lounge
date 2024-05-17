@@ -28,6 +28,20 @@ def get_list(request):
 
 
 
+@api_view(['GET'])
+def get_playing(request):
+    if request.method == 'GET':
+        url = 'https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1'
+        now_playing_movies = requests.get(url, headers=headers).json().get('results')
+        top3_ids = []
+        for i in range(3):
+            top3_ids.append(now_playing_movies[i].get('id'))
+        top3_movies = Movie.objects.filter(movie_id__in=top3_ids)
+        serializer = MovieSerializer(top3_movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 def get_trailer_key(movie_id):
     languages = ['ko-KR', 'en-US']
     trailer_key = ''
