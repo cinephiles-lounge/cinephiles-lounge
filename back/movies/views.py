@@ -17,6 +17,8 @@ headers = {
     "Authorization": f"Bearer {tmdb_access_token}"
 }
 
+
+
 @api_view(['GET'])
 def get_list(request):
     if request.method == 'GET':
@@ -53,13 +55,12 @@ def get_trailer_key(movie_id):
 def set_db(request):
     if request.method == 'POST':
 
-        for i in range(1, 31):
+        for i in range(1, 51):
             url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
             response = requests.get(url, headers=headers).json()
             
             for movie_data in response.get('results'):
                 if Movie.objects.filter(movie_id=movie_data.get('id')).exists():
-                    print('exist')
                     movie = Movie.objects.get(movie_id=movie_data.get('id'))
                     movie.popularity = movie_data.get('popularity')
                     movie.vote_average = movie_data.get('vote_average')
@@ -85,6 +86,7 @@ def set_db(request):
                         new_movie.genres.add(genre)
                 
         return Response(status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
