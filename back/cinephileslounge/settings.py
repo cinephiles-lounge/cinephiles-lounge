@@ -15,6 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+
 import os
 import environ
 
@@ -95,6 +97,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
     ],
 }
+
+REST_AUTH = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+}
+
+ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
 
 
 ROOT_URLCONF = 'cinephileslounge.urls'
