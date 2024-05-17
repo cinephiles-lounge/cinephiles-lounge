@@ -23,14 +23,15 @@ def get_trailer_key(movie_id):
 
     # 한국어 검색 결과가 나오지 않으면 영어로도 검색
     for language in languages:
-        url = f'https://api.themoviedb.org/3/movie/278/videos?language={language}'
+        url = f'https://api.themoviedb.org/3/movie/{movie_id}/videos?language={language}'
         videos = requests.get(url, headers=headers).json().get('results')
+        print(videos)
 
         # 해당 영화의 비디오 검색 결과가 존재하면
         if videos:
             # 비디오들이 담긴 배열을 순회                
             for video in videos:
-                if video.get('type') == 'trailer':
+                if video.get('type') == 'Trailer':
                     trailer_key = video.get('key')
                     return trailer_key
     
@@ -43,30 +44,39 @@ def get_trailer_key(movie_id):
 @api_view(['POST'])
 def set_db(request):
     if request.method == 'POST':
+
         for i in range(1, 31):
             url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
             response = requests.get(url, headers=headers).json()
             
-            for movie in response.get('results'):
-                data = {
-                    'movie_id': movie.get('id'),
-                    'title': movie.get('title'),
-                    'overview': movie.get('overview'),
-                    'popularity': movie.get('popularity'),
-                    'release_date': movie.get('release_date'),
-                    'vote_average': movie.get('vote_average'),
-                    'vote_count': movie.get('vote_count'),
-                    'poster_path': movie.get('poster_path'),
-                    'trailer_path': get_trailer_key(movie.get('id')),
-                    'genres': movie.get('genre_ids')
-                }
-                
-                serializer = MovieSerializer(data=data)
+            for movie_data in response.get('results'):
+                if Movie.objects.filter(movie_id=movie_data.get('id')).exists():
+                    print('exist')
+                    movie = Movie.objects.get(movie_id=movie_data.get('id'))
+                    movie.popularity = movie_data.get('popularity')
+                    movie.vote_average = movie_data.get('vote_average')
+                    movie.vote_count = movie_data.get('vote_count')
+                    movie.save()
+                else:
+                    new_movie = Movie()
+                    new_movie.movie_id = movie_data.get('id')
+                    new_movie.title = movie_data.get('title')
+                    new_movie.overview = movie_data.get('overview')
+                    new_movie.popularity = movie_data.get('popularity')
+                    new_movie.release_date = movie_data.get('release_date')
+                    new_movie.vote_average = movie_data.get('vote_average')
+                    new_movie.vote_count = movie_data.get('vote_count')
+                    new_movie.poster_path = movie_data.get('poster_path')
+                    new_movie.trailer_key = get_trailer_key(new_movie.movie_id)
+                    new_movie.save()
+                    
+                    genres = movie_data.get('genre_ids')
 
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
+                    for genre_id in genres:
+                        genre = Genre.objects.get(genre_id=genre_id)
+                        new_movie.genres.add(genre)
                 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
