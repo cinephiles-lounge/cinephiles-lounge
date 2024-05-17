@@ -7,4 +7,5 @@ urlpatterns = [
     path('list/', views.get_list),
     path('playing/', views.get_playing),
     path('upcoming/', views.get_upcoming),
+    path('recommend/like/', views.get_recommendation_like),
 ]
