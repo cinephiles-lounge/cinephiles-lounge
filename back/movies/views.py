@@ -107,18 +107,18 @@ def get_genre(request):
 
 # 영화 상세 조회
 @api_view(['GET'])
-def get_movie_detail(request, movie_pk):
+def get_movie_detail(request, movie_id):
     if request.method == 'GET':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = Movie.objects.get(movie_id=movie_id)
         serializer = MovieSerializer(movie)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # 영화 좋아요
 @api_view(['POST'])
-def like_movie(request, movie_pk):
+def like_movie(request, movie_id):
     if request.method == 'POST':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = Movie.objects.get(movie_id=movie_id)
         
         if movie.like_users.filter(pk=request.user.pk).exists():
             movie.liked_users.remove(request.user)
@@ -132,9 +132,9 @@ def like_movie(request, movie_pk):
         
 
 @api_view(['POST'])
-def create_short_review(request, movie_pk):
+def create_short_review(request, movie_id):
     if request.method == 'POST':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = Movie.objects.get(movie_id=movie_id)
         serializer = ShortReviewSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, movie=movie)
