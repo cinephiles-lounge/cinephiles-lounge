@@ -85,6 +85,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import axios from 'axios'
+import { useAccountStore } from "@/stores/account";
+const accountStore = useAccountStore()
 const username = ref("");
 // const email = ref("");
 const password = ref("");
@@ -145,26 +147,14 @@ const buttonActive = computed(() => {
   );
 });
 
-
+// 회원가입
 const signUp = ()=>{
   const payload = {
     username : username.value,
     password1: password.value,
     password2: password2.value
   }
-  axios({
-    method:'post',
-    url:'http://127.0.0.1:8000/auth/registration/',
-    data:{
-    username:payload.username,
-    password1:payload.password1,
-    password2 : payload.password2,
-    }
-  })
-  .then((res)=>{
-    console.log('회원가입 성공')
-  })
-  .catch((err)=>{console.log('회원가입 실패')})
+  accountStore.signUp(payload)
 }
 
 </script>
