@@ -3,6 +3,8 @@ from ..models import *
 
 # 영화 DB 저장 함수
 def save_movies(result_arr):
+    did_create = False
+
     # 줄거리, 트레일러 없으면 저장 안되게
     for movie_data in result_arr:
     # 현재 영화가 이미 DB에 저장되어 있다면 변동 가능성 있는 popularity, vote_average, vote_count를 업데이트 후 수정
@@ -37,14 +39,15 @@ def save_movies(result_arr):
             new_movie.backdrop_path = movie_data.get('backdrop_path')
 
             new_movie.save()
-            
+            did_create = True
+
             genres = movie_data.get('genre_ids')
 
             for genre_id in genres:
                 genre = Genre.objects.get(genre_id=genre_id)
                 new_movie.genres.add(genre)
-
-
+    return did_create
+        
 
 # 트레일러 youtube video key를 반환하는 함수
 def get_trailer_key(movie_id):
