@@ -32,6 +32,7 @@ def save_movies(result_arr):
             new_movie.trailer_key = trailer_key
 
             new_movie.movie_id = movie_data.get('id')
+            new_movie.is_adult = movie_data.get('adult')
             new_movie.title = movie_data.get('title')
             new_movie.popularity = movie_data.get('popularity')
             new_movie.release_date = movie_data.get('release_date')

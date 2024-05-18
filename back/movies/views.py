@@ -84,6 +84,7 @@ def like_movie(request, movie_id):
             movie.liked_users.add(request.user)
         
         data = {
+            'movie': movie.title,
             'like_count': movie.liked_users.count()
         }
         return Response(data, status=status.HTTP_200_OK)
@@ -151,7 +152,7 @@ def set_db(request):
 
         # 1~50 페이지 요청 == 1000개 영화 저장
         for i in range(1, 51):
-            url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
+            url = f'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=ko-KR&page={i}&sort_by=popularity.desc'
             response = requests.get(url, headers=headers).json()
             did_create = save_movies(response.get('results'))[0]
 

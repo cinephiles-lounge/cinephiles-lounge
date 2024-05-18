@@ -11,6 +11,7 @@ class Genre(models.Model):
 
 class Movie(models.Model):
     movie_id = models.IntegerField(unique=True)
+    is_adult = models.BooleanField()
     title = models.CharField(max_length=100)
     overview = models.TextField()
     popularity = models.FloatField()

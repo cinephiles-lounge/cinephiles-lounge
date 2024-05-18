@@ -15,7 +15,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class SimpleUserSerializer(serializers.ModelSerializer):
         class Meta:
             model = User
-            fields = ('username', )
+            fields = ('username', 'nickname',)
 
     user = SimpleUserSerializer(read_only=True)
     liked_users = SimpleUserSerializer(many=True, read_only=True)
