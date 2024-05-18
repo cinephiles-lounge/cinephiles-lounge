@@ -10,6 +10,7 @@ urlpatterns = [
     path('recommend/like/', views.get_recommendation_like),
     path('<int:movie_id>/', views.get_movie_detail),
     path('<int:movie_id>/like/', views.like_movie),
+    path('subs/<int:to_user_pk>/', views.get_list_subscribing),
     path('short_review/create/<int:movie_id>/', views.create_short_review),
     path('short_review/<int:short_review_pk>/', views.update_short_review),
 ]

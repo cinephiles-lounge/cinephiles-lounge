@@ -120,13 +120,13 @@ def like_movie(request, movie_id):
     if request.method == 'POST':
         movie = Movie.objects.get(movie_id=movie_id)
         
-        if movie.like_users.filter(pk=request.user.pk).exists():
+        if movie.liked_users.filter(pk=request.user.pk).exists():
             movie.liked_users.remove(request.user)
         else:
             movie.liked_users.add(request.user)
         
         data = {
-            'like_count': movie.like_users.count()
+            'like_count': movie.liked_users.count()
         }
         return Response(data, status=status.HTTP_200_OK)
         
@@ -158,8 +158,18 @@ def update_short_review(request, short_review_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# 구독하는 사람이 좋아요 누른 영화 조회
+@api_view(['GET'])
+def get_list_subscribing(request, to_user_pk):
+    if request.method == 'GET':
+        to_user = User.objects.get(pk=to_user_pk)
+        movies = to_user.liked_movies.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # 미완성
 @api_view(['GET'])
 def get_recommendation_like(request):
     recommend()
-    return Response({'실행': 'O'})
+    return Response({'실행': 'O'})  
