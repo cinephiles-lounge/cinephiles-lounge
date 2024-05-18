@@ -32,7 +32,7 @@ def set_db(request):
 
 # 전체 영화 조회
 @api_view(['GET'])
-def get_list(request):
+def get_movie_list(request):
     if request.method == 'GET':
         movies = Movie.objects.all()
         serializer = MovieSerializer(movies, many=True)
