@@ -33,12 +33,23 @@
       </div>
     </div>
     <UpcommingMovies />
+    <PlayingMovies
+      v-for="(playingMovie, ranking) in playingStore.playingMovies"
+      :playingMovie="playingMovie"
+      :ranking="ranking"
+      :key="playingMovie.id"
+    />
   </section>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import UpcommingMovies from "@/components/UpcomingMovies.vue";
+import PlayingMovies from "@/components/PlayingMovies.vue";
+import { usePlayingMovieStore } from "@/stores/playingMovie";
+const playingStore = usePlayingMovieStore();
+playingStore.getPlayingMovies();
+
 const movies = [
   {
     id: 0,

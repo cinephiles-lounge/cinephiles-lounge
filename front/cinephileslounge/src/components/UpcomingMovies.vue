@@ -7,7 +7,7 @@
       class="no-shadow slides"
       :visible-slides="10"
       slide-multiple
-      :gap="2"
+      :gap="1"
       :infinite="true"
       :bullets="false"
       :arrows-outside="false"
@@ -48,7 +48,7 @@ axios({
 <style scoped>
 .upcoming-container {
   padding: 38px 80px;
-  background-color: #1e1e31;
+  background-color: #948176;
 }
 .upcoming-container h1 {
   color: #fff;
