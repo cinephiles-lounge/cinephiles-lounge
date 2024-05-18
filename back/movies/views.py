@@ -122,7 +122,6 @@ def update_short_review(request, short_review_pk):
         return Response(message, status=status.HTTP_403_FORBIDDEN)
 
 
-
 # 구독하는 사람들이 좋아요 누른 영화 조회
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])

@@ -20,6 +20,7 @@ def get_article_list(request):
 
 
 # 게시글 생성
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def create_article(request, movie_id):
     if request.method == 'POST':
@@ -40,6 +41,7 @@ def article_detail(request, article_pk):
 
 
 # 게시글 수정, 삭제
+@permission_classes([IsAuthenticated])
 @api_view(['PUT', 'DELETE'])
 def article_update(request, article_pk):
     article = Article.objects.get(pk=article_pk)
@@ -60,6 +62,7 @@ def article_update(request, article_pk):
 
 
 # 게시글 좋아요
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def like_article(request, article_pk):
     if request.method == 'POST':
@@ -74,5 +77,14 @@ def like_article(request, article_pk):
         return Response(data, status=status.HTTP_200_OK)
 
 
-
+# 댓글 작성
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def create_comment(request, article_pk):
+    if request.method == 'POST':
+        article = Article.objects.get(pk=article_pk)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, article=article)
+            return Response(serializer.data, status=status.HTTP_200_OK)
             
