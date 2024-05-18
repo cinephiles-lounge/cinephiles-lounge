@@ -16,7 +16,7 @@ def subscribe(request, to_user_pk):
         else:
             to_user.subscribers.add(request.user)
         data = {
-            'subscribers_count': to_user.subcribers.count()
+            'subscriber_count': to_user.subscribers.count()
         }
         return Response(data, status=status.HTTP_200_OK)
     
