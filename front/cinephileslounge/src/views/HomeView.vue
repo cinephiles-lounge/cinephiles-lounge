@@ -32,11 +32,13 @@
         </div>
       </div>
     </div>
+    <UpcommingMovies />
   </section>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import UpcommingMovies from "@/components/UpcomingMovies.vue";
 const movies = [
   {
     id: 0,
@@ -103,7 +105,7 @@ const displayedMovies = computed(() => {
 });
 
 const posters = computed(() => {
-  // 인덱스 1, 2, 3, 4, 0 순선대로 반환
+  // 인덱스 1, 2, 3, 4, 0 순서대로 반환
   const start = currentIndex.value + 1;
   const end = movies.length;
   return [...movies.slice(start, end), ...movies.slice(0, start)];
