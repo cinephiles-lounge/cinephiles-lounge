@@ -3,7 +3,7 @@
     <div class="container">
       <div ref="carousel" class="carousel">
         <div class="list">
-          <div class="item" v-for="movie in movies" :key="movie.id">
+          <div class="item" v-for="movie in displayedMovies" :key="movie.id">
             <img
               :src="`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`"
             />
@@ -22,12 +22,7 @@
           </div>
         </div>
         <div class="posters">
-          <div
-            class="item"
-            v-for="(movie, index) in movies"
-            :key="movie.id"
-            @click="thumbnailClick(index)"
-          >
+          <div class="item" v-for="movie in posters" :key="movie.id">
             <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" />
           </div>
         </div>
@@ -41,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 const movies = [
   {
     id: 0,
@@ -83,54 +78,70 @@ const movies = [
     poster_path: "/9GAOhSzXjXJR4AxYCa2AMzMGPVg.jpg",
     backdrop_path: "/jTWllMddJzCb7hBVNZICtgKhYM9.jpg",
   },
+  {
+    id: 4,
+    title: "가필드 더 무비",
+    overview:
+      "세상귀찮 집냥이, 바쁘고 험난한 세상에 던져졌다! 집사 ‘존’과 반려견 ‘오디’를 기르며 평화로운 나날을 보내던 집냥이 ‘가필드’. 어느 날, 험악한 길냥이 무리에게 납치당해 냉혹한 거리로 던져진다. 돌봐주는 집사가 없는 집 밖 세상은 너무나도 정신없게 돌아가고 길에서 우연히 다시 만난 아빠 길냥이 ‘빅’은 오히려 ‘가필드’를 위기에 빠지게 하는데… 험난한 세상, 살아남아야 한다!",
+    release_date: "2024-04-30",
+    vote_average: 6.6,
+    poster_path: "/57g3pHYi3p0JNVO1LkcyYbeMDBf.jpg",
+    backdrop_path: "/vWzJDjLPmycnQ42IppEjMpIhrhc.jpg",
+  },
 ];
-
-const carousel = ref(null); // carousel클래스 참조
+const currentIndex = ref(0); // 캐러셀 움직이기 위한 인덱스
 const timeRunning = ref(3000); // 애니메이션 실행되는 시간
 const timeAutoNext = ref(7000); // 다음 슬라이드로 이동하는 시간 간격
-
+const carousel = ref(null); // 캐러셀 클래스 참조
 let runTimeOut = null; // 애니메이션 실행 후 클래스 제거하기 위한 타이머
 let runNextAuto = null; // 자동으로 다음 슬라이드로 이동하기 위한 타이머
 
-const showSlider = (type) => {
-  const carouselList = carousel.value.querySelector(".list");
-  const carouselListItem = carouselList.querySelectorAll(".item");
-  const posterList = carousel.value.querySelector(".posters");
-  const posterListItem = posterList.querySelectorAll(".item");
+const displayedMovies = computed(() => {
+  const start = currentIndex.value;
+  const end = movies.length;
+  return [...movies.slice(start, end), ...movies.slice(0, start)]; //
+});
 
+const posters = computed(() => {
+  // 인덱스 1, 2, 3, 4, 0 순선대로 반환
+  const start = currentIndex.value + 1;
+  const end = movies.length;
+  return [...movies.slice(start, end), ...movies.slice(0, start)];
+});
+
+const showSlider = (type) => {
+  // 다음 버튼 클릭시
   if (type === "next") {
-    // 다음 버튼 클릭 시
-    carouselList.appendChild(carouselListItem[0]); // 캐러셀에 0번이 제일 뒤로 추가
-    posterList.appendChild(posterListItem[0]); // 포스터 0번이 제일 뒤로 추가
-    carousel.value.classList.add("next"); // 캐러셀에 next class 추가
+    currentIndex.value = (currentIndex.value + 1) % movies.length; // 인덱스 +1
+    carousel.value.classList.add("next"); //캐러셀에 next클래스 추가
   } else {
-    // 이전 버튼 클릭 시
-    carouselList.prepend(carouselListItem[carouselListItem.length - 1]); // 캐러셀 마지막요소를 맨 앞으로 추가
-    posterList.prepend(posterListItem[posterListItem.length - 1]); // 포스터 마지막요소를 맨 앞으로 추가
-    carousel.value.classList.add("prev"); // 캐러셀에 prev class 추가
+    // 이전 버튼 클릭시
+    currentIndex.value =
+      (currentIndex.value - 1 + movies.length) % movies.length; // 인덱스 -1
+    carousel.value.classList.add("prev"); //캐러셀에 prev클래스 추가
   }
 
   clearTimeout(runTimeOut); // 이미 runTimeOut이 설정되어있으면 취소시키기
   runTimeOut = setTimeout(() => {
     carousel.value.classList.remove("next");
     carousel.value.classList.remove("prev");
-  }, timeRunning.value); // timeRunning.value(3000ms)후에 캐러셀에 추가된 클래스들 제거
+  }, timeRunning.value); //timeRunning(3000ms)후에 캐러셀에 추가된 클래스들 제거
 
-  clearTimeout(runNextAuto); // 이미 runNextAuto가 설정되어있으면 취소시키기
+  clearTimeout(runNextAuto); // 이미 runNextAuto 설정되어있으면 취소시키기
   runNextAuto = setTimeout(() => {
     showSlider("next");
-  }, timeAutoNext.value); //timeAutoNext(7000ms)후에 showSlider("next")함수 실행. 자동으로 슬라이드 이동시키기 위해
+  }, timeAutoNext.value); // timeAutoNext(7000ms)후에 showSlider("next")함수 실행(자동으로 슬라이드 시키기 위해)
 };
 
 onMounted(() => {
-  // 컴포넌트가 마운트될 때, 슬라이드 이동 타이머 설정
+  // 컴포넌트가 마운트 될 때, timeAutoNext(7000ms)초 후에 슬라이드 이동 타이머 설정
   runNextAuto = setTimeout(() => {
     showSlider("next");
   }, timeAutoNext.value);
 });
 
 onUnmounted(() => {
-  //컴포넌트 언마운트될 때, 타이머 정리하기
+  // 컴포넌트가 언마운틀 될 때, 타이머 정리하기
   clearTimeout(runTimeOut);
   clearTimeout(runNextAuto);
 });
