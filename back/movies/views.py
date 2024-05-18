@@ -30,7 +30,7 @@ def get_playing(request):
         processed_count = 0
         now_playing_movies_ids = []
 
-        while processed_count < 10:
+        while processed_count < 3:
             url = 'https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1'
             movie_list = requests.get(url, headers=headers).json().get('results')
             processed_count += save_movies(movie_list)[1]
