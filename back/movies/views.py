@@ -120,13 +120,13 @@ def like_movie(request, movie_id):
     if request.method == 'POST':
         movie = Movie.objects.get(movie_id=movie_id)
         
-        if movie.like_users.filter(pk=request.user.pk).exists():
+        if movie.liked_users.filter(pk=request.user.pk).exists():
             movie.liked_users.remove(request.user)
         else:
             movie.liked_users.add(request.user)
         
         data = {
-            'like_count': movie.like_users.count()
+            'like_count': movie.liked_users.count()
         }
         return Response(data, status=status.HTTP_200_OK)
         

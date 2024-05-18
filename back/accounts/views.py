@@ -1,3 +1,22 @@
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
-# Create your views here.
+
+User = get_user_model()
+
+@api_view(['POST'])
+def subscribe(request, to_user_pk):
+    if request.method == 'POST':
+        to_user = User.objects.get(pk=to_user_pk)
+        if to_user.subscribers.filter(pk=request.user.pk).exists():
+            to_user.subscribers.remove(request.user)
+        else:
+            to_user.subscribers.add(request.user)
+        data = {
+            'subscribers_count': to_user.subcribers.count()
+        }
+        return Response(data, status=status.HTTP_200_OK)
+    
