@@ -26,16 +26,20 @@ def get_movie_list(request):
 @api_view(['GET'])
 def get_playing(request):
     if request.method == 'GET':
-        url = 'https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1'
-        now_playing_movies = requests.get(url, headers=headers).json().get('results')
-        save_movies(now_playing_movies)
+        page = 1
+        processed_count = 0
+        now_playing_movies_ids = []
 
-        top3_ids = []
-        for i in range(3):
-            top3_ids.append(now_playing_movies[i].get('id'))
+        while processed_count < 10:
+            url = 'https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1'
+            movie_list = requests.get(url, headers=headers).json().get('results')
+            processed_count += save_movies(movie_list)[1]
+            for movie_data in movie_list:
+                now_playing_movies_ids.append(movie_data.get('id'))
+            page += 1
 
-        top3_movies = Movie.objects.filter(movie_id__in=top3_ids)
-        serializer = MovieSerializer(top3_movies, many=True)
+        top_3_movies = Movie.objects.filter(movie_id__in=now_playing_movies_ids).order_by('-popularity')[:3]
+        serializer = MovieSerializer(top_3_movies, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
