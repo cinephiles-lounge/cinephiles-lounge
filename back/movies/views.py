@@ -146,16 +146,23 @@ def create_short_review(request, movie_id):
 @api_view(['PUT', 'DELETE'])
 def update_short_review(request, short_review_pk):
     short_review = ShortReview.objects.get(pk=short_review_pk)
-    if request.method == 'PUT':
-        serializer = ShortReviewSerializer(
-            short_review, data=request.data, partial=True
-        )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'DELETE':
-        short_review.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    if request.user.pk == short_review.user.pk:
+        if request.method == 'PUT':
+            serializer = ShortReviewSerializer(
+                short_review, data=request.data, partial=True
+            )
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            short_review.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'access denied': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)
+
 
 
 # 구독하는 사람이 좋아요 누른 영화 조회
