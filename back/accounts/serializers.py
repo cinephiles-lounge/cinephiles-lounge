@@ -2,7 +2,8 @@ from rest_framework import serializers
 from dj_rest_auth.serializers import UserDetailsSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from .models import User
-
+from movies.serializers import MovieSerializer
+from articles.serializers import ArticleSerializer
 
 class CustomRegisterSerializer(RegisterSerializer):
     # 닉네임 필드 추가
@@ -29,6 +30,10 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 
 class CustomUserDetailsSerializer(UserDetailsSerializer):
+    liked_movies = MovieSerializer(many=True, read_only=True)
+    liked_articles = ArticleSerializer(many=True, read_only=True)
+    posted_articles = ArticleSerializer(many=True, read_only=True)
+
     class Meta:
         extra_fields = []
         if hasattr(User, 'USERNAME_FIELD'):
@@ -42,5 +47,5 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         if hasattr(User, 'nickname'):
             extra_fields.append('nickname')
         model = User
-        fields = ('pk', *extra_fields)
+        fields = ('pk', 'liked_movies', 'liked_articles', 'posted_articles', *extra_fields)
         read_only_fields = ('email',)

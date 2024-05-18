@@ -99,10 +99,11 @@ REST_FRAMEWORK = {
 }
 
 
-# 회원가입 커스텀 환경설정
+# 회원가입 & User Detail 조회 커스텀 환경설정
 ###################################################################################
 REST_AUTH = {
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailsSerializer',
 }
 
 ACCOUNT_ADAPTER  = 'accounts.models.CustomAccountAdapter'
