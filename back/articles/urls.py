@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:article_pk>/comment/create/', views.create_comment),
     path('comment/<int:comment_pk>/', views.update_comment),
     path('comment/<int:comment_pk>/like/', views.like_comment),
+    path('subs/', views.get_list_subscribing),
 ]

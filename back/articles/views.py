@@ -125,3 +125,14 @@ def like_comment(request, comment_pk):
             'like_count': comment.liked_users.count()
         }
         return Response(data, status=status.HTTP_200_OK)
+    
+
+# 내가 구독하는 사람들이 작성한 게시글 조회
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def get_list_subscribing(request):
+    if request.method == 'GET':
+        subscriptions = request.user.subscriptions.all()
+        serializer = SubscriptionUserSerializer(subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
