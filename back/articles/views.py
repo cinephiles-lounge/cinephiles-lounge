@@ -30,6 +30,35 @@ def create_article(request, movie_id):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# 게시글 조회
+@api_view(['GET'])
+def article_detail(request, article_pk):
+    if request.method == 'GET':
+        article = Article.objects.get(pk=article_pk)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 게시글 수정, 삭제
+@api_view(['PUT', 'DELETE'])
+def article_update(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
+    if request.user.pk == article.user.pk:
+        if request.method == 'PUT':
+            serializer = ArticleSerializer(article, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            article.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'access denied': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
 # 게시글 좋아요
 @api_view(['POST'])
 def like_article(request, article_pk):
@@ -43,6 +72,7 @@ def like_article(request, article_pk):
             'like_count': article.liked_users.count()        
         }
         return Response(data, status=status.HTTP_200_OK)
+
 
 
             
