@@ -54,7 +54,7 @@ def article_update(request, article_pk):
             return Response(status=status.HTTP_204_NO_CONTENT)
     else:
         message = {
-            'access denied': '작성자만 접근이 가능합니다.'
+            'message': '작성자만 접근이 가능합니다.'
         }
         return Response(message, status=status.HTTP_403_FORBIDDEN)
 

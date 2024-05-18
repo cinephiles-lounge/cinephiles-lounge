@@ -13,23 +13,6 @@ from .utils.recommend import recommend
 
 
 
-# 한 페이지 당 영화 20개씩 리턴
-# 초당 요청 max: around 50
-@api_view(['POST'])
-def set_db(request):
-    if request.method == 'POST':
-
-        # 1~50 페이지 요청 == 1000개 영화 저장
-        for i in range(1, 51):
-            url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
-            response = requests.get(url, headers=headers).json()
-            did_create = save_movies(response.get('results'))
-
-        if did_create:
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_200_OK)
-    
-
 # 전체 영화 조회
 @api_view(['GET'])
 def get_movie_list(request):
@@ -77,8 +60,110 @@ def get_upcoming(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# 영화 상세 조회
+@api_view(['GET'])
+def get_movie_detail(request, movie_id):
+    if request.method == 'GET':
+        movie = Movie.objects.get(movie_id=movie_id)
+        serializer = MovieSerializer(movie)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 영화 좋아요
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def like_movie(request, movie_id):
+    if request.method == 'POST':
+        movie = Movie.objects.get(movie_id=movie_id)
+        
+        if movie.liked_users.filter(pk=request.user.pk).exists():
+            movie.liked_users.remove(request.user)
+        else:
+            movie.liked_users.add(request.user)
+        
+        data = {
+            'like_count': movie.liked_users.count()
+        }
+        return Response(data, status=status.HTTP_200_OK)
+        
+
+# 한줄 리뷰 작성
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def create_short_review(request, movie_id):
+    if request.method == 'POST':
+        movie = Movie.objects.get(movie_id=movie_id)
+        serializer = ShortReviewSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, movie=movie)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# 한줄 리뷰 수정 / 삭제
+@permission_classes([IsAuthenticated])
+@api_view(['PUT', 'DELETE'])
+def update_short_review(request, short_review_pk):
+    short_review = ShortReview.objects.get(pk=short_review_pk)
+    if request.user.pk == short_review.user.pk:
+        if request.method == 'PUT':
+            serializer = ShortReviewSerializer(
+                short_review, data=request.data, partial=True
+            )
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            short_review.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'message': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+
+# 구독하는 사람들이 좋아요 누른 영화 조회
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def get_list_subscribing(request):
+    if request.method == 'GET':
+        to_user = User.objects.get(pk=to_user_pk)
+        movies = to_user.liked_movies.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 미완성
+@api_view(['GET'])
+def get_recommendation_like(request):
+    recommend()
+    return Response({'실행': 'O'})  
+
+
+
+# 한 페이지 당 영화 20개씩 리턴
+# 초당 요청 max: around 50
+# @permission_classes([IsAdminUser])
+@api_view(['POST'])
+def set_db(request):
+    if request.method == 'POST':
+
+        # 1~50 페이지 요청 == 1000개 영화 저장
+        for i in range(1, 51):
+            url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
+            response = requests.get(url, headers=headers).json()
+            did_create = save_movies(response.get('results'))
+
+        if did_create:
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_200_OK)
+
+
+
 # 장르 정보 불러오기
 # DB에 장르 데이터가 없을때만 저장함
+# @permission_classes([IsAdminUser])
 @api_view(['POST'])
 def get_genre(request):
     if request.method == 'POST':
@@ -103,80 +188,3 @@ def get_genre(request):
                 'message': '장르 데이터가 이미 존재합니다.'
             }
             return Response(data=message)
-
-
-# 영화 상세 조회
-@api_view(['GET'])
-def get_movie_detail(request, movie_id):
-    if request.method == 'GET':
-        movie = Movie.objects.get(movie_id=movie_id)
-        serializer = MovieSerializer(movie)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# 영화 좋아요
-@api_view(['POST'])
-def like_movie(request, movie_id):
-    if request.method == 'POST':
-        movie = Movie.objects.get(movie_id=movie_id)
-        
-        if movie.liked_users.filter(pk=request.user.pk).exists():
-            movie.liked_users.remove(request.user)
-        else:
-            movie.liked_users.add(request.user)
-        
-        data = {
-            'like_count': movie.liked_users.count()
-        }
-        return Response(data, status=status.HTTP_200_OK)
-        
-
-# 한줄 리뷰 작성
-@api_view(['POST'])
-def create_short_review(request, movie_id):
-    if request.method == 'POST':
-        movie = Movie.objects.get(movie_id=movie_id)
-        serializer = ShortReviewSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user, movie=movie)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# 한줄 리뷰 수정 / 삭제
-@api_view(['PUT', 'DELETE'])
-def update_short_review(request, short_review_pk):
-    short_review = ShortReview.objects.get(pk=short_review_pk)
-    if request.user.pk == short_review.user.pk:
-        if request.method == 'PUT':
-            serializer = ShortReviewSerializer(
-                short_review, data=request.data, partial=True
-            )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-        elif request.method == 'DELETE':
-            short_review.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-    else:
-        message = {
-            'access denied': '작성자만 접근이 가능합니다.'
-        }
-        return Response(message, status=status.HTTP_403_FORBIDDEN)
-
-
-
-# 구독하는 사람이 좋아요 누른 영화 조회
-@api_view(['GET'])
-def get_list_subscribing(request, to_user_pk):
-    if request.method == 'GET':
-        to_user = User.objects.get(pk=to_user_pk)
-        movies = to_user.liked_movies.all()
-        serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# 미완성
-@api_view(['GET'])
-def get_recommendation_like(request):
-    recommend()
-    return Response({'실행': 'O'})  

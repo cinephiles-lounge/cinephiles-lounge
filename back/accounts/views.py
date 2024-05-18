@@ -3,10 +3,12 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from movies.serializers import MovieSerializer
 
 User = get_user_model()
 
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def subscribe(request, to_user_pk):
     if request.method == 'POST':
@@ -22,6 +24,7 @@ def subscribe(request, to_user_pk):
         return Response(data, status=status.HTTP_200_OK)
     
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def liked_movies(request):
     if request.method == 'GET':
