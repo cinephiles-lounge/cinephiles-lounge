@@ -128,9 +128,8 @@ def update_short_review(request, short_review_pk):
 @api_view(['GET'])
 def get_list_subscribing(request):
     if request.method == 'GET':
-        to_user = User.objects.get(pk=to_user_pk)
-        movies = to_user.liked_movies.all()
-        serializer = MovieSerializer(movies, many=True)
+        subscriptions = request.user.subscriptions.all()
+        serializer = SubscriptionUserSerializer(subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class CommentDetailSerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField(source='liked_users.count', read_only=True)
 
@@ -23,3 +22,11 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = '__all__'
         read_only_fields = ('user', 'movie', 'lounge', 'liked_users', )
+
+
+class SubscriptionUserSerializer(serializers.ModelSerializer):
+    posted_articles = ArticleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'nickname')
