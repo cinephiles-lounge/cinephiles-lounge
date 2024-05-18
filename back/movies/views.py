@@ -40,23 +40,25 @@ def get_playing(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# 상영 예정작 20개 조회
+# 상영 예정작 15개 조회
 @api_view(['GET'])
 def get_upcoming(request):
     if request.method == 'GET':
-        url = f"https://api.themoviedb.org/3/discover/movie?language=ko-KR&page=1&sort_by=popularity.desc&primary_release_date.gte={date.today()}"
-        upcoming_movies = requests.get(url, headers=headers).json().get('results')
-        print(url)
-        save_movies(upcoming_movies)
+        page = 1
+        processed_count = 0
+        upcoming_movies_ids = []
 
-        ids = []
+        while processed_count < 15:
+            url = f"https://api.themoviedb.org/3/discover/movie?language=ko-KR&page={page}&sort_by=popularity.desc&primary_release_date.gte={date.today()}"
+            movie_list = requests.get(url, headers=headers).json().get('results')
+            processed_count += save_movies(movie_list)[1]
+            for movie_data in movie_list:
+                upcoming_movies_ids.append(movie_data.get('id'))
+            page += 1
 
-        for i in range(20):
-            ids.append(upcoming_movies[i].get('id'))
-
-        upcoming_movies = Movie.objects.filter(movie_id__in=ids)
+        upcoming_movies = Movie.objects.filter(movie_id__in=upcoming_movies_ids)
         serializer = MovieSerializer(upcoming_movies, many=True)
-
+        # print(upcoming_movies.count())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -114,7 +116,7 @@ def update_short_review(request, short_review_pk):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         elif request.method == 'DELETE':
             short_review.delete()
-            
+            return Response(status=status.HTTP_204_NO_CONTENT)
     else:
         message = {
             'message': '작성자만 접근이 가능합니다.'
@@ -145,12 +147,13 @@ def get_recommendation_like(request):
 @api_view(['POST'])
 def set_db(request):
     if request.method == 'POST':
+        did_create = False
 
         # 1~50 페이지 요청 == 1000개 영화 저장
         for i in range(1, 51):
             url = f'https://api.themoviedb.org/3/movie/popular?language=ko-KR&page={i}'
             response = requests.get(url, headers=headers).json()
-            did_create = save_movies(response.get('results'))
+            did_create = save_movies(response.get('results'))[0]
 
         if did_create:
             return Response(status=status.HTTP_201_CREATED)
