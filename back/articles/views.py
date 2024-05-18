@@ -88,3 +88,22 @@ def create_comment(request, article_pk):
             serializer.save(user=request.user, article=article)
             return Response(serializer.data, status=status.HTTP_200_OK)
             
+
+@permission_classes([IsAuthenticated])
+@api_view(['PUT', 'DELETE'])
+def update_comment(request, comment_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    if request.user.pk == comment.user.pk:
+        if request.method == 'PUT':
+            serializer = CommentSerializer(comment, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'message': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)

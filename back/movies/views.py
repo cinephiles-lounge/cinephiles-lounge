@@ -114,7 +114,7 @@ def update_short_review(request, short_review_pk):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         elif request.method == 'DELETE':
             short_review.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            
     else:
         message = {
             'message': '작성자만 접근이 가능합니다.'
