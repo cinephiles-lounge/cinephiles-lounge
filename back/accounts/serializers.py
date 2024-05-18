@@ -48,4 +48,6 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
             extra_fields.append('nickname')
         model = User
         fields = ('pk', 'liked_movies', 'liked_articles', 'posted_articles', *extra_fields)
-        read_only_fields = ('email',)
+
+        # username(아이디), email은 수정 불가능
+        read_only_fields = ('username', 'email',)
