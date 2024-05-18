@@ -140,7 +140,6 @@ def get_recommendation_like(request):
     return Response({'실행': 'O'})  
 
 
-
 # 한 페이지 당 영화 20개씩 리턴
 # 초당 요청 max: around 50
 # @permission_classes([IsAdminUser])
@@ -157,7 +156,6 @@ def set_db(request):
         if did_create:
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_200_OK)
-
 
 
 # 장르 정보 불러오기

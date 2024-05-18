@@ -35,7 +35,12 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionUserSerializer(serializers.ModelSerializer):
-    liked_movies = MovieSerializer(many=True, read_only=True)
+    class SimpleMovieSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Movie
+            fields = ('movie_id', 'title', )
+
+    liked_movies = SimpleMovieSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
