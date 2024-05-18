@@ -28,3 +28,21 @@ def create_article(request, movie_id):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, movie=movie)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# 게시글 좋아요
+@api_view(['POST'])
+def like_article(request, article_pk):
+    if request.method == 'POST':
+        article = Article.objects.get(pk=article_pk)
+        if article.liked_users.filter(pk=request.user.pk):
+            article.liked_users.remove(request.user)
+        else:
+            article.liked_users.add(request.user)
+        data = {
+            'like_count': article.liked_users.count()        
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+            
