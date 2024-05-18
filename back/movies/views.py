@@ -84,6 +84,7 @@ def like_movie(request, movie_id):
             movie.liked_users.add(request.user)
         
         data = {
+            'movie': movie.title,
             'like_count': movie.liked_users.count()
         }
         return Response(data, status=status.HTTP_200_OK)
