@@ -1,4 +1,5 @@
 import requests
+from django.db.models import Count
 from django.conf import settings
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework import status
@@ -7,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import *
 from .serializers import *
-
+from datetime import date, timedelta
 
 
 # 게시글 전체 목록 조회
@@ -136,3 +137,17 @@ def get_list_subscribing(request):
         serializer = SubscriptionUserSerializer(subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+# 게시글 인기 순으로 조회
+@api_view(['GET'])
+def get_popular(request):
+    if request.method == 'GET':
+        articles = Article.objects.filter(
+            # 최근 일주일 이내에 작성된 게시글만 불러오기
+            created_at__gte=date.today()-timedelta(7)
+        ).annotate(
+            # 인기도(좋아요 + 댓글 수) 도출 후 내림차순으로 정렬
+            popularity=Count('liked_users')+Count('comment')
+        ).order_by('-popularity')
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

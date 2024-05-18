@@ -11,4 +11,5 @@ urlpatterns = [
     path('comment/<int:comment_pk>/', views.update_comment),
     path('comment/<int:comment_pk>/like/', views.like_comment),
     path('subs/', views.get_list_subscribing),
+    path('popular/', views.get_popular),
 ]
