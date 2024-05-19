@@ -25,9 +25,7 @@
                 <p class="release_date">{{ playingMovie.release_date }}</p>
               </div>
               <div class="overview-box">
-                <p>
-                  {{ playingMovie.overview }}
-                </p>
+                <p>"{{ playingMovie.overview }}"</p>
               </div>
               <p class="vote_average">
                 <i class="bx bxs-star"></i>
@@ -123,7 +121,6 @@ main {
   height: 210px;
 }
 .playing-container .playing-wrapper .content-wrapper .content-text h2 {
-  font-family: TiemposHeadline-Semibold, Georgia, serif;
   font-weight: 400;
   font-size: 48px;
   line-height: 1em;
@@ -153,7 +150,7 @@ main {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  margin-top: 40px;
+  margin-top: 50px;
 }
 .playing-container .playing-wrapper .content-wrapper .content-text .des .genre {
   width: 200px;
@@ -176,7 +173,7 @@ main {
   font-weight: 400;
   font-size: 13px;
   line-height: 1.38em;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 .playing-container
   .playing-wrapper

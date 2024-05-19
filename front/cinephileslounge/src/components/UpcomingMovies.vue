@@ -5,13 +5,14 @@
       :loop="true"
       :touchable="false"
       class="no-shadow slides"
-      :visible-slides="10"
+      :visible-slides="7"
       slide-multiple
-      :gap="1"
+      :gap="2"
       :infinite="true"
       :bullets="false"
       :arrows-outside="false"
-      :slide-ratio="1 / 8"
+      :slide-ratio="1 / 5"
+      transition-speed="700"
       :breakpoints="{ 800: { visibleSlides: 2, slideMultiple: 2 } }"
     >
       <vueper-slide
@@ -19,8 +20,13 @@
         v-for="movie in movies"
         :key="movie.id"
         :image="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-        style="width: 160px; height: 220px"
-        @click="console.log(movie.id)"
+        style="width: 200px; height: 280px"
+        @click="
+          router.push({
+            name: 'MovieDetailView',
+            params: { movie_id: movie.movie_id },
+          })
+        "
       />
     </vueper-slides>
   </div>
@@ -28,12 +34,13 @@
 <script setup>
 import { ref } from "vue";
 import { useMovieStore } from "@/stores/movie.js";
+import { useRouter } from "vue-router";
 import { VueperSlides, VueperSlide } from "vueperslides";
 import "vueperslides/dist/vueperslides.css";
 import axios from "axios";
-
 const movieStore = useMovieStore();
 const movies = ref(null);
+const router = useRouter();
 axios({
   methods: "get",
   url: `${movieStore.API_URL}/movies/upcoming/`,
@@ -47,7 +54,7 @@ axios({
 </script>
 <style scoped>
 .upcoming-container {
-  padding: 38px 80px;
+  padding: 38px 50px;
   background-color: #948176;
 }
 .upcoming-container h1 {
@@ -56,7 +63,7 @@ axios({
   font-weight: 700;
   line-height: 26px;
   margin-bottom: 10px;
-  margin-left: 20px;
+  margin-left: 10px;
 }
 .vueperslide--visible {
   border-radius: 5px;
@@ -69,7 +76,7 @@ axios({
 .slide:hover {
   z-index: 1;
   transform: scale(1.25);
-  box-shadow: 0 25px 40px rgba(0, 0, 0, 1.5);
+
   filter: brightness(60%);
 }
 </style>
