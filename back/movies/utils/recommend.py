@@ -10,17 +10,21 @@ def create_soup(arr):
     return ' '.join(arr)
 
 # https://www.kaggle.com/code/ibtesama/getting-started-with-a-movie-recommendation-system
-def recommend():
+def recommend(genres):
 
-    # get_nouns(): 입력 문장에서 명사만 추출합니다.
-    liked_movies = [150540, 809]
-    movies = Movie.objects.prefetch_related('genres')
-
+    movies = Movie.objects.all()
     df = pd.DataFrame(list(movies.values()))
 
-    df['genres'] = df['genres'].apply(literal_eval)
+    qs = Movie.objects.prefetch_related('genres')
 
-    print(df['genres'])
+    # genre_df = pd.DataFrame(columns=['genre'])
+    # for q in qs:
+    # df1 = pd.DataFrame(list(qs.values()))
+    # print(df1['genres'])
+
+    # df['genres'] = df['genres'].apply(literal_eval)
+
+    # print(df['genres'])
 
     # df['soup'] = df['overview'].apply(create_soup)
 

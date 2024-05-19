@@ -18,6 +18,13 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class ShortReviewSerializer(serializers.ModelSerializer):
+    class SimpleUserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ('nickname', )
+    
+    user = SimpleUserSerializer(read_only=True)
+
     class Meta:
         model = ShortReview
         fields = '__all__'
