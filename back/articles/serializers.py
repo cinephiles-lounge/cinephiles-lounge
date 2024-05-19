@@ -35,13 +35,19 @@ class ArticleSerializer(serializers.ModelSerializer):
             model = Comment
             fields = ('id', 'user', 'content', 'created_at', 'like_count',)
 
+    class SimpleMovieSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Movie
+            fields = ('movie_id', 'title')
+
     comment_set = SimpleCommentSerializer(many=True, read_only=True)
     like_count = serializers.IntegerField(source='liked_users.count', read_only=True)
+    movie = SimpleMovieSerializer(read_only=True)
 
     class Meta:
         model = Article
         fields = '__all__'
-        read_only_fields = ('user', 'movie', 'lounge', 'liked_users', )
+        read_only_fields = ('user', 'liked_users', )
 
 
 class SubscriptionUserSerializer(serializers.ModelSerializer):
