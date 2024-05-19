@@ -141,7 +141,15 @@ def like_comment(request, comment_pk):
 def get_list_subscribing(request):
     if request.method == 'GET':
         subscriptions = request.user.subscriptions.all()
-        serializer = SubscriptionUserSerializer(subscriptions, many=True)
+
+        articles = []
+
+        for subscribing_user in subscriptions:
+            person_articles = subscribing_user.posted_articles.all()
+            for article in person_articles:
+                    articles.append(article)
+                    
+        serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
