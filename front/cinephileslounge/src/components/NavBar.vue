@@ -3,7 +3,7 @@
     <div class="nav-content">
       <div class="nav-left">
         <div class="logo">
-          <a href="#">CinePhile Lounge</a>
+          <RouterLink :to="{ name: 'HomeView' }">CinePhile Lounge</RouterLink>
         </div>
         <ul class="nav-links">
           <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
