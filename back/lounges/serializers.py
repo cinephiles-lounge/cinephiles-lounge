@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
-
+from articles.serializers import ArticleSerializer
 
 User = get_user_model()
 
@@ -13,6 +13,7 @@ class LoungeSerializer(serializers.ModelSerializer):
 
     admin = SimpleUserSerializer(read_only=True)
     members = SimpleUserSerializer(read_only=True, many=True)
+    article_set = ArticleSerializer(read_only=True, many=True)
 
     class Meta:
         model = Lounge

@@ -26,6 +26,16 @@ def create_article(request, movie_id):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, movie=movie)
+            # 라운지 정보가 존재할 시에는 유저가 해당 라운지의 회원인지 확인한 후 저장
+            if request.data.get('lounge'):
+                lounge = Lounge.objects.get(pk=request.data.get('lounge'))
+                if lounge.members.filter(pk=request.user.pk).exists():
+                    serializer.save(lounge=lounge)
+                else:
+                    message = {
+                        'message': '가입한 라운지의 게시글만 작성이 가능합니다.'
+                    }
+                    return Response(message, status=status.HTTP_403_FORBIDDEN)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
