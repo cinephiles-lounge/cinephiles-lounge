@@ -1,7 +1,6 @@
 <template>
   <h1>리뷰 페이지</h1>
   <p>한줄리뷰 작성</p>
-  <h1>{{ userRating }}</h1>
   <form v-if="accountStore.isLogin" @submit.prevent="createShortReview">
     <star-rating
       @update:rating="setRating"
@@ -29,12 +28,12 @@
   />
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useAccountStore } from "@/stores/account";
 import MovieDetailListItem from "@/components/MovieDetailListItem.vue";
 import axios from "axios";
 import StarRating from "vue-star-rating";
-const userRating = ref();
+const userRating = ref(1);
 // 사용자가 입력한 별점 userRating에 저장
 const setRating = (rating) => {
   userRating.value = rating;
@@ -53,6 +52,13 @@ const reviews = ref(props.shortReviews);
 const accountStore = useAccountStore();
 const content = ref("");
 
+// 부모 컴포넌트한테 받은 shortReviews prop을 watch로 변할때마다 업데이트
+watch(
+  () => props.shortReviews,
+  (newReviews) => {
+    reviews.value = [...newReviews];
+  }
+);
 // 한줄리뷰 생성
 const createShortReview = () => {
   axios({

@@ -57,7 +57,7 @@ const props = defineProps({
 const emit = defineEmits(["delete"]);
 const review = ref(props.shortReview);
 const isUpdate = ref(false);
-const userRating = ref();
+const userRating = ref(1);
 const content = ref("");
 
 // 사용자가 입력한 별점 userRating에 저장
