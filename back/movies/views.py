@@ -133,7 +133,17 @@ def update_short_review(request, short_review_pk):
 def get_list_subscribing(request):
     if request.method == 'GET':
         subscriptions = request.user.subscriptions.all()
-        serializer = SubscriptionUserSerializer(subscriptions, many=True)
+        movies = []
+        movies_id_set = set()
+        for subscribing_user in subscriptions:
+            person_movies = subscribing_user.liked_movies.all()
+            for movie in person_movies:
+                curr_len = len(movies_id_set)
+                movies_id_set.add(movie)
+                if curr_len != len(movies_id_set):
+                    # 중복체크 통과하면 movies 리스트에 저장
+                    movies.append(movie)
+        serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
