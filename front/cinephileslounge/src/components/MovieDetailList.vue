@@ -1,23 +1,61 @@
 <template>
   <h1>리뷰 페이지</h1>
   <p>한줄리뷰 작성</p>
-  <p>{{ content }}</p>
-  <form>
-    <input type="text" v-model="content" />
+  <form @submit.prevent="createShortReview">
+    <input type="text" v-model.trim="content" />
     <input type="submit" />
   </form>
   <MovieDetailListItem
-    v-for="shortReview in shortReviews"
+    v-for="shortReview in sortedShortReviews"
     :key="shortReview.id"
     :shortReview="shortReview"
+    @delete="delete_review"
   />
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useAccountStore } from "@/stores/account";
 import MovieDetailListItem from "@/components/MovieDetailListItem.vue";
-defineProps({
-  shortReviews: Array,
+import axios from "axios";
+// shortReviews created_at 최신순으로 정렬
+const sortedShortReviews = computed(() => {
+  return [...reviews.value].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
 });
+const props = defineProps({
+  shortReviews: Array,
+  movieId: Number,
+});
+const reviews = ref(props.shortReviews);
+const accountStore = useAccountStore();
 const content = ref("");
+
+// 한줄리뷰 생성
+const createShortReview = () => {
+  axios({
+    method: "post",
+    url: `${accountStore.API_URL}/movies/short_review/create/${props.movieId}/`,
+    data: {
+      content: content.value,
+      rank: 4,
+    },
+    headers: {
+      Authorization: `Token ${accountStore.token}`,
+    },
+  })
+    .then((res) => {
+      reviews.value = [...reviews.value, res.data];
+      // front 에서도 바로 추가된것처럼 보이게
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const delete_review = (reviewId) => {
+  reviews.value = reviews.value.filter((review) => review.id !== reviewId);
+  // front에서도 바로 삭제된것처럼 보이게
+};
 </script>
 <style scoped></style>
