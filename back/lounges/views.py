@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import *
-import uuid
+from movies.serializers import MovieSerializer
 from django.core.exceptions import ValidationError
+
+
 
 # 전체 라운지 목록 조회
 @api_view(['GET'])
@@ -99,3 +101,20 @@ def leave(request, lounge_pk):
         lounge.members.remove(request.user)
         serializer = LoungeSerializer(lounge)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+# 라운지 회원들이 좋아요 누른 영화 목록 조회
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def member_liked_movies(request, lounge_pk):
+    if request.method == 'GET':
+        lounge = Lounge.objects.get(pk=lounge_pk)
+        members = lounge.members.all()
+        movies = []
+        for member in members:
+            person_movies = member.liked_movies.all()
+            for movie in person_movies:
+                movies.append(movie)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
