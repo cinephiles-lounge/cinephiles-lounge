@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from movies.serializers import MovieSerializer
 from .serializers import CustomUserDetailsSerializer
-
+from lounges.serializers import LoungeSerializer
 
 User = get_user_model()
 
@@ -64,4 +64,24 @@ def liked_movies(request):
         movies = request.user.liked_movies.all()
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
+# 라운지 정보는 라운지, 마이페이지 두 뷰에서 사용해야 하므로 get_user_detail으로부터 분리함
+# 내가 가입한 라운지 조회 기능
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def get_joined_lounges(request):
+    if request.method == 'GET':
+        lounges = request.user.joined_lounges.all()
+        serializer = LoungeSerializer(lounges, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 내가 관리하는 라운지 조회 기능
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def get_managing_lounges(request):
+    if request.method == 'GET':
+        lounges = request.user.managing_lounges.all()
+        serializer = LoungeSerializer(lounges, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
