@@ -150,19 +150,16 @@ def get_list_subscribing(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# 미완성
+# 좋아요 기반 추천 알고리즘
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_recommendation_like(request):
-    liked_movies = request.user.liked_movies.all()
-    total_genres = []
-    for movie in liked_movies:
-        print(movie.title)
-        genres = movie.genres.all()
-        for genre in genres:
-            print(genre.name)
-            total_genres.append(genre.name)
-    recommend(total_genres)
-    return Response({'실행': 'O'})  
+    if request.method == 'GET':
+        liked_movies = request.user.liked_movies.all()
+        recommendation_indices = recommend(liked_movies)
+        recommendation = Movie.objects.filter(id__in=recommendation_indices).exclude(id__in=liked_movies)
+        serializer = MovieSerializer(recommendation.order_by('?')[:10], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # 한 페이지 당 영화 20개씩 리턴
