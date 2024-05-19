@@ -73,6 +73,8 @@ const logOut = () => {
     .then((res) => {
       console.log("로그아웃 성공");
       accountStore.token = null; // 토큰 초기화
+      accountStore.userId = ""; //유저 이름 초기화
+      accountStore.userNickname = ""; //닉네임 초기화
       router.push({ name: "HomeView" });
     })
     .catch((err) => {

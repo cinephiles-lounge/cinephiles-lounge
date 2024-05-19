@@ -1,7 +1,23 @@
 <template>
   <h1>리뷰 페이지</h1>
   <p>한줄리뷰 작성</p>
-  <form @submit.prevent="createShortReview">
+  <h1>{{ userRating }}</h1>
+  <form v-if="accountStore.isLogin" @submit.prevent="createShortReview">
+    <star-rating
+      @update:rating="setRating"
+      :increment="0.5"
+      :max-rating="5"
+      :rounded-corners="true"
+      :inline="true"
+      :show-rating="false"
+      :active-color="['#520000', '#520000']"
+      :active-border-color="['#F6546A', '#948989']"
+      :border-width="3"
+      :star-size="24"
+      :active-on-click="true"
+      :clearable="true"
+    >
+    </star-rating>
     <input type="text" v-model.trim="content" />
     <input type="submit" />
   </form>
@@ -17,6 +33,12 @@ import { ref, computed } from "vue";
 import { useAccountStore } from "@/stores/account";
 import MovieDetailListItem from "@/components/MovieDetailListItem.vue";
 import axios from "axios";
+import StarRating from "vue-star-rating";
+const userRating = ref();
+// 사용자가 입력한 별점 userRating에 저장
+const setRating = (rating) => {
+  userRating.value = rating;
+};
 // shortReviews created_at 최신순으로 정렬
 const sortedShortReviews = computed(() => {
   return [...reviews.value].sort(
@@ -38,7 +60,7 @@ const createShortReview = () => {
     url: `${accountStore.API_URL}/movies/short_review/create/${props.movieId}/`,
     data: {
       content: content.value,
-      rank: 4,
+      rank: userRating.value,
     },
     headers: {
       Authorization: `Token ${accountStore.token}`,
