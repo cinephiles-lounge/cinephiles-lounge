@@ -2,48 +2,45 @@ import pandas as pd
 from ast import literal_eval
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import random
 from ..models import *
+import random
+import re
 
+def clean_string(text):
+    cleaned_text = re.sub(r'[^a-zA-Z가-힣0-9\s]', '', text)
+    return cleaned_text
 
-def create_soup(arr):
-    return ' '.join(arr)
 
 # https://www.kaggle.com/code/ibtesama/getting-started-with-a-movie-recommendation-system
-def recommend(genres):
+def recommend(liked_movies):
+    movies = Movie.objects.all().prefetch_related('genres')
 
-    movies = Movie.objects.all()
-    df = pd.DataFrame(list(movies.values()))
-
-    qs = Movie.objects.prefetch_related('genres')
-
-    # genre_df = pd.DataFrame(columns=['genre'])
-    # for q in qs:
-    # df1 = pd.DataFrame(list(qs.values()))
-    # print(df1['genres'])
-
-    # df['genres'] = df['genres'].apply(literal_eval)
-
-    # print(df['genres'])
-
-    # df['soup'] = df['overview'].apply(create_soup)
-
-    # print(df['soup'])
+    # 영화 정보를 Pandas 데이터프레임으로 변환
+    movie_data = []
+    for movie in movies:
+        genres = ' '.join([genre.name for genre in movie.genres.all()])
+        movie_data.append({'movie_id': movie.movie_id, 'title': movie.title, 'genres': genres})
+    movies_df = pd.DataFrame(movie_data)
+    movies_df.index = movies_df.index + 1
+    movies_df['title'] = movies_df['title'].apply(clean_string)
+    movies_df['soup'] = movies_df['title'] + ' ' + movies_df['genres']
+    # print(movies_df['soup'])
 
     count_vect = CountVectorizer()
-    # count_matrix = count_vect.fit_transform(df['soup'])
-    # cosine_sim = cosine_similarity(count_matrix, count_matrix)
+    count_matrix = count_vect.fit_transform(movies_df['soup'])
+    cosine_sim = cosine_similarity(count_matrix, count_matrix)
+    recommended_movies = set()
 
-    # indices = pd.Series(df.index, index=df['title']).drop_duplicates()
+    for movie in liked_movies:
+        # print('----------')
+        # print(movies_df.iloc[[movie.id-1]])
+        sim_scores = list(enumerate(cosine_sim[movie.id - 1]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:11]
+        movie_indices = [x[0] for x in sim_scores]
+        for idx in movie_indices: 
+            recommended_movies.add(idx + 1)
+            # print(movies_df.iloc[[idx]])
+        # print('---------')
 
-    # recommended_movies = pd.DataFrame()
-
-    # for title in movie_titles:
-    #     idx = indices[title]
-    #     sim_scores = list(enumerate(cosine_sim[idx]))
-    #     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    #     sim_scores = sim_scores[1:11]
-    #     movie_indices = [x[0] for x in sim_scores]
-    #     recommended_movies = pd.concat([recommended_movies, df['title'].iloc[movie_indices]]).drop_duplicates()
-
-    # return recommended_movies.sample(n=10)
+    return recommended_movies
