@@ -110,11 +110,19 @@ def member_liked_movies(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
         members = lounge.members.all()
+
         movies = []
+        movies_id_set = set()
+
         for member in members:
             person_movies = member.liked_movies.all()
+
             for movie in person_movies:
-                movies.append(movie)
+                curr_len = len(movies_id_set)
+                movies_id_set.add(movie)
+                if curr_len != len(movies_id_set):
+                    movies.append(movie)
+                    
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
