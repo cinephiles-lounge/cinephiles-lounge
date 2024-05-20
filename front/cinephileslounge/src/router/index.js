@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAccountStore } from "@/stores/account";
 import HomeView from "@/views/HomeView.vue";
 import LogInView from "@/views/LogInView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import MovieDetailView from "@/views/MovieDetailView.vue";
-import { useAccountStore } from "@/stores/account";
+import FeedView from "@/views/FeedView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -26,6 +27,11 @@ const router = createRouter({
       path: "/movies/:movie_id",
       name: "MovieDetailView",
       component: MovieDetailView,
+    },
+    {
+      path: "/articles",
+      name: "FeedView",
+      component: FeedView,
     },
   ],
 });
