@@ -8,7 +8,8 @@ from .serializers import *
 from datetime import date
 from .utils.load import save_movies, headers
 from .utils.recommend import recommend
-
+from .utils.search import search
+from django.db.models import Q, When
 
 
 # 전체 영화 조회
@@ -161,6 +162,32 @@ def get_recommendation_like(request):
         recommendation = Movie.objects.filter(id__in=recommendation_indices).exclude(id__in=liked_movies)
         serializer = MovieSerializer(recommendation.order_by('?')[:10], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+from django.db.models import Case, Value
+
+
+# 제목, 줄거리 기반으로 검색 
+# 제목에 검색 키워드를 포함하는 영화를 먼저 반환하고 그다음 줄거리에 키워드를 포함하는 영화들을 반환
+@api_view(['GET'])
+def get_search(request):
+    if request.method == 'GET':
+        q1 = Q(title__contains=request.GET['keyword'])
+        q2 = Q(overview__contains=request.GET['keyword'])
+        results = Movie.objects.filter(q1 | q2).annotate(
+          search_order=Case(
+              When(q1, then=Value(1)),
+              When(q2, then=Value(2)),
+            )
+        ).order_by('search_order')
+        serializer = MovieSerializer(results, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+####################################################
+################### DB 저장 함수 ###################
+####################################################
+
 
 
 # 한 페이지 당 영화 20개씩 리턴
