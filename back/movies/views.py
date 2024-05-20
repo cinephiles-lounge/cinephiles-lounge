@@ -8,7 +8,9 @@ from .models import *
 from .serializers import *
 from django.db.models import Q, When, Case, Value
 from .utils.load import save_movies, headers
-from .utils.recommend import recommend
+from .utils.recommend_by_likes import recommend_by_likes
+from .utils.recommend_by_weather import recommend_by_weather
+
 
 # 전체 영화 조회
 @api_view(['GET'])
@@ -156,26 +158,27 @@ def get_list_subscribing(request):
 def get_recommendation_like(request):
     if request.method == 'GET':
         liked_movies = request.user.liked_movies.all()
-        recommendation_indices = recommend(liked_movies)
+        recommendation_indices = recommend_by_likes(liked_movies)
         recommendation = Movie.objects.filter(id__in=recommendation_indices).exclude(id__in=liked_movies)
         serializer = MovieSerializer(recommendation.order_by('?')[:10], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-
+# 날씨 기반 추천 알고리즘
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_recommendation_weather(request):
     if request.method == 'GET':
-        lon = 35.0398058
-        lat = 126.7168158
+        lat = 35.0398058
+        lon = 126.7168158
         # lon = request.GET.get('lon')
         # lat = request.GET.get('lat')
         api_key = settings.OPEN_WEATHER_API_KEY
         url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}'
-        result = requests.get(url, headers=headers).json()
-        print(result)
-    pass
+        weather_id = requests.get(url, headers=headers).json().get('weather')[0].get('id')
+        results = recommend_by_weather(weather_id)
+        return Response(status=status.HTTP_200_OK)
+
 
 # 제목, 줄거리 기반으로 검색 
 # 제목에 검색 키워드를 포함하는 영화를 먼저 반환하고 그다음 줄거리에 키워드를 포함하는 영화들을 반환

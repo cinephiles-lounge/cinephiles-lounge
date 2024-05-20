@@ -9,7 +9,7 @@ def clean_string(text):
     cleaned_text = re.sub(r'[^a-zA-Z가-힣0-9\s]', '', text)
     return cleaned_text
 
-def recommend(liked_movies):
+def recommend_by_likes(liked_movies):
 
     # 영화 데이터를 genre M:N 필드와 함께 불러옴
     movies = Movie.objects.all().prefetch_related('genres')
