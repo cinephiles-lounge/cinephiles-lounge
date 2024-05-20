@@ -8,6 +8,7 @@ export const useAccountStore = defineStore(
     const router = useRouter();
     const token = ref(null);
     const API_URL = "http://127.0.0.1:8000";
+    const userPk = ref(null); // 로그인 한 유저 pk
     const userId = ref(null); // 로그인 한 유저 아이디
     const userNickname = ref(null); // 로그인 한 유저 닉네임
     const isLogin = computed(() => {
@@ -66,8 +67,9 @@ export const useAccountStore = defineStore(
             },
           })
             .then((res) => {
-              userId.value = res.data.username; // 로그인한 유저 아이디 저장
-              userNickname.value = res.data.nickname; // 로그인한 유저 닉네임 저장
+              userPk.value = res.data.pk; // 로그인 한 유저 pk 저장
+              userId.value = res.data.username; // 로그인 한 유저 아이디 저장
+              userNickname.value = res.data.nickname; // 로그인 한 유저 닉네임 저장
             })
             .catch((err) => {
               console.log(err);
@@ -83,7 +85,16 @@ export const useAccountStore = defineStore(
         });
     };
 
-    return { signUp, logIn, API_URL, token, isLogin, userId, userNickname };
+    return {
+      signUp,
+      logIn,
+      API_URL,
+      token,
+      isLogin,
+      userPk,
+      userId,
+      userNickname,
+    };
   },
   { persist: true }
 );

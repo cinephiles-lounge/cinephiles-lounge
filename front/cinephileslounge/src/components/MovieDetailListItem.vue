@@ -4,14 +4,13 @@
   <p>별점 : {{ review.rank }}</p>
   <button
     @click="delete_shortReview"
-    v-if="!isUpdate && accountStore.userNickname === review.user.nickname"
+    v-if="!isUpdate && accountStore.userPk === review.user.id"
   >
-    <!--유저 닉네임 말고 유저 아이디로 수정-->
     삭제
   </button>
   <button
     @click="isUpdate = !isUpdate"
-    v-if="!isUpdate && accountStore.userNickname === review.user.nickname"
+    v-if="!isUpdate && accountStore.userPk === review.user.id"
   >
     수정
   </button>
