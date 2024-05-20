@@ -28,8 +28,8 @@ class Movie(models.Model):
 class ShortReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posted_short_reviews')
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rank = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    rank = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5)]
     )
     content = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
