@@ -11,7 +11,7 @@ def recommend_by_weather(weather_id):
         weather_message = "촉촉한 비가 내려요"
     elif weather_id < 700:
         # Snow (6XX)
-        weather_message = "하얀 눈이 송이송이 내려요"
+        weather_message = "하얀 눈이 내려요"
     elif weather_id == 800:
         # Clear (800)
         weather_message = "맑은 하늘이 아름다운 날이에요"
