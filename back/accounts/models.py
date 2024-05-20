@@ -9,7 +9,7 @@ from allauth.account.utils import user_email, user_field, user_username
 class User(AbstractUser):
     subscriptions = models.ManyToManyField('self', symmetrical=False, related_name='subscribers')
     profile_path = models.ImageField(blank=True)
-    nickname = models.CharField(max_length=30)
+    nickname = models.CharField(max_length=30, unique=True)
     
 
 class CustomAccountAdapter(DefaultAccountAdapter):

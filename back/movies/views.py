@@ -87,7 +87,8 @@ def like_movie(request, movie_id):
         
         data = {
             'movie': movie.title,
-            'like_count': movie.liked_users.count()
+            'like_count': movie.liked_users.count(),
+            'did_i_follow': movie.liked_users.filter(pk=request.user.pk).exists()
         }
         return Response(data, status=status.HTTP_200_OK)
         

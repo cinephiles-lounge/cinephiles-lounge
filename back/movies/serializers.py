@@ -21,7 +21,7 @@ class ShortReviewSerializer(serializers.ModelSerializer):
     class SimpleUserSerializer(serializers.ModelSerializer):
         class Meta:
             model = User
-            fields = ('nickname', )
+            fields = ('id', 'nickname', )
     
     user = SimpleUserSerializer(read_only=True)
 
