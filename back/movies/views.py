@@ -165,6 +165,9 @@ def get_recommendation_like(request):
 from django.db.models import Case, Value
 
 
+def get_recommendation_weather(request):
+    pass
+
 # 제목, 줄거리 기반으로 검색 
 # 제목에 검색 키워드를 포함하는 영화를 먼저 반환하고 그다음 줄거리에 키워드를 포함하는 영화들을 반환
 @api_view(['GET'])
