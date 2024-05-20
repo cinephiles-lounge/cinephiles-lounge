@@ -93,6 +93,7 @@ const movie_like = () => {
 <style scoped>
 .detail-view {
   padding-top: 50px;
+  width: 100vw;
   min-height: 100vh;
   background-color: black;
   color: #fff;
@@ -101,8 +102,6 @@ const movie_like = () => {
 }
 .detail-container {
   position: relative;
-  width: 100%;
-  max-width: 1680px;
   height: 431px;
   margin-bottom: 20px;
   display: flex;
@@ -125,11 +124,11 @@ const movie_like = () => {
   position: absolute;
   top: 0px;
   bottom: 22px;
-  right: 0px;
+  left: 680px;
   width: 950px;
 }
 .detail-container .movie-video iframe {
-  width: 1000px;
+  width: 800px;
   height: 405px;
   display: inline;
 }
@@ -167,7 +166,7 @@ const movie_like = () => {
 .detail-container .movie-content .content-overview p {
   font-size: 16px;
   line-height: 25px;
-  width: 700px;
+  width: 600px;
   max-width: 700px;
   color: #84868d;
 }

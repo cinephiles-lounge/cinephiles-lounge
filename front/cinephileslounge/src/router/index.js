@@ -5,6 +5,8 @@ import LogInView from "@/views/LogInView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import MovieDetailView from "@/views/MovieDetailView.vue";
 import FeedView from "@/views/FeedView.vue";
+import FeedDetailView from "@/views/FeedDetailView.vue";
+import FeedCreateView from "@/views/FeedCreateView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -32,6 +34,21 @@ const router = createRouter({
       path: "/articles",
       name: "FeedView",
       component: FeedView,
+    },
+    {
+      path: "/articles/:article_pk",
+      name: "FeedDetailView",
+      component: FeedDetailView,
+    },
+    {
+      path: "/articles/create",
+      name: "FeedCreateView",
+      component: FeedCreateView,
+    },
+    {
+      path: "/articles/edit/:article_pk",
+      name: "FeedEditView",
+      component: FeedCreateView,
     },
   ],
 });
