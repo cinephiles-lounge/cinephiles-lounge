@@ -28,6 +28,7 @@ environ.Env.read_env(
 TMDB_API_KEY = env('TMDB_API_KEY')
 TMDB_ACCESS_TOKEN = env('TMDB_ACCESS_TOKEN')
 OPEN_WEATHER_API_KEY = env('OPEN_WEATHER_API_KEY')
+OPEN_API_KEY = env('OPEN_API_KEY')
 
 
 # Quick-start development settings - unsuitable for production
