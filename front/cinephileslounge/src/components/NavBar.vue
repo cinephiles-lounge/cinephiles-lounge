@@ -7,7 +7,7 @@
         </div>
         <ul class="nav-links">
           <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
-          <li><a href="#">피드</a></li>
+          <li><RouterLink :to="{ name: 'FeedView' }">피드</RouterLink></li>
           <li><a href="#">라운지</a></li>
           <li><a href="#">검색</a></li>
         </ul>
