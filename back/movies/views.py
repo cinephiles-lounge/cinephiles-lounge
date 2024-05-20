@@ -1,15 +1,14 @@
 import requests
+from datetime import date
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import *
 from .serializers import *
-from datetime import date
+from django.db.models import Q, When, Case, Value
 from .utils.load import save_movies, headers
 from .utils.recommend import recommend
-from django.db.models import Q, When
-
 
 # 전체 영화 조회
 @api_view(['GET'])
@@ -162,10 +161,20 @@ def get_recommendation_like(request):
         serializer = MovieSerializer(recommendation.order_by('?')[:10], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-from django.db.models import Case, Value
 
 
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
 def get_recommendation_weather(request):
+    if request.method == 'GET':
+        lon = 35.0398058
+        lat = 126.7168158
+        # lon = request.GET.get('lon')
+        # lat = request.GET.get('lat')
+        api_key = settings.OPEN_WEATHER_API_KEY
+        url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}'
+        result = requests.get(url, headers=headers).json()
+        print(result)
     pass
 
 # 제목, 줄거리 기반으로 검색 
@@ -173,8 +182,8 @@ def get_recommendation_weather(request):
 @api_view(['GET'])
 def get_search(request):
     if request.method == 'GET':
-        q1 = Q(title__contains=request.GET['keyword'])
-        q2 = Q(overview__contains=request.GET['keyword'])
+        q1 = Q(title__contains=request.GET.get('q'))
+        q2 = Q(overview__contains=request.GET.get(['q']))
         results = Movie.objects.filter(q1 | q2).annotate(
           search_order=Case(
               When(q1, then=Value(1)),
