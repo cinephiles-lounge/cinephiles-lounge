@@ -1,5 +1,5 @@
 from openai import OpenAI
-
+from django.conf import settings
 
 def recommend_by_weather(weather_id):
     weather_message = ""
@@ -19,6 +19,18 @@ def recommend_by_weather(weather_id):
         # Atmosphere (8XX), Clouds (80X)
         weather_message = "우중충 하고 흐린 날이에요"
     
-    # client = OpenAI(
-    #     api_key:
-    # )
+    client = OpenAI(
+        api_key=settings.OPEN_API_KEY
+    )
+
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "user",
+                "content": "화창한 날에 어울리는 가족 영화를 추천해줘",
+            },
+        ],
+    )
+
+    print(completion.choices[0].message)
