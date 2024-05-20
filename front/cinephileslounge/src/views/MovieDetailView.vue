@@ -54,8 +54,9 @@ movieStore.getMovieDetail(movieId.value);
 const reviews = ref();
 // 좋아요 눌렀는지 확인
 const isLiked = computed(() => {
-  if (!movieStore.movie.liked_users) return false;
+  if (!movieStore.movie.liked_users) return false; // 좋아요 누른 유저가 아무도 없으면 false
   return movieStore.movie.liked_users.some(
+    // 현재 유저가 좋아요 눌렀으면 true
     (user) => user.id === accountStore.userPk
   );
 });
