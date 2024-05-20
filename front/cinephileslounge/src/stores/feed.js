@@ -10,8 +10,44 @@ export const useFeedStore = defineStore(
     const API_URL = "http://127.0.0.1:8000";
     const accountStore = useAccountStore();
     const router = useRouter();
-    const articles = ref();
-    const article = ref();
+    const articles = ref(); // 게시글 리스트
+    const article = ref(); // 게시글 아이템
+    const subscribedArticles = ref(null); // 구독한사람의 글
+    const popularArticles = ref(null); // 인기 게시글
+
+    // 구독한 사람의 글 조회(지금 되는지 모르겠음 구독부터 만들어야함)
+    const getSubs = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/articles/subs/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          console.log(res.data);
+          subscribedArticles.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // 인기 게시글 조회
+    const getPopular = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/articles/popular/`,
+      })
+        .then((res) => {
+          popularArticles.value = res.data.slice(0, 10);
+          // 인기글이 너무 많으면 안되니까 상위 10개만 저장
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     // 전체 게시글 조회
     const getArticles = () => {
       axios({
@@ -112,6 +148,10 @@ export const useFeedStore = defineStore(
       deleteArticle,
       createArticle,
       updateArticle,
+      getSubs,
+      subscribedArticles,
+      getPopular,
+      popularArticles,
     };
   },
   { persist: true }
