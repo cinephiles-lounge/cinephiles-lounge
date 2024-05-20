@@ -8,7 +8,6 @@ from .serializers import *
 from datetime import date
 from .utils.load import save_movies, headers
 from .utils.recommend import recommend
-from .utils.search import search
 from django.db.models import Q, When
 
 
