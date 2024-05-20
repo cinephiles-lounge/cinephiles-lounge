@@ -1,32 +1,55 @@
-from transformers import BertModel, BertTokenizer
-import torch
+import pandas as pd
+import re
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from ..models import *
+from soynlp.word import WordExtractor
+from soynlp.noun import LRNounExtractor_v2
+from soynlp.tokenizer import LTokenizer
+from .stop_words import stop_words
 
-# KoBERT 모델과 토크나이저 로드
-tokenizer = BertTokenizer.from_pretrained('monologg/kobert')
-model = BertModel.from_pretrained('monologg/kobert')
+def clean_string(text):
+    tokens = ''
+    for char in text:
+        tokens += char + ' '
+    return tokens
 
-def get_embedding(text):
-    inputs = tokenizer(text, return_tensors='pt')
-    outputs = model(**inputs)
-    return outputs.last_hidden_state.mean(dim=1).detach().numpy()
+def search(keyword):
+    # 영화 정보를 Pandas 데이터프레임으로 변환
+    movies = Movie.objects.all()
 
-korean_texts = ["안녕하세요", "반갑습니다", "오늘 날씨가 좋네요"]
-embeddings = [get_embedding(text) for text in korean_texts]
+    movies_df_1 = pd.DataFrame(data=[keyword], columns=['title'])
+    movies_df_2 = pd.DataFrame(Movie.objects.values('title'))
+    movies_df = pd.concat([movies_df_1, movies_df_2], ignore_index=True)
+    movies_df['title'] = movies_df['title'].apply(clean_string)
+    movies_df['title'] = movies_df['title'].apply(clean_string)
+    # print(movies_df)
+    corpus = [keyword]
+    for movie in Movie.objects.values('title'):
+        corpus.append(movie.get('title'))
+
+    print(corpus)
+    word_extractor = WordExtractor(corpus)
+    words = word_extractor.extract()
+    print(words)
+
+    noun_extractor = LRNounExtractor_v2(verbose=True)
+    nouns = noun_extractor.train_extract(corpus)
+    tokenizer = LTokenizer(scores=nouns)
+
+    count_vect = CountVectorizer(tokenizer=tokenizer.tokenize, stop_words=stop_words)
+    count_matrix = count_vect.fit_transform(corpus)
+    cosine_sim = cosine_similarity(count_matrix, count_matrix)
+
+    sim_scores = list(enumerate(cosine_sim[0]))
+    sim_scores = sorted(sim_scores, key=lambda tpl: tpl[1], reverse=True)
+    print(sim_scores)
+    sim_scores = sim_scores[1:11]
 
 
-import faiss
-import numpy as np
+    movie_indices = [tpl[0] for tpl in sim_scores]
+    # print(movies_df.iloc[[movie_indices[0]]])
+    # print(movie_indices)
 
-# 임베딩 배열을 FAISS 인덱스에 추가
-d = embeddings[0].shape[1]
-index = faiss.IndexFlatL2(d)
-index.add(np.vstack(embeddings))
+    return movie_indices
 
-# 검색할 한국어 문장을 벡터화
-query = "안녕"
-query_embedding = get_embedding(query)
-
-# 유사도 검색
-k = 2  # 상위 2개의 유사한 결과를 찾습니다.
-D, I = index.search(query_embedding, k)
-print(I)  # 유사한 문장의 인덱스 출력
