@@ -8,7 +8,10 @@
       allow="autoplay"
       allowfullscreen
     ></iframe> -->
+    <h1>{{ movieStore.movie }}</h1>
     <h1>{{ movieStore.movie.title }}</h1>
+    <i class="bx bx-heart"></i>
+    <i class="bx bxs-heart"></i>
     <p>{{ genres }}</p>
     <p>{{ movieStore.movie.release_date }}</p>
     <p>{{ movieStore.movie.overview }}</p>
@@ -30,17 +33,12 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useMovieStore } from "@/stores/movie";
-import { onMounted } from "vue";
 import MovieDetailList from "@/components/MovieDetailList.vue";
 const movieStore = useMovieStore();
 const route = useRoute();
 const movieId = ref(route.params.movie_id);
 const genres = movieStore.movie.genres.map((item) => item.name).join("  "); // 장르 이름만 뽑아서 공백으로 구분
-
-// 마운트 될때 무비디테일 정보 가져오기
-onMounted(() => {
-  movieStore.getMovieDetail(movieId.value);
-});
+movieStore.getMovieDetail(movieId.value);
 </script>
 <style scoped>
 .detail-container {

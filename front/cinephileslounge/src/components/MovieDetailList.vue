@@ -17,7 +17,7 @@
       :clearable="true"
     >
     </star-rating>
-    <input type="text" v-model.trim="content" />
+    <input type="text" v-model.trim="inputContent" />
     <input type="submit" />
   </form>
   <MovieDetailListItem
@@ -50,7 +50,7 @@ const props = defineProps({
 });
 const reviews = ref(props.shortReviews);
 const accountStore = useAccountStore();
-const content = ref("");
+const inputContent = ref("");
 
 // 부모 컴포넌트한테 받은 shortReviews prop을 watch로 변할때마다 업데이트
 watch(
@@ -65,7 +65,7 @@ const createShortReview = () => {
     method: "post",
     url: `${accountStore.API_URL}/movies/short_review/create/${props.movieId}/`,
     data: {
-      content: content.value,
+      content: inputContent.value,
       rank: userRating.value,
     },
     headers: {
@@ -74,6 +74,7 @@ const createShortReview = () => {
   })
     .then((res) => {
       reviews.value = [...reviews.value, res.data];
+      inputContent.value = "";
       // front 에서도 바로 추가된것처럼 보이게
     })
     .catch((err) => {
