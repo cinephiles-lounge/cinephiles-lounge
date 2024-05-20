@@ -6,6 +6,7 @@ from lounges.models import Lounge
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.utils import user_email, user_field, user_username
 
+
 class User(AbstractUser):
     subscriptions = models.ManyToManyField('self', symmetrical=False, related_name='subscribers')
     profile_path = models.ImageField(blank=True)
