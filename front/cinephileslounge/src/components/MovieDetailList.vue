@@ -1,7 +1,5 @@
 <template>
-  <h1>리뷰 페이지</h1>
-  <p>한줄리뷰 작성</p>
-  <form v-if="accountStore.isLogin" @submit.prevent="createShortReview">
+  <div class="create-review-container" v-if="accountStore.isLogin">
     <star-rating
       @update:rating="setRating"
       :increment="0.5"
@@ -9,17 +7,28 @@
       :rounded-corners="true"
       :inline="true"
       :show-rating="false"
-      :active-color="['#520000', '#520000']"
-      :active-border-color="['#F6546A', '#948989']"
-      :border-width="3"
+      :active-color="['#f82e62']"
+      :active-border-color="['#f82e62']"
+      :border-width="1"
       :star-size="24"
       :active-on-click="true"
       :clearable="true"
     >
     </star-rating>
-    <input type="text" v-model.trim="inputContent" />
-    <input type="submit" />
-  </form>
+    <div class="review-userInput">
+      <input
+        class="review-userInput-text"
+        type="text"
+        v-model.trim="inputContent"
+      />
+      <input
+        class="review-userInput-btn"
+        @click.prevent="createShortReview"
+        type="submit"
+        value="작성"
+      />
+    </div>
+  </div>
   <MovieDetailListItem
     v-for="shortReview in sortedShortReviews"
     :key="shortReview.id"
@@ -33,7 +42,7 @@ import { useAccountStore } from "@/stores/account";
 import MovieDetailListItem from "@/components/MovieDetailListItem.vue";
 import axios from "axios";
 import StarRating from "vue-star-rating";
-const userRating = ref(1);
+const userRating = ref(0);
 // 사용자가 입력한 별점 userRating에 저장
 const setRating = (rating) => {
   userRating.value = rating;
@@ -75,10 +84,14 @@ const createShortReview = () => {
     .then((res) => {
       reviews.value = [...reviews.value, res.data];
       inputContent.value = "";
+      userRating.value = 0;
       // front 에서도 바로 추가된것처럼 보이게
     })
     .catch((err) => {
       console.log(err);
+      if (userRating.value === 0) {
+        window.alert("평점을 입력해주세요");
+      }
     });
 };
 
@@ -87,4 +100,39 @@ const delete_review = (reviewId) => {
   // front에서도 바로 삭제된것처럼 보이게
 };
 </script>
-<style scoped></style>
+<style scoped>
+.create-review-container {
+  border-bottom: 1px solid #1b1c1d;
+  max-width: 1680px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
+  padding-bottom: 20px;
+}
+.create-review-container .review-userInput {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.create-review-container .review-userInput .review-userInput-text {
+  height: 50px;
+  width: 500px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 13px;
+  background-color: #222326;
+  outline: none;
+  color: #eee;
+  font-size: 15px;
+}
+.create-review-container .review-userInput .review-userInput-btn {
+  height: 50px;
+  width: 90px;
+  font-size: 15px;
+  border-radius: 5px;
+  background-color: #f82e62;
+  color: #eee;
+  border: none;
+}
+</style>

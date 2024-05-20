@@ -75,6 +75,7 @@ const logOut = () => {
       accountStore.token = null; // 토큰 초기화
       accountStore.userId = ""; //유저 이름 초기화
       accountStore.userNickname = ""; //닉네임 초기화
+      accountStore.userPk = ""; //유저 pk 초기화
       router.push({ name: "HomeView" });
     })
     .catch((err) => {
