@@ -29,7 +29,9 @@
             <RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink>
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
-          <li v-if="accountStore.isLogin"><RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink></li>
+          <li v-if="accountStore.isLogin">
+            <RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink>
+          </li>
         </ul>
       </div>
     </div>
@@ -81,8 +83,8 @@ const logOut = () => {
       accountStore.likedMovies = ref([]);
       accountStore.likedArticles = ref([]);
       accountStore.postedArticles = ref([]);
-      accountStore.joinedLounges = ref([]); 
-      accountStore.managingLounges = ref([]); 
+      accountStore.joinedLounges = ref([]);
+      accountStore.managingLounges = ref([]);
       router.push({ name: "HomeView" });
     })
     .catch((err) => {
@@ -103,7 +105,7 @@ nav {
   z-index: 99999;
 }
 nav.sticky {
-  background-color: #0b1010;
+  background-color: #141517;
 }
 nav .nav-content {
   display: flex;
@@ -141,6 +143,10 @@ nav .nav-content .nav-right {
   padding: 10px 4px;
   color: #fff;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+.nav-content .nav-links li:hover {
+  transform: scale(1.1);
 }
 
 .nav-content .nav-links li a {
@@ -150,6 +156,7 @@ nav .nav-content .nav-right {
 .nav-content .nav-links li a:hover {
   color: #b3b3b3;
   transition: all 0.4s ease;
+  transform: scale(1.1);
 }
 .nav-content .nav-right form {
   padding: 10px 4px;

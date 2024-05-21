@@ -2,18 +2,16 @@
   <div class="feed">
     <div class="card">
       <h1>구독한 사람의 글</h1>
+      <button class="prev-button" @click="prevSlide('subscribed')"><</button>
       <div
         v-if="feedStore.subscribedArticles.length >= 1"
         class="slider-wrapper"
       >
-        <button class="prev-button" @click="prevSlide('subscribed')">
-          Prev
-        </button>
         <div class="slider-container">
           <div class="slider-track" :style="subscribedSliderStyle">
             <ul class="card-movie-container">
               <FeedCard
-                @click="navigateToFeedDetailView(subscribedArticle.id)"
+                @click="navigateToArticleDetail(subscribedArticle.id)"
                 v-for="subscribedArticle in feedStore.subscribedArticles"
                 :key="subscribedArticle.id"
                 :article="subscribedArticle"
@@ -21,10 +19,8 @@
             </ul>
           </div>
         </div>
-        <button class="next-button" @click="nextSlide('subscribed')">
-          Next
-        </button>
       </div>
+      <button class="next-button" @click="nextSlide('subscribed')">></button>
       <div v-if="feedStore.subscribedArticles.length == 0">
         <h1>아직 구독한 사람이 없습니다.</h1>
       </div>
@@ -32,13 +28,13 @@
     <hr />
     <div class="card">
       <h1>인기글</h1>
+      <button class="prev-button" @click="prevSlide('popular')"><</button>
       <div class="slider-wrapper">
-        <button class="prev-button" @click="prevSlide('popular')">Prev</button>
         <div class="slider-container">
           <div class="slider-track" :style="popularSliderStyle">
             <ul class="card-movie-container">
               <FeedCard
-                @click="navigateToPopularArticleDetail(popularArticle.id)"
+                @click="navigateToArticleDetail(popularArticle.id)"
                 v-for="popularArticle in feedStore.popularArticles"
                 :key="popularArticle.id"
                 :article="popularArticle"
@@ -46,22 +42,25 @@
             </ul>
           </div>
         </div>
-        <button class="next-button" @click="nextSlide('popular')">Next</button>
       </div>
+      <button class="next-button" @click="nextSlide('popular')">></button>
     </div>
     <hr />
-    <div class="board-container">
-      <h1>게시글 전체조회</h1>
-      <div v-for="article in feedStore.articles" :key="article.id">
-        <RouterLink
-          :to="{ name: 'FeedDetailView', params: { article_pk: article.id } }"
-        >
-          {{ article.title }}
-        </RouterLink>
+    <div class="card">
+      <div class="article-title">
+        <h1>게시글 전체조회</h1>
+        <button>
+          <RouterLink :to="{ name: 'FeedCreateView' }">글 생성</RouterLink>
+        </button>
       </div>
-      <button>
-        <RouterLink :to="{ name: 'FeedCreateView' }">글 생성</RouterLink>
-      </button>
+      <ul class="article-movie-container">
+        <FeedCard
+          @click="navigateToArticleDetail(article.id)"
+          v-for="article in feedStore.articles"
+          :key="article.id"
+          :article="article"
+        />
+      </ul>
     </div>
   </div>
 </template>
@@ -81,11 +80,7 @@ feedStore.getSubs(); // 구독한 사람의 게시글 조회
 feedStore.getPopular(); // 인기 게시글 조회
 
 // 게시글 클릭 -> 디테일 페이지로 이동
-const navigateToPopularArticleDetail = (id) => {
-  router.push({ name: "FeedDetailView", params: { article_pk: id } });
-};
-
-const navigateToFeedDetailView = (id) => {
+const navigateToArticleDetail = (id) => {
   router.push({ name: "FeedDetailView", params: { article_pk: id } });
 };
 
@@ -139,9 +134,32 @@ const prevSlide = (type) => {
     }
   }
 };
+
+// 시간 포멧팅 함수
+const formatTimeDifference = (dateString) => {
+  const now = new Date(); //현재시간
+  const date = new Date(dateString); //게시글 작성시간
+  const diff = (now - date) / 1000; // 초 단위 차이
+
+  if (diff < 60) {
+    return `${Math.floor(diff)}초 전`;
+  } else if (diff < 3600) {
+    return `${Math.floor(diff / 60)}분 전`;
+  } else if (diff < 86400) {
+    return `${Math.floor(diff / 3600)}시간 전`;
+  } else {
+    return `${Math.floor(diff / 86400)}일 전`;
+  }
+};
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Song+Myung&display=swap");
+.song-myung-regular {
+  font-family: "Song Myung", serif;
+  font-weight: 400;
+  font-style: normal;
+}
 .feed {
   padding-top: 100px;
   color: #fff;
@@ -151,6 +169,7 @@ const prevSlide = (type) => {
 }
 .feed .card {
   margin-bottom: 32px;
+  position: relative;
 }
 .feed .card h1 {
   font-size: 20px;
@@ -159,7 +178,6 @@ const prevSlide = (type) => {
   margin-bottom: 5px;
 }
 .slider-wrapper {
-  position: relative;
   width: 100%;
   overflow: hidden;
 }
@@ -180,5 +198,58 @@ hr {
   background-color: #48484b;
   border: none;
   margin: 32px 0px;
+}
+.article-movie-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.article-movie-container > li {
+  margin-bottom: 32px;
+}
+.article-title {
+  display: flex;
+  justify-content: space-between;
+}
+.article-title button {
+  background-color: #f82e62;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s ease;
+}
+.article-title button:hover {
+  transform: scale(1.1);
+}
+.article-title button a {
+  text-decoration: none;
+  color: #eee;
+}
+.next-button,
+.prev-button {
+  position: absolute;
+  z-index: 9;
+  top: 45%;
+  font-size: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: #48484b;
+  transition: 0.5s;
+}
+.next-button:hover,
+.prev-button:hover {
+  transform: scale(1.2);
+}
+.next-button {
+  right: -15px;
+}
+.prev-button {
+  left: -10px;
 }
 </style>
