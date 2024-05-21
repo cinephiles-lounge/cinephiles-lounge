@@ -29,7 +29,7 @@
             <RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink>
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
-          <li v-if="accountStore.isLogin"><a href="#">마이페이지</a></li>
+          <li v-if="accountStore.isLogin"><RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink></li>
         </ul>
       </div>
     </div>
@@ -78,6 +78,11 @@ const logOut = () => {
       accountStore.userPk = ""; //유저 pk 초기화
       accountStore.subscriptions = []; // 내가 구독하는 사람들 초기화
       accountStore.subscribers = []; // 나를 구독한 사람들 초기화
+      accountStore.likedMovies = ref([]);
+      accountStore.likedArticles = ref([]);
+      accountStore.postedArticles = ref([]);
+      accountStore.joinedLounges = ref([]); 
+      accountStore.managingLounges = ref([]); 
       router.push({ name: "HomeView" });
     })
     .catch((err) => {

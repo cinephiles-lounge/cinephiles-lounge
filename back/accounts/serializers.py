@@ -4,7 +4,7 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from .models import User
 from movies.serializers import MovieSerializer
 from articles.serializers import ArticleSerializer
-
+from lounges.serializers import LoungeSerializer
 
 class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,6 +42,8 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
     posted_articles = ArticleSerializer(many=True, read_only=True)
     subscriptions = SimpleUserSerializer(many=True, read_only=True)
     subscribers = SimpleUserSerializer(many=True, read_only=True)
+    joined_lounges = LoungeSerializer(many=True, read_only=True)
+    managing_lounges = LoungeSerializer(many=True, read_only=True)
 
     class Meta:
         extra_fields = []
@@ -56,7 +58,17 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         if hasattr(User, 'nickname'):
             extra_fields.append('nickname')
         model = User
-        fields = ('pk', 'liked_movies', 'liked_articles', 'posted_articles', 'subscriptions', 'subscribers', *extra_fields)
+        fields = (
+            'pk', 
+            'liked_movies', 
+            'liked_articles', 
+            'posted_articles', 
+            'subscriptions', 
+            'subscribers', 
+            'joined_lounges', 
+            'managing_lounges', 
+            *extra_fields
+        )
 
         # username(아이디), email은 수정 불가능
         read_only_fields = ('username', 'email',)

@@ -49,8 +49,8 @@ const movieStore = useMovieStore();
 const accountStore = useAccountStore();
 const route = useRoute();
 const movieId = ref(route.params.movie_id);
-const genres = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
 movieStore.getMovieDetail(movieId.value);
+const genres = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
 const reviews = ref();
 // 좋아요 눌렀는지 확인
 const isLiked = computed(() => {
