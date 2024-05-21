@@ -2,11 +2,16 @@
   <div class="feed">
     <div class="subs">
       <h1>구독한 사람의 글</h1>
-      <p>{{ feedStore.subscribedArticles }}</p>
-      <p v-if="feedStore.subscribedArticles.length >= 1">게시글 채워야함</p>
-      <p v-if="feedStore.subscribedArticles.length == 0">
-        아직 구독한 사람이 없습니다.
-      </p>
+      <div v-if="feedStore.subscribedArticles.length >= 1">
+        <FeedSubs
+          v-for="subscribedArticle in feedStore.subscribedArticles"
+          :key="subscribedArticle.id"
+          :article="subscribedArticle"
+        />
+      </div>
+      <div v-if="feedStore.subscribedArticles.length == 0">
+        <h1>아직 구독한 사람이 없습니다.</h1>
+      </div>
     </div>
     <div class="popular">
       <h1>인기글</h1>
@@ -37,6 +42,7 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
 import FeedPopular from "@/components/Feed/FeedPopular.vue";
+import FeedSubs from "@/components/Feed/FeedSubs.vue";
 const feedStore = useFeedStore();
 const router = useRouter();
 
@@ -55,6 +61,10 @@ const navigateToPopularArticleDetail = (id) => {
 <style scoped>
 .feed {
   padding-top: 50px;
+  padding-left: 100px;
+  padding-right: 100px;
+  color: #fff;
+  background-color: black;
 }
 h1 {
   font-size: 50px;
