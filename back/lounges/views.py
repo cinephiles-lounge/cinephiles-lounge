@@ -33,6 +33,7 @@ def create_lounge(request):
 
 
 # 개별 라운지 상세 조회
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_lounge_detail(request, lounge_pk):
     if request.method == 'GET':
