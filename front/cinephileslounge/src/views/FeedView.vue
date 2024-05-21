@@ -40,11 +40,9 @@ import FeedPopular from "@/components/Feed/FeedPopular.vue";
 const feedStore = useFeedStore();
 const router = useRouter();
 
-onMounted(() => {
-  feedStore.getArticles(); // 전체 게시글 조회
-  feedStore.getSubs(); // 구독한 사람의 게시글 조회
-  feedStore.getPopular(); // 인기 게시글 조회
-});
+feedStore.getArticles(); // 전체 게시글 조회
+feedStore.getSubs(); // 구독한 사람의 게시글 조회
+feedStore.getPopular(); // 인기 게시글 조회
 
 // 게시글 클릭 -> 디테일 페이지로 이동
 const navigateToPopularArticleDetail = (id) => {
