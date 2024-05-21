@@ -14,8 +14,10 @@ export const useFeedStore = defineStore(
     const article = ref(); // 게시글 아이템
     const subscribedArticles = ref(null); // 구독한사람의 글
     const popularArticles = ref(null); // 인기 게시글
+    const isSubs = ref(false); // 구독 여부
 
-    // 구독한 사람의 글 조회(지금 되는지 모르겠음 구독부터 만들어야함)
+
+    // 구독한 사람의 글 조회
     const getSubs = () => {
       axios({
         method: "get",
@@ -25,7 +27,6 @@ export const useFeedStore = defineStore(
         },
       })
         .then((res) => {
-          console.log(res.data);
           subscribedArticles.value = res.data;
         })
         .catch((err) => {
@@ -152,6 +153,7 @@ export const useFeedStore = defineStore(
       subscribedArticles,
       getPopular,
       popularArticles,
+      
     };
   },
   { persist: true }
