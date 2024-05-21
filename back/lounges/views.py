@@ -68,8 +68,8 @@ def update_lounge(request, lounge_pk):
 def join(request):
     if request.method == 'POST':
         try:
-            if Lounge.objects.filter(uuid=request.POST.get("code")).exists():
-                lounge = Lounge.objects.get(uuid=request.POST.get("code"))
+            if Lounge.objects.filter(uuid=request.data.get("code")).exists():
+                lounge = Lounge.objects.get(uuid=request.data.get("code"))
                 if lounge.members.filter(pk=request.user.pk).exists():
                     message = {
                         'message': '이미 가입한 라운지입니다.'

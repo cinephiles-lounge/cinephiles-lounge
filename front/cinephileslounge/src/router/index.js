@@ -7,6 +7,7 @@ import MovieDetailView from "@/views/MovieDetailView.vue";
 import FeedView from "@/views/FeedView.vue";
 import FeedDetailView from "@/views/FeedDetailView.vue";
 import FeedCreateView from "@/views/FeedCreateView.vue";
+import MyPageView from "@/views/MyPageView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -49,6 +50,11 @@ const router = createRouter({
       path: "/articles/edit/:article_pk",
       name: "FeedEditView",
       component: FeedCreateView,
+    },
+    {
+      path: "/mypage",
+      name: "MyPageView",
+      component: MyPageView,
     },
   ],
 });

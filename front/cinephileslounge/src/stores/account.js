@@ -16,6 +16,8 @@ export const useAccountStore = defineStore(
     const likedMovies = ref([]);
     const likedArticles = ref([]);
     const postedArticles = ref([]);
+    const joinedLounges = ref([]);
+    const managingLounges = ref([]);
 
     const isLogin = computed(() => {
       if (token.value === null) {
@@ -64,27 +66,8 @@ export const useAccountStore = defineStore(
       })
         .then((res) => {
           token.value = res.data.key;
+          getUserInfo();
           router.push({ name: "HomeView" });
-          axios({
-            method: "get",
-            url: `${API_URL}/auth/user/`,
-            headers: {
-              Authorization: `Token ${res.data.key}`,
-            },
-          })
-            .then((res) => {
-              userPk.value = res.data.pk; // 로그인 한 유저 pk 저장
-              userId.value = res.data.username; // 로그인 한 유저 아이디 저장
-              userNickname.value = res.data.nickname; // 로그인 한 유저 닉네임 저장
-              subscribers.value = res.data.subscribers; // 나를 구독하는 사람들 저장
-              subscriptions.value = res.data.subscriptions; // 내가 구독하는 사람들 저장
-              likedMovies.value = res.data.liked_movies; // 내가 좋아요 누른 영화들
-              likedArticles.value = res.data.liked_articles; // 내가 좋아요 누른 게시글들
-              postedArticles.value = res.data.posted_articles; // 내가 작성한 게시글들
-            })
-            .catch((err) => {
-              console.log(err);
-            });
         })
         .catch((err) => {
           console.log("로그인 실패");
@@ -93,6 +76,32 @@ export const useAccountStore = defineStore(
             window.alert("아이디 또는 비밀번호가 잘못되었습니다.");
             router.go(0);
           }
+        });
+    };
+
+    // 유저 정보 GET 요청 함수
+    const getUserInfo = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/auth/user/`,
+        headers: {
+          Authorization: `Token ${token.value}`,
+        },
+      })
+        .then((res) => {
+          userPk.value = res.data.pk; // 로그인 한 유저 pk 저장
+          userId.value = res.data.username; // 로그인 한 유저 아이디 저장
+          userNickname.value = res.data.nickname; // 로그인 한 유저 닉네임 저장
+          subscribers.value = res.data.subscribers; // 나를 구독하는 사람들 저장
+          subscriptions.value = res.data.subscriptions; // 내가 구독하는 사람들 저장
+          likedMovies.value = res.data.liked_movies; // 내가 좋아요 누른 영화들
+          likedArticles.value = res.data.liked_articles; // 내가 좋아요 누른 게시글들
+          postedArticles.value = res.data.posted_articles; // 내가 작성한 게시글들
+          joinedLounges.value = res.data.joined_lounges; // 내가 가입한 라운지들
+          managingLounges.value = res.data.managing_lounges; // 내가 관리하는 라운지들
+        })
+        .catch((err) => {
+          console.log(err);
         });
     };
 
@@ -107,6 +116,10 @@ export const useAccountStore = defineStore(
       userNickname,
       subscribers,
       subscriptions,
+      getUserInfo,
+      likedMovies,
+      likedArticles,
+      postedArticles,
     };
   },
   { persist: true }
