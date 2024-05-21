@@ -4,12 +4,10 @@ import axios from "axios";
 import { useAccountStore } from "@/stores/account.js";
 import { useRouter } from "vue-router";
 
-export const useFeedStore = defineStore(
+export const useLoungeStore = defineStore(
   "lounges",
   () => {
-
-    return {
-    };
+    return {};
   },
   { persist: true }
 );
