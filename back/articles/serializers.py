@@ -41,7 +41,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     class SimpleMovieSerializer(serializers.ModelSerializer):
         class Meta:
             model = Movie
-            fields = ('movie_id', 'title')
+            fields = ('movie_id', 'title', 'backdrop_path', 'trailer_key', 'poster_path', )
 
     user = SimpleUserSerializer(read_only=True)
     comment_set = SimpleCommentSerializer(many=True, read_only=True)
