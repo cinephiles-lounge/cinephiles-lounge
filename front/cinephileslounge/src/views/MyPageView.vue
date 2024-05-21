@@ -48,8 +48,9 @@
 
     <div class="slide-container">
       <h3>내가 가입한 라운지 
-        <button id="join-lounge-button" @click="openModal"><i class='bx bx-network-chart'></i></button>
-        <button id="join-lounge-button" @click=""><i class='bx bx-add-to-queue'></i></button>
+        <!-- 여기 할 차례 -->
+        <button id="join-lounge-button" @click="toggleMode($event), openModal($event)"><i class='bx bx-network-chart'></i></button>
+        <button id="join-lounge-button" @click="toggleMode($event), openModal($event)"><i class='bx bx-add-to-queue'></i></button>
       </h3>
       <ul v-if="accountStore.joinedLounges" class="slide">
         <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
@@ -67,7 +68,7 @@
           <label for="code">가입 코드를 입력하세요.</label>
           <input type="text" id="code" v-model="codeInput">
           <div class="modal-btn">
-            <button type="submit">확인</button>
+            <button type="submit">{{ isEditMode ? '생성' : '가입' }}</button>
             <button @click.prevent="openModal">닫기</button>
           </div>
         </form>
@@ -79,6 +80,7 @@
 
 <script setup>
 // 영화 최상위 ul, 영화하나하나는 li
+// 생성 수정은 모달로
 import { ref } from 'vue';
 import { useAccountStore } from "@/stores/account";
 import { useRouter } from "vue-router";
