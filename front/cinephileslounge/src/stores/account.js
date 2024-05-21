@@ -11,6 +11,8 @@ export const useAccountStore = defineStore(
     const userPk = ref(null); // 로그인 한 유저 pk
     const userId = ref(null); // 로그인 한 유저 아이디
     const userNickname = ref(null); // 로그인 한 유저 닉네임
+    const subscribers = ref([]); // 나를 구독하는 사람들
+    const subscriptions = ref([]); // 내가 구독하는 사람들
     const isLogin = computed(() => {
       if (token.value === null) {
         return false;
@@ -70,6 +72,8 @@ export const useAccountStore = defineStore(
               userPk.value = res.data.pk; // 로그인 한 유저 pk 저장
               userId.value = res.data.username; // 로그인 한 유저 아이디 저장
               userNickname.value = res.data.nickname; // 로그인 한 유저 닉네임 저장
+              subscribers.value = res.data.subscribers; // 나를 구독하는 사람들 저장
+              subscriptions.value = res.data.subscriptions; // 내가 구독하는 사람들 저장
             })
             .catch((err) => {
               console.log(err);
@@ -94,6 +98,8 @@ export const useAccountStore = defineStore(
       userPk,
       userId,
       userNickname,
+      subscribers,
+      subscriptions,
     };
   },
   { persist: true }

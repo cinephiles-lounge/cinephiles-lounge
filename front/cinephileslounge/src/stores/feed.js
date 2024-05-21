@@ -16,7 +16,6 @@ export const useFeedStore = defineStore(
     const popularArticles = ref(null); // 인기 게시글
     const isSubs = ref(false); // 구독 여부
 
-
     // 구독한 사람의 글 조회
     const getSubs = () => {
       axios({
@@ -140,6 +139,53 @@ export const useFeedStore = defineStore(
           });
       });
     };
+
+    // 댓글 생성
+    const createComment = (payload) => {
+      axios({
+        method: "post",
+        url: `${API_URL}/articles/${payload.articleId}/comment/create/`,
+        data: {
+          content: payload.content,
+        },
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          getArticle(payload.articleId);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // 구독 & 구독취소(toggle)
+    const subscribe = (userPk, isSubs) => {
+      axios({
+        method: "post",
+        url: `${API_URL}/accounts/subscribe/${userPk}/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          if (isSubs) {
+            console.log("구독취소할꺼");
+            // 내가 구독하는 사람들에서 빼주기
+            accountStore.subscriptions = accountStore.subscriptions.filter(
+              (subscription) => subscription.id !== userPk
+            );
+          } else {
+            console.log("구독할꺼");
+            // 내가 구독하는 사람들에 추가해주기
+            accountStore.subscriptions.push(article.value.user);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     return {
       API_URL,
       getArticles,
@@ -153,7 +199,8 @@ export const useFeedStore = defineStore(
       subscribedArticles,
       getPopular,
       popularArticles,
-      
+      createComment,
+      subscribe,
     };
   },
   { persist: true }

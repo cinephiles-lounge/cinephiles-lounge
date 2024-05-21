@@ -76,6 +76,8 @@ const logOut = () => {
       accountStore.userId = ""; //유저 이름 초기화
       accountStore.userNickname = ""; //닉네임 초기화
       accountStore.userPk = ""; //유저 pk 초기화
+      accountStore.subscriptions = []; // 내가 구독하는 사람들 초기화
+      accountStore.subscribers = []; // 나를 구독한 사람들 초기화
       router.push({ name: "HomeView" });
     })
     .catch((err) => {
