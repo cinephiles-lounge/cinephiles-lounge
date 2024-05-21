@@ -51,15 +51,9 @@
         <button id="join-lounge-button" @click="openModal"><i class='bx bx-network-chart'></i></button>
         <button id="join-lounge-button" @click=""><i class='bx bx-add-to-queue'></i></button>
       </h3>
-      <ul v-if="lounges" class="slide">
-        <li 
-          v-for="lounge in accountStore.joinedLounges.concat(accountStore.managingLounges)" 
-          :key="lounge.id"
-        >
-          <RouterLink
-            :to="{ name: 'FeedDetailView', params: { article_pk: article.id } }"
-            >{{ article.title }}
-          </RouterLink>
+      <ul v-if="accountStore.joinedLounges" class="slide">
+        <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
+          {{ lounge.name }}
         </li>
       </ul>
       <p v-else>

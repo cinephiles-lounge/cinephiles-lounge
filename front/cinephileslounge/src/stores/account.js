@@ -99,6 +99,7 @@ export const useAccountStore = defineStore(
           postedArticles.value = res.data.posted_articles; // 내가 작성한 게시글들
           joinedLounges.value = res.data.joined_lounges; // 내가 가입한 라운지들
           managingLounges.value = res.data.managing_lounges; // 내가 관리하는 라운지들
+          console.log(joinedLounges.value)
         })
         .catch((err) => {
           console.log(err);
@@ -120,6 +121,8 @@ export const useAccountStore = defineStore(
       likedMovies,
       likedArticles,
       postedArticles,
+      joinedLounges,
+      managingLounges,
     };
   },
   { persist: true }
