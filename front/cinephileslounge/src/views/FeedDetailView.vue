@@ -274,7 +274,7 @@ const formatTimeDifference = (dateString) => {
   font-size: 17px;
   line-height: 20px;
   margin-bottom: 10px;
-  min-width: 1550px;
+  min-width: 1750px;
   min-height: 250px;
 }
 .detail-container .article-container .content .like-count {
@@ -410,12 +410,3 @@ hr {
   font-size: 14px;
 }
 </style>
-
-<!-- 
-<div class="comment-content">
-  <div class="comment-header">
-    <span class="comment-nickname">{{ comment.user.nickname }}</span>
-    <span class="writed-at">{{
-      formatTimeDifference(comment.created_at)
-    }}</span>
-  </div> -->
