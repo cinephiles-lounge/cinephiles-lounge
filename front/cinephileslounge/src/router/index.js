@@ -3,6 +3,7 @@ import { useAccountStore } from "@/stores/account";
 import HomeView from "@/views/HomeView.vue";
 import LogInView from "@/views/LogInView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
+import UserUpdateView from "@/views/UserUpdateView.vue";
 import MovieDetailView from "@/views/MovieDetailView.vue";
 import FeedView from "@/views/FeedView.vue";
 import FeedDetailView from "@/views/FeedDetailView.vue";
@@ -25,6 +26,11 @@ const router = createRouter({
       path: "/registration",
       name: "RegistrationView",
       component: RegistrationView,
+    },
+    {
+      path: "/user/update",
+      name: "UserUpdateView",
+      component: UserUpdateView,
     },
     {
       path: "/movies/:movie_id",

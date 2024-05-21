@@ -6,7 +6,9 @@
       </div>
       <p class="profile-name-p">
         <span id="nickname">{{ accountStore.userNickname }}</span>
-        <i class="bx bxs-edit-alt"></i>
+        <RouterLink :to="{ name: 'UserUpdateView' }"
+          ><i class="bx bxs-edit-alt"></i
+        ></RouterLink>
       </p>
     </div>
 
@@ -50,7 +52,6 @@
     <div class="slide-container">
       <h3>
         내가 가입한 라운지
-        <!-- 여기 할 차례 -->
         <button
           id="join-lounge-button"
           @click="switchMode('join'), toggleModal($event)"
@@ -127,6 +128,7 @@
 </template>
 
 <script setup>
+import { RouterLink } from "vue-router";
 import { ref } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
@@ -136,7 +138,6 @@ import axios from "axios";
 
 const router = useRouter();
 const accountStore = useAccountStore();
-const loungeStore = useLoungeStore();
 
 accountStore.getUserInfo();
 
@@ -166,6 +167,7 @@ const loungeDescription = ref("");
 // 가입, 생성 시 요청 에러가 나면 메시지를 띄운다
 const errorMessage = ref("");
 
+// axios 요청은 에러 메시지 처리 위해 loungeStore가 아닌 해당 뷰에서 진행
 const joinLounge = function () {
   axios({
     method: "post",
