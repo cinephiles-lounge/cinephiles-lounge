@@ -6,9 +6,7 @@
       </div>
       <p class="profile-name-p">
         <span id="nickname">{{ accountStore.userNickname }}</span>
-        <RouterLink :to="{ name: 'UserUpdateView' }"
-          ><i class="bx bxs-edit-alt"></i
-        ></RouterLink>
+        <i class="bx bxs-edit-alt"></i>
       </p>
     </div>
 

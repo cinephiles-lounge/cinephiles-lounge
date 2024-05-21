@@ -8,7 +8,7 @@
         <ul class="nav-links">
           <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
           <li><RouterLink :to="{ name: 'FeedView' }">피드</RouterLink></li>
-          <li><a href="#">라운지</a></li>
+          <li><RouterLink :to="{ name: 'LoungeView' }">라운지</RouterLink></li>
           <li><a href="#">검색</a></li>
         </ul>
       </div>
@@ -29,7 +29,9 @@
             <RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink>
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
-          <li v-if="accountStore.isLogin"><RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink></li>
+          <li v-if="accountStore.isLogin">
+            <RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink>
+          </li>
         </ul>
       </div>
     </div>
@@ -81,8 +83,8 @@ const logOut = () => {
       accountStore.likedMovies = ref([]);
       accountStore.likedArticles = ref([]);
       accountStore.postedArticles = ref([]);
-      accountStore.joinedLounges = ref([]); 
-      accountStore.managingLounges = ref([]); 
+      accountStore.joinedLounges = ref([]);
+      accountStore.managingLounges = ref([]);
       router.push({ name: "HomeView" });
     })
     .catch((err) => {
