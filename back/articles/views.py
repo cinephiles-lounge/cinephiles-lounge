@@ -163,6 +163,6 @@ def get_popular(request):
         ).annotate(
             # 인기도(좋아요 + 댓글 수) 도출 후 내림차순으로 정렬
             popularity=Count('liked_users')+Count('comment')
-        ).order_by('-popularity')
+        ).order_by('-popularity') 
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

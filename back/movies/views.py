@@ -169,15 +169,19 @@ def get_recommendation_like(request):
 @api_view(['GET'])
 def get_recommendation_weather(request):
     if request.method == 'GET':
-        lat = 35.0398058
-        lon = 126.7168158
-        # lon = request.GET.get('lon')
-        # lat = request.GET.get('lat')
+        lon = request.GET.get('lon')
+        lat = request.GET.get('lat')
         api_key = settings.OPEN_WEATHER_API_KEY
         url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}'
         weather_id = requests.get(url, headers=headers).json().get('weather')[0].get('id')
-        results = recommend_by_weather(weather_id)
-        return Response(status=status.HTTP_200_OK)
+        weather_message, result_movie_ids = recommend_by_weather(weather_id)
+        recommendation = Movie.objects.filter(movie_id__in=result_movie_ids)
+        serializer = MovieSerializer(recommendation, many=True)
+        data = {
+            'weather_message': weather_message,
+            'recommended_movies': serializer.data
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 # 제목, 줄거리 기반으로 검색 
@@ -213,7 +217,7 @@ def set_db(request):
         did_create = False
 
         # 1~50 페이지 요청 == 1000개 영화 저장
-        for i in range(1, 51):
+        for i in range(1, 251):
             url = f'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=ko-KR&page={i}&sort_by=popularity.desc'
             response = requests.get(url, headers=headers).json()
             did_create = save_movies(response.get('results'))[0]
