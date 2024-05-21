@@ -165,7 +165,7 @@ def get_recommendation_like(request):
     
 
 # 날씨 기반 추천 알고리즘
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_recommendation_weather(request):
     if request.method == 'GET':

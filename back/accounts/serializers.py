@@ -5,6 +5,13 @@ from .models import User
 from movies.serializers import MovieSerializer
 from articles.serializers import ArticleSerializer
 
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'nickname',)
+
+
 class CustomRegisterSerializer(RegisterSerializer):
     # 닉네임 필드 추가
     # 회원가입 시에 필수로 작성하지 않아도 됨
@@ -33,6 +40,8 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
     liked_movies = MovieSerializer(many=True, read_only=True)
     liked_articles = ArticleSerializer(many=True, read_only=True)
     posted_articles = ArticleSerializer(many=True, read_only=True)
+    subscriptions = SimpleUserSerializer(many=True, read_only=True)
+    subscribers = SimpleUserSerializer(many=True, read_only=True)
 
     class Meta:
         extra_fields = []
@@ -47,7 +56,8 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         if hasattr(User, 'nickname'):
             extra_fields.append('nickname')
         model = User
-        fields = ('pk', 'liked_movies', 'liked_articles', 'posted_articles', *extra_fields)
+        fields = ('pk', 'liked_movies', 'liked_articles', 'posted_articles', 'subscriptions', 'subscribers', *extra_fields)
 
         # username(아이디), email은 수정 불가능
         read_only_fields = ('username', 'email',)
+
