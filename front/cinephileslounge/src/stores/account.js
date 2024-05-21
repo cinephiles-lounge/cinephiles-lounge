@@ -13,6 +13,10 @@ export const useAccountStore = defineStore(
     const userNickname = ref(null); // 로그인 한 유저 닉네임
     const subscribers = ref([]); // 나를 구독하는 사람들
     const subscriptions = ref([]); // 내가 구독하는 사람들
+    const likedMovies = ref([]);
+    const likedArticles = ref([]);
+    const postedArticles = ref([]);
+
     const isLogin = computed(() => {
       if (token.value === null) {
         return false;
@@ -74,6 +78,9 @@ export const useAccountStore = defineStore(
               userNickname.value = res.data.nickname; // 로그인 한 유저 닉네임 저장
               subscribers.value = res.data.subscribers; // 나를 구독하는 사람들 저장
               subscriptions.value = res.data.subscriptions; // 내가 구독하는 사람들 저장
+              likedMovies.value = res.data.liked_movies; // 내가 좋아요 누른 영화들
+              likedArticles.value = res.data.liked_articles; // 내가 좋아요 누른 게시글들
+              postedArticles.value = res.data.posted_articles; // 내가 작성한 게시글들
             })
             .catch((err) => {
               console.log(err);
