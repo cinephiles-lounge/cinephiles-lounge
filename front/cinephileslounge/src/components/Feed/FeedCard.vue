@@ -67,6 +67,7 @@ const formatTimeDifference = (dateString) => {
   z-index: 1;
   transform: scale(1.15);
   filter: brightness(70%);
+  cursor: pointer;
 }
 
 .subs-container .movie-img {
@@ -85,6 +86,7 @@ const formatTimeDifference = (dateString) => {
   bottom: 25px;
   left: 50%; /* 부모의 왼쪽에서 50% 위치 */
   transform: translateX(-50%); /* 자신의 너비의 50%만큼 왼쪽으로 이동 */
+  white-space: nowrap;
   font-size: 40px;
 }
 .subs-container .movie-content {

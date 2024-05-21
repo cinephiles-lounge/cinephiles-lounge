@@ -1,59 +1,101 @@
 <template>
   <div class="detail-container">
-    <h1>{{ articleId }}번게시글 상세조회</h1>
-    <p>제목 : {{ feedStore.article.title }}</p>
-    <p>내용 : {{ feedStore.article.content }}</p>
-    <p>작성자 : {{ feedStore.article.user.nickname }}</p>
-    <p>작성시간 : {{ formatTimeDifference(feedStore.article.created_at) }}</p>
-    <p>좋아요 수 : {{ feedStore.article.like_count }}</p>
-    <p>영화 : {{ feedStore.article.movie.title }}</p>
-    <p>평점 : {{ feedStore.article.rank }}</p>
-    <p>내가 구독하는 사람들 {{ accountStore.subscriptions }}</p>
-    <p>내 구독자들 {{ accountStore.subscribers }}</p>
-    <button
-      @click="subscribe"
-      v-if="feedStore.article.user.id !== accountStore.userPk"
-    >
-      {{ isSubs ? "구독취소" : "구독" }}
-    </button>
-    <div
-      v-if="feedStore.article.user.id !== accountStore.userPk"
-      class="content-btn"
-    >
-      <i @click="toggleLike" v-if="!isLiked" class="bx bx-heart"></i>
-      <i @click="toggleLike" v-if="isLiked" class="bx bxs-heart"></i>
+    <div class="article-container">
+      <div class="content">
+        <div class="author">
+          <i class="bx bxl-github"></i>
+          <p>{{ feedStore.article.user.nickname }}</p>
+          <p>
+            {{ formatTimeDifference(feedStore.article.created_at) }}
+          </p>
+        </div>
+        <h1>{{ feedStore.article.title }}</h1>
+
+        <div class="movie-title">
+          <p>영화 · {{ feedStore.article.movie.title }}</p>
+        </div>
+        <div class="movie-rank">
+          <i class="bx bxs-star"></i>
+          <p>{{ parseFloat(feedStore.article.rank).toFixed(1) }}</p>
+        </div>
+        <div class="movie-content">{{ feedStore.article.content }}</div>
+        <div class="like-count">
+          좋아요 {{ feedStore.article.like_count }}
+          <div class="article-btn">
+            <button
+              class="article-update-btn"
+              v-if="feedStore.article.user.id === accountStore.userPk"
+              @click="updateArticle"
+            >
+              수정
+            </button>
+            <button
+              class="article-delete-btn"
+              v-if="feedStore.article.user.id === accountStore.userPk"
+              @click="deleteArticle"
+            >
+              삭제
+            </button>
+          </div>
+        </div>
+        <hr />
+        <div class="btn-wrapper">
+          <div class="btn-box">
+            <button @click="toggleLike">
+              <i v-if="!isLiked" class="bx bx-like"></i>
+              <i v-if="isLiked" class="bx bxs-like"></i>
+              좋아요
+            </button>
+            <span>|</span>
+            <button><i class="bx bx-message-rounded"></i>댓글</button>
+            <span>|</span>
+
+            <button @click="subscribe">
+              <i v-if="!isSubs" class="bx bx-bell"></i>
+              <i v-if="isSubs" class="bx bxs-bell"></i>
+              {{ isSubs ? "구독취소" : "구독" }}
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <div
+        class="img-box"
+        :style="{
+          '--backdrop-url': `url(https://image.tmdb.org/t/p/w1280/${feedStore.article.movie.backdrop_path})`,
+        }"
+      ></div>
     </div>
 
-    <button
-      v-if="feedStore.article.user.id === accountStore.userPk"
-      @click="updateArticle"
-    >
-      수정
-    </button>
-    <button
-      v-if="feedStore.article.user.id === accountStore.userPk"
-      @click="deleteArticle"
-    >
-      삭제
-    </button>
-
     <div class="comment-container">
-      <h1>게시글 댓글</h1>
+      <h1>Comments</h1>
       <div v-if="accountStore.isLogin">
         <input type="text" v-model.trim="content" />
         <input @click="createComment" type="submit" value="작성" />
       </div>
       <div v-for="comment in feedStore.article.comment_set" :key="comment.id">
-        <p>
-          {{ comment.user.nickname }}: {{ comment.content }}
-          {{ formatTimeDifference(comment.created_at) }}
-        </p>
-        <button
-          v-if="comment.user.id === accountStore.userPk"
-          @click="deleteComment(comment.id)"
-        >
-          삭제
-        </button>
+        <div class="comment-wrapper">
+          <div class="profile-img">
+            <i class="bx bxl-github"></i>
+          </div>
+          <div class="comment-content">
+            <div class="comment-header">
+              <span class="comment-nickname">{{ comment.user.nickname }}</span>
+              <span class="writed-at">{{
+                formatTimeDifference(comment.created_at)
+              }}</span>
+            </div>
+            <div class="comment-des">
+              <p>{{ comment.content }}</p>
+              <i
+                v-if="comment.user.id === accountStore.userPk"
+                @click="deleteComment(comment.id)"
+                class="bx bxs-message-square-x"
+              ></i>
+            </div>
+          </div>
+        </div>
+        <hr />
       </div>
     </div>
   </div>
@@ -171,6 +213,209 @@ const formatTimeDifference = (dateString) => {
 
 <style scoped>
 .detail-container {
-  padding-top: 50px;
+  padding: 70px;
+  position: relative;
+  min-height: 100vh;
+}
+.detail-container .article-container {
+  display: flex;
+  margin-top: 100px;
+  margin-left: 110px;
+  margin-right: 110px;
+}
+.detail-container .article-container .img-box {
+  background: linear-gradient(
+      to right top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 0.8) 35%,
+      rgba(0, 0, 0, 0.7) 40%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    var(--backdrop-url);
+  width: 1200px;
+  height: 500px;
+  position: absolute;
+  top: 70px;
+  right: 170px;
+}
+.detail-container .article-container .content {
+  z-index: 1;
+}
+.detail-container .article-container .content h1 {
+  font-size: 40px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.detail-container .article-container .content .author {
+  display: flex;
+  color: #babac1;
+}
+.detail-container .article-container .content .author i {
+  margin-right: 10px;
+}
+.detail-container .article-container .content .author p {
+  margin-right: 10px;
+}
+.detail-container .article-container .content .movie-title {
+  color: #babac1;
+}
+.detail-container .article-container .content .movie-rank {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  /* color: #babac1; */
+}
+.detail-container .article-container .content .movie-rank i {
+  margin-right: 5px;
+}
+.detail-container .article-container .content .movie-content {
+  font-size: 17px;
+  line-height: 20px;
+  margin-bottom: 10px;
+  min-width: 1550px;
+  min-height: 250px;
+}
+.detail-container .article-container .content .like-count {
+  color: #babac1;
+  margin-top: 32px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.detail-container .article-container .content .like-count .article-btn button {
+  background-color: #f82e62;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s ease;
+  color: #eee;
+  width: 70px;
+}
+.detail-container
+  .article-container
+  .content
+  .like-count
+  .article-btn
+  button:hover {
+  transform: scale(1.1);
+}
+.detail-container
+  .article-container
+  .content
+  .like-count
+  .article-btn
+  .article-delete-btn {
+  margin-left: 10px;
+}
+
+.detail-container .article-container .content .btn-wrapper {
+  width: 100%;
+  height: 43px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.detail-container .article-container .content .btn-wrapper button {
+  width: 314px;
+  height: 37px;
+  background-color: transparent;
+  border: none;
+  color: #eee;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #babac1;
+}
+.detail-container .article-container .content .btn-wrapper button:hover {
+  transform: scale(1.1);
+}
+.detail-container .article-container .content .btn-wrapper button i {
+  margin-right: 10px;
+}
+.detail-container .article-container .content .btn-wrapper span {
+  color: #48484b;
+}
+hr {
+  height: 1px;
+  background-color: #48484b;
+  border: none;
+}
+/* 여기부터 댓글 */
+.detail-container .comment-container {
+  margin-left: 110px;
+  margin-right: 110px;
+  margin-top: 32px;
+}
+.detail-container .comment-container h1 {
+  font-size: 22px;
+}
+.detail-container .comment-container .comment-wrapper {
+  display: flex;
+  padding: 5px;
+}
+.detail-container .comment-container .comment-wrapper .profile-img {
+  margin-right: 5px;
+}
+.detail-container .comment-container .comment-wrapper i {
+  font-size: 40px;
+}
+.detail-container .comment-container .comment-wrapper .comment-content {
+  display: flex;
+  flex-direction: column;
+}
+.detail-container .comment-container .comment-wrapper .comment-des {
+  display: flex;
+  color: #7c7b84;
+}
+.detail-container .comment-container .comment-wrapper .comment-des i {
+  font-size: 17px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.detail-container .comment-container .comment-wrapper .comment-des i:hover {
+  transform: scale(1.1);
+  color: #eee;
+}
+.detail-container .comment-container .comment-wrapper .comment-content p {
+  margin-right: 6px;
+}
+.detail-container
+  .comment-container
+  .comment-wrapper
+  .comment-content
+  .comment-header {
+  margin-bottom: 6px;
+}
+.detail-container
+  .comment-container
+  .comment-wrapper
+  .comment-content
+  .comment-header
+  .comment-nickname {
+  margin-right: 7px;
+}
+.detail-container
+  .comment-container
+  .comment-wrapper
+  .comment-content
+  .comment-header
+  .writed-at {
+  color: #7c7b84;
+  font-size: 14px;
 }
 </style>
+
+<!-- 
+<div class="comment-content">
+  <div class="comment-header">
+    <span class="comment-nickname">{{ comment.user.nickname }}</span>
+    <span class="writed-at">{{
+      formatTimeDifference(comment.created_at)
+    }}</span>
+  </div> -->

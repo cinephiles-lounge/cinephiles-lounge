@@ -105,7 +105,7 @@ nav {
   z-index: 99999;
 }
 nav.sticky {
-  background-color: #0b1010;
+  background-color: #141517;
 }
 nav .nav-content {
   display: flex;
@@ -143,6 +143,10 @@ nav .nav-content .nav-right {
   padding: 10px 4px;
   color: #fff;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+.nav-content .nav-links li:hover {
+  transform: scale(1.1);
 }
 
 .nav-content .nav-links li a {
@@ -152,6 +156,7 @@ nav .nav-content .nav-right {
 .nav-content .nav-links li a:hover {
   color: #b3b3b3;
   transition: all 0.4s ease;
+  transform: scale(1.1);
 }
 .nav-content .nav-right form {
   padding: 10px 4px;
