@@ -8,6 +8,7 @@ urlpatterns = [
     path('genre/<int:genre_id>/', views.get_genre_movie),
     path('list/', views.get_movie_list),
     path('playing/', views.get_playing),
+    path('new_release/', views.get_new_release),
     path('upcoming/', views.get_upcoming),
     path('recommend/like/', views.get_recommendation_like),
     path('recommend/weather/', views.get_recommendation_weather),

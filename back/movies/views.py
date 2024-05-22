@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 from datetime import date
 from rest_framework import status
 from rest_framework.response import Response
@@ -35,6 +36,15 @@ def get_popular(request):
 def get_genre_movie(request, genre_id):
     if request.method == 'GET':
         movies = Movie.objects.filter(genres__genre_id=genre_id).order_by('?')
+        serializer = MovieSerializer(movies[:20], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 최신 개봉작 20개 조회 (개봉일 최신 순으로 정렬)
+@api_view(['GET'])
+def get_new_release(request):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(release_date__lte=datetime.now()).order_by('-release_date')
         serializer = MovieSerializer(movies[:20], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

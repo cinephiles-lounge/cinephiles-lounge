@@ -34,3 +34,4 @@ class ShortReview(models.Model):
     content = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_spoiler = models.BooleanField(default=False)
