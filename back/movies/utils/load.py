@@ -24,11 +24,16 @@ def save_movies(result_arr):
             if not overview:
                 continue
 
+            backdrop_path = movie_data.get('backdrop_path')
+            if not backdrop_path:
+                continue
+
             trailer_key = get_trailer_key(movie_data.get('id'))
             if not trailer_key:
                 continue
             
             new_movie.overview = overview
+            new_movie.backdrop_path = backdrop_path
             new_movie.trailer_key = trailer_key
 
             new_movie.movie_id = movie_data.get('id')
