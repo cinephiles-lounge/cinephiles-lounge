@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.set_db),
     path('popular/', views.get_popular),
     path('genre/', views.get_genre),
+    path('genre/<int:genre_id>/', views.get_genre_movie),
     path('list/', views.get_movie_list),
     path('playing/', views.get_playing),
     path('upcoming/', views.get_upcoming),

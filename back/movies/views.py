@@ -30,6 +30,15 @@ def get_popular(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# 장르별 영화 20개 조회
+@api_view(['GET'])
+def get_genre_movie(request, genre_id):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(genres__genre_id=genre_id).order_by('?')
+        serializer = MovieSerializer(movies[:20], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # 현재 상영작 조회 (3위까지)
 @api_view(['GET'])
 def get_playing(request):
