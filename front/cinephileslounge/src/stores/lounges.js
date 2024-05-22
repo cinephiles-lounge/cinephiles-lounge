@@ -10,9 +10,9 @@ export const useLoungeStore = defineStore(
     const accountStore = useAccountStore();
 
     const loungeData = ref([]);
-    const loungeMovies = ref([])
-    const loungeReviews = ref([])
-    const loungeArticles = ref([])
+    const loungeMovies = ref([]);
+    const loungeReviews = ref([]);
+    const loungeArticles = ref([]);
 
     const getLounge = function (loungePk) {
       axios({
@@ -26,9 +26,9 @@ export const useLoungeStore = defineStore(
           loungeData.value = res.data;
         })
         .then((res) => {
-          getMovies(loungePk)
-          getReviews(loungePk)
-          getArticles(loungePk)
+          getMovies(loungePk);
+          getReviews(loungePk);
+          getArticles(loungePk);
         })
         .catch((err) => {
           console.log(err);
@@ -49,7 +49,7 @@ export const useLoungeStore = defineStore(
         .catch((err) => {
           console.log(err);
         });
-    }
+    };
 
     const getReviews = function (loungePk) {
       axios({
@@ -65,7 +65,7 @@ export const useLoungeStore = defineStore(
         .catch((err) => {
           console.log(err);
         });
-    }
+    };
 
     const getArticles = function (loungePk) {
       axios({
@@ -81,17 +81,61 @@ export const useLoungeStore = defineStore(
         .catch((err) => {
           console.log(err);
         });
-    }
+    };
 
-    return { 
+    const deleteLounge = function () {
+      axios({
+        method: "delete",
+        url: `${accountStore.API_URL}/lounges/${loungeData.value.id}/update/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeData.value = [];
+          loungeMovies.value = [];
+          loungeReviews.value = [];
+          loungeArticles.value = [];
+          accountStore.getUserInfo();
+          console.log("삭제");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const leaveLounge = function () {
+      axios({
+        method: "post",
+        url: `${accountStore.API_URL}/lounges/${loungeData.value.id}/leave/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeData.value = [];
+          loungeMovies.value = [];
+          loungeReviews.value = [];
+          loungeArticles.value = [];
+          accountStore.getUserInfo();
+          console.log("삭제");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    return {
       loungeData,
       loungeMovies,
       loungeReviews,
       loungeArticles,
-      getLounge, 
-      getMovies, 
-      getReviews, 
-      getArticles, 
+      getLounge,
+      getMovies,
+      getReviews,
+      getArticles,
+      deleteLounge,
+      leaveLounge,
     };
   },
   { persist: true }

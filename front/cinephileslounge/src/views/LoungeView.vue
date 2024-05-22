@@ -22,7 +22,7 @@
         />
       </div>
     </div>
-    <div v-show="!hasManagingLounge && !hasJoinedLounge">
+    <div v-show="!hasManagingLounge && !hasNonManagingLounges">
       <p>나만의 라운지를 만들어보세요.</p>
     </div>
   </div>
