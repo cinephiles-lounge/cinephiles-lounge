@@ -17,14 +17,6 @@
         </ul>
       </div>
       <div class="nav-right">
-        <form action="#">
-          <i @click="isSearch = !isSearch" class="bx bx-search"></i>
-          <input
-            v-if="isSearch"
-            type="text"
-            placeholder=" 검색어를 입력해주세요"
-          />
-        </form>
         <ul class="nav-links">
           <li v-if="!accountStore.isLogin">
             <RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink>
@@ -183,24 +175,5 @@ nav .nav-content .nav-right {
   color: #b3b3b3;
   transition: all 0.4s ease;
   transform: scale(1.1);
-}
-.nav-content .nav-right form {
-  padding: 10px 4px;
-}
-
-.nav-content .nav-right form i {
-  color: #fff;
-  cursor: pointer;
-}
-
-.nav-content .nav-right form input {
-  margin-left: 10px;
-  border: none;
-  font-size: 15px;
-  background-color: #fff;
-  padding: 6px;
-  color: black;
-  border-radius: 8px;
-  outline: none;
 }
 </style>

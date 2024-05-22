@@ -45,16 +45,22 @@ export const useAccountStore = defineStore(
         .then((res) => {
           console.log("회원가입 성공");
           const password = password1;
-          logIn({ username, password });
+          logIn({ username, password }, "registration");
         })
         .catch((err) => {
           console.log("회원가입 실패");
-          console.log(err);
+          if (
+            err.response.data.username[0] ===
+            "A user with that username already exists."
+          ) {
+            window.alert("이미 존재하는 아이디 입니다.");
+            router.go(0);
+          }
         });
     };
 
     // 로그인
-    const logIn = (payload) => {
+    const logIn = (payload, type) => {
       const username = payload.username;
       const password = payload.password;
 
@@ -69,7 +75,11 @@ export const useAccountStore = defineStore(
         .then((res) => {
           token.value = res.data.key;
           getUserInfo();
-          router.push({ name: "HomeView" });
+          if (type) {
+            router.push({ name: "RegistrationSelectView" }); // 회원가입이면 관심있는 영화 보내는 페이지로 이동
+          } else {
+            router.push({ name: "HomeView" }); // 로그인이면 메인페이지로 이동
+          }
         })
         .catch((err) => {
           console.log("로그인 실패");

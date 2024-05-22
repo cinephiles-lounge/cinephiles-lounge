@@ -84,6 +84,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useAccountStore } from "@/stores/account";
+import { useMovieStore } from "@/stores/movie";
+const movieStore = useMovieStore();
 const accountStore = useAccountStore();
 const username = ref("");
 const nickname = ref("");
@@ -96,6 +98,8 @@ const usernameState = ref(false);
 const nicknameState = ref(false);
 const passwordState = ref(false);
 const password2State = ref(false);
+
+movieStore.getAllMovies(); //회원가입하고 좋아요 누르는페이지 가기전에 여기서부터 데이터 요청
 
 // 이름 2글자 이상 입력 -> border #e73e3e -> #48484b
 const usernameCheck = () => {

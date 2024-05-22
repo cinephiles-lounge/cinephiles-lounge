@@ -193,7 +193,7 @@ const navigateToDetail = (movieId) => {
 }
 
 .carousel .list .item .title {
-  font-size: 60px;
+  font-size: 55px;
   font-weight: bold;
   line-height: 104px;
 }
