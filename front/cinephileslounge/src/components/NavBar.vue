@@ -34,7 +34,7 @@
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
           <li v-if="accountStore.isLogin">
-            <RouterLink :to="{ name: 'MyPageView' }">내 프로필</RouterLink>
+            <RouterLink :to="{ name: 'MyProfileView' }">내 프로필</RouterLink>
           </li>
         </ul>
       </div>

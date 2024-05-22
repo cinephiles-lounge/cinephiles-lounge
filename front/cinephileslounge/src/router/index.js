@@ -7,7 +7,7 @@ import MovieDetailView from "@/views/MovieDetailView.vue";
 import FeedView from "@/views/FeedView.vue";
 import FeedDetailView from "@/views/FeedDetailView.vue";
 import FeedCreateView from "@/views/FeedCreateView.vue";
-import MyPageView from "@/views/MyPageView.vue";
+import UserProfileView from "@/views/UserProfileView.vue";
 import LoungeView from "@/views/LoungeView.vue";
 import LoungeDetailView from "@/views/LoungeDetailView.vue";
 import LoungeArticleCreateView from "@/views/LoungeArticleCreateView.vue";
@@ -58,8 +58,13 @@ const router = createRouter({
     },
     {
       path: "/mypage",
-      name: "MyPageView",
-      component: MyPageView,
+      name: "MyProfileView",
+      component: UserProfileView,
+    },
+    {
+      path: "/user/:userId",
+      name: "UserProfileView",
+      component: UserProfileView,
     },
     {
       path: "/lounge",

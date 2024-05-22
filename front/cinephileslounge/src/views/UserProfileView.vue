@@ -4,16 +4,24 @@
       <div class="reviewItem-img">
         <i class="bx bxl-github"></i>
       </div>
-      <p class="profile-name-p">
+      <template v-if="isMyProfile">
         <span id="nickname">{{ accountStore.userNickname }}</span>
-        <i class="bx bxs-edit-alt"></i>
-      </p>
+      </template>
+      <template v-else>
+        <span id="nickname">{{ currentUser.nickname }}</span>
+        <button @click="subscribe">
+          <i v-if="!isSubs" class="bx bx-bell"></i>
+          <i v-if="isSubs" class="bx bxs-bell"></i>
+          {{ isSubs ? "구독취소" : "구독" }}
+        </button>
+      </template>
     </div>
 
     <div class="slide-container">
-      <h3>내가 좋아요 누른 영화</h3>
-      <ul v-if="accountStore.likedMovies" class="slide">
-        <li v-for="movie in accountStore.likedMovies" :key="movie.movie_id">
+      <h3 v-if="isMyProfile">내가 좋아요 누른 영화</h3>
+      <h3 v-else>{{ currentUser.nickname }}님이 좋아요 누른 영화</h3>
+      <ul v-if="currentUser.liked_movies" class="slide">
+        <li v-for="movie in likedMovies" :key="movie.movie_id">
           <img
             class="liked-movie-img"
             @click="
@@ -30,10 +38,11 @@
     </div>
 
     <div class="slide-container">
-      <h3>내가 작성한 글</h3>
-      <ul v-if="accountStore.postedArticles" class="slide">
+      <h3 v-if="isMyProfile">내가 작성한 글</h3>
+      <h3 v-else>{{ currentUser.nickname }}님이 작성한 글</h3>
+      <ul v-if="postedArticles" class="slide">
         <FeedCard
-          v-for="article in accountStore.postedArticles"
+          v-for="article in currentUser.posted_articles"
           :key="article.id"
           :article="article"
           @click="
@@ -47,7 +56,7 @@
       <p v-else>아직 작성한 게시글이 없습니다.</p>
     </div>
 
-    <div class="slide-container">
+    <div class="slide-container" v-if="isMyProfile">
       <h3>
         내 라운지
         <button
@@ -74,73 +83,130 @@
       <p v-else>아직 가입한 라운지가 없습니다.</p>
     </div>
 
-    <div class="modal-wrap" v-show="isModalOpen" @click="toggleModal">
-      <div class="modal-container" @click.stop="">
-        <template v-if="currentMode === 'join'">
-          <form @submit.prevent="joinLounge">
-            <div class="modal-input">
-              <label for="code">가입 코드를 입력하세요.</label>
-              <input type="text" id="code" v-model="codeInput" />
-            </div>
+    <template v-if="isMyProfile">
+      <div class="modal-wrap" v-show="isModalOpen" @click="toggleModal">
+        <div class="modal-container" @click.stop="">
+          <template v-if="currentMode === 'join'">
+            <form @submit.prevent="joinLounge">
+              <div class="modal-input">
+                <label for="code">가입 코드를 입력하세요.</label>
+                <input type="text" id="code" v-model="codeInput" />
+              </div>
 
-            <p v-show="errorMessage">{{ errorMessage }}</p>
+              <p v-show="errorMessage">{{ errorMessage }}</p>
 
-            <div class="modal-btn">
-              <button type="submit">가입</button>
-              <button @click.prevent="toggleModal">닫기</button>
-            </div>
-          </form>
-        </template>
+              <div class="modal-btn">
+                <button type="submit">가입</button>
+                <button @click.prevent="toggleModal">닫기</button>
+              </div>
+            </form>
+          </template>
 
-        <template v-if="currentMode === 'create'">
-          <form @submit.prevent="createLounge">
-            <div class="modal-input">
-              <label for="name">라운지 이름</label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                v-model="loungeName"
-                required
-              />
-            </div>
-            <div class="modal-input">
-              <label for="description">라운지 소개</label>
-              <textarea
-                name="description"
-                id="description"
-                v-model="loungeDescription"
-                required
-              ></textarea>
-            </div>
+          <template v-if="currentMode === 'create'">
+            <form @submit.prevent="createLounge">
+              <div class="modal-input">
+                <label for="name">라운지 이름</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  v-model="loungeName"
+                  required
+                />
+              </div>
+              <div class="modal-input">
+                <label for="description">라운지 소개</label>
+                <textarea
+                  name="description"
+                  id="description"
+                  v-model="loungeDescription"
+                  required
+                ></textarea>
+              </div>
 
-            <p v-show="errorMessage">{{ errorMessage }}</p>
+              <p v-show="errorMessage">{{ errorMessage }}</p>
 
-            <div class="modal-btn">
-              <button type="submit">생성</button>
-              <button @click.prevent="toggleModal">닫기</button>
-            </div>
-          </form>
-        </template>
+              <div class="modal-btn">
+                <button type="submit">생성</button>
+                <button @click.prevent="toggleModal">닫기</button>
+              </div>
+            </form>
+          </template>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
-import { ref } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { computed, ref } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
+import { useFeedStore } from "@/stores/feed";
 import { useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
 import LoungeCard from "@/components/Lounge/LoungeCard.vue";
 import axios from "axios";
 
+const route = useRoute();
 const router = useRouter();
-const accountStore = useAccountStore();
 
+const accountStore = useAccountStore();
+const feedStore = useFeedStore();
+
+const userId = route.params.userId;
+const currentUser = ref({});
+
+// 내 정보 초기화
 accountStore.getUserInfo();
+
+const likedMovies = accountStore.likedMovies;
+const postedArticles = accountStore.postedArticles;
+
+// 내 프로필로 들어왔는지 다른 유저의 프로필로 들어왔는지 여부를 반환
+const isMyProfile = computed(() => {
+  return !userId || userId === accountStore.userPk;
+});
+
+// 다른 유저의 프로필로 들어왔으면 해당 프로필에서 렌더링할 currentUser에 데이터 넣어주기
+if (userId && userId !== accountStore.userPk) {
+  axios({
+    method: "get",
+    url: `${accountStore.API_URL}/accounts/${userId}/`,
+  })
+    .then((res) => {
+      currentUser.value = res.data;
+      likedMovies = ref(res.data.liked_movies);
+      postedArticles = ref(res.data.posted_articles);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+// 구독 확인
+const isSubs = ref(
+  accountStore.subscriptions && userId in accountStore.subscriptions
+);
+
+// 구독 & 구독취소(toggle)
+const subscribe = () => {
+  axios({
+    method: "post",
+    url: `${accountStore.API_URL}/accounts/subscribe/${userId}/`,
+    headers: {
+      Authorization: `Token ${accountStore.token}`,
+    },
+  })
+    .then((res) => {
+      isSubs.value = !isSubs.value;
+      accountStore.getUserInfo();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // 모달 모드: 'join' || 'create'
 const currentMode = ref("");
@@ -241,7 +307,7 @@ const navigateToLoungeDetailView = (loungePk) => {
   font-size: 200px;
 }
 
-.profile-name-p {
+#nickname {
   font-size: 30px;
 }
 
@@ -336,5 +402,17 @@ h3 {
 
 .modal-btn > button {
   margin: 5px;
+}
+
+button {
+  width: 200px;
+  height: 37px;
+  background-color: transparent;
+  border: none;
+  color: #eee;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #babac1;
 }
 </style>
