@@ -41,6 +41,50 @@ export const useMovieStore = defineStore(
           console.log(err);
         });
     };
+    // 최신 영화 조회
+    const newMovies = ref();
+    const getNewMovies = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/movies/new_release/`,
+      })
+        .then((res) => {
+          newMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // 코미디 영화 조회
+    const comedyMovies = ref();
+    const getComedyMovies = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/movies/genre/35/`,
+      })
+        .then((res) => {
+          comedyMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // 로맨스 영화 조회
+    const romanceMovies = ref();
+    const getRomanceMovies = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/movies/genre/10749/`,
+      })
+        .then((res) => {
+          romanceMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
 
     // 인기 상영작 1~5위 조회
     const popularMovie = ref();
@@ -81,6 +125,12 @@ export const useMovieStore = defineStore(
       likeMovies,
       getSubsMovies,
       subsMovies,
+      getComedyMovies,
+      comedyMovies,
+      getRomanceMovies,
+      romanceMovies,
+      getNewMovies,
+      newMovies,
     };
   },
   { persist: true }

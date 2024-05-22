@@ -37,6 +37,11 @@
       </div>
     </div>
     <MovieSlider
+      v-if="movieStore.newMovies && movieStore.newMovies.length > 0"
+      :movies="movieStore.newMovies"
+      :title="'신작 영화 추천'"
+    />
+    <MovieSlider
       v-if="movieStore.likeMovies && movieStore.likeMovies.length > 0"
       :movies="movieStore.likeMovies"
       :title="`${accountStore.userNickname}님이 좋아할 만한 영화`"
@@ -45,6 +50,16 @@
       v-if="movieStore.subsMovies && movieStore.subsMovies.length > 0"
       :movies="movieStore.subsMovies"
       :title="`${accountStore.userNickname}님이 구독한 유저가 좋아하는 영화`"
+    />
+    <MovieSlider
+      v-if="movieStore.comedyMovies && movieStore.comedyMovies.length > 0"
+      :movies="movieStore.comedyMovies"
+      :title="'코미디 영화 추천'"
+    />
+    <MovieSlider
+      v-if="movieStore.romanceMovies && movieStore.romanceMovies.length > 0"
+      :movies="movieStore.romanceMovies"
+      :title="'로맨스 영화 추천'"
     />
     <PlayingMovies
       v-for="(playingMovie, ranking) in playingStore.playingMovies"
@@ -72,9 +87,11 @@ const playingStore = usePlayingMovieStore();
 
 movieStore.getLikeMovies(); // 좋아요 기반 영화 조회
 movieStore.getSubsMovies(); // 구독 기반 영화 조회
+movieStore.getNewMovies(); // 최신 영화 조회
 movieStore.getPopularMovie(); // 인기 상역작 1~5위 조회
 playingStore.getPlayingMovies(); // 현재 상영작 1,2,3 위 조회
-
+movieStore.getComedyMovies(); // 코미디 영화 조회
+movieStore.getRomanceMovies(); // 로맨스 영화 조회
 const movies = ref(movieStore.popularMovie);
 
 const currentIndex = ref(0); // 캐러셀 움직이기 위한 인덱스
