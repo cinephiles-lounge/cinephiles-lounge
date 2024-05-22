@@ -9,14 +9,16 @@
             />
             <div class="content">
               <div class="title">{{ movie.title }}</div>
-              <div class="vote_average">평점 : {{ movie.vote_average }}</div>
+              <div class="vote_average">
+                평점 : {{ movie.vote_average.toFixed(1) }}
+              </div>
               <div class="release_date">개봉일 : {{ movie.release_date }}</div>
               <div class="overview">
                 {{ movie.overview }}
               </div>
               <div class="buttons">
                 <button>더보기</button>
-                <button>찜</button>
+                <button>좋아요</button>
               </div>
             </div>
           </div>

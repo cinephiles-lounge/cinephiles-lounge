@@ -53,7 +53,7 @@
             <button @click="subscribe">
               <i v-if="!isSubs" class="bx bx-bell"></i>
               <i v-if="isSubs" class="bx bxs-bell"></i>
-              {{ isSubs ? "구독취소" : "구독" }}
+              {{ isSubs ? "글쓴이 구독취소" : "글쓴이 구독" }}
             </button>
           </div>
         </div>
@@ -69,11 +69,20 @@
 
     <div class="comment-container">
       <h1>Comments</h1>
-      <div v-if="accountStore.isLogin">
-        <input type="text" v-model.trim="content" />
-        <input @click="createComment" type="submit" value="작성" />
+      <div v-if="accountStore.isLogin" class="comment-userInput">
+        <input
+          class="comment-userInput-text"
+          type="text"
+          v-model.trim="content"
+        />
+        <input
+          class="comment-userInput-btn"
+          @click="createComment"
+          type="submit"
+          value="작성"
+        />
       </div>
-      <div v-for="comment in feedStore.article.comment_set" :key="comment.id">
+      <div v-for="comment in sortedComments" :key="comment.id">
         <div class="comment-wrapper">
           <div class="profile-img">
             <i class="bx bxl-github"></i>
@@ -162,6 +171,13 @@ const deleteArticle = () => {
   feedStore.deleteArticle(articleId);
 };
 
+// 댓글 최신순으로 정렬
+const sortedComments = computed(() => {
+  return [...feedStore.article.comment_set].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+});
+
 // 댓글 생성
 const createComment = () => {
   const payload = {
@@ -169,6 +185,7 @@ const createComment = () => {
     content: content.value,
   };
   feedStore.createComment(payload);
+  content.value = "";
 };
 
 // 댓글 삭제
@@ -312,6 +329,7 @@ const formatTimeDifference = (dateString) => {
   .article-btn
   .article-delete-btn {
   margin-left: 10px;
+  background-color: #262626;
 }
 
 .detail-container .article-container .content .btn-wrapper {
@@ -408,5 +426,38 @@ hr {
   .writed-at {
   color: #7c7b84;
   font-size: 14px;
+}
+/* 댓글 생성폼 */
+.comment-container .comment-userInput {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.comment-container .comment-userInput .comment-userInput-text {
+  height: 50px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  margin-right: 13px;
+  background-color: #222326;
+  outline: none;
+  color: #eee;
+  font-size: 15px;
+}
+.comment-container .comment-userInput .comment-userInput-btn {
+  height: 50px;
+  width: 90px;
+  font-size: 15px;
+  border-radius: 5px;
+  background-color: #f82e62;
+  color: #eee;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.comment-container .comment-userInput .comment-userInput-btn:hover {
+  transform: scale(1.1);
 }
 </style>

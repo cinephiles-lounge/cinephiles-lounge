@@ -49,9 +49,6 @@
     <div class="card">
       <div class="article-title">
         <h1>게시글 전체조회</h1>
-        <button>
-          <RouterLink :to="{ name: 'FeedCreateView' }">글 생성</RouterLink>
-        </button>
       </div>
       <ul class="article-movie-container">
         <FeedCard
@@ -202,7 +199,8 @@ hr {
 .article-movie-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-top: 15px;
 }
 .article-movie-container > li {
   margin-bottom: 32px;
@@ -211,23 +209,7 @@ hr {
   display: flex;
   justify-content: space-between;
 }
-.article-title button {
-  background-color: #f82e62;
-  margin-right: 10px;
-  border-radius: 5px;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s ease;
-}
-.article-title button:hover {
-  transform: scale(1.1);
-}
-.article-title button a {
-  text-decoration: none;
-  color: #eee;
-}
+
 .next-button,
 .prev-button {
   position: absolute;

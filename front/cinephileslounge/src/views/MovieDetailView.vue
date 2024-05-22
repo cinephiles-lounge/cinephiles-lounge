@@ -6,7 +6,7 @@
           <h2>{{ movieStore.movie.title }}</h2>
           <div class="content-des">
             <span v-if="movieStore.movie.vote_average">
-              {{ movieStore.movie.vote_average }}
+              {{ movieStore.movie.vote_average.toFixed(1) }}
             </span>
             <span>{{ movieStore.movie.release_date }}</span>
             <span>{{ genres }}</span>
@@ -18,6 +18,10 @@
         <div class="content-btn">
           <i v-if="!isLiked" @click="movie_like" class="bx bx-heart"></i>
           <i v-if="isLiked" @click="movie_like" class="bx bxs-heart"></i>
+          <div @click="navigateToCreateArticle" class="article-btn">
+            <i class="bx bx-plus"></i>
+            <span>게시글 작성</span>
+          </div>
         </div>
       </div>
 
@@ -29,7 +33,7 @@
       </div>
     </div>
     <div class="review-container">
-      <h1>시네필라운지 사용자 평</h1>
+      <h1>시네필라운지 한줄평</h1>
 
       <MovieDetailList
         :shortReviews="movieStore.movie.shortreview_set"
@@ -40,14 +44,17 @@
 </template>
 <script setup>
 import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useMovieStore } from "@/stores/movie";
 import { useAccountStore } from "@/stores/account";
+import { useFeedStore } from "@/stores/feed";
 import MovieDetailList from "@/components/MovieDetailList.vue";
 import axios from "axios";
 const movieStore = useMovieStore();
 const accountStore = useAccountStore();
+const feedStore = useFeedStore();
 const route = useRoute();
+const router = useRouter();
 const movieId = ref(route.params.movie_id);
 movieStore.getMovieDetail(movieId.value);
 const genres = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
@@ -90,6 +97,15 @@ const movie_like = () => {
       console.log(err);
     });
 };
+
+// 게시글 작성 페이지로 이동
+const navigateToCreateArticle = () => {
+  feedStore.articleCreateId = movieId.value;
+  feedStore.articleMovieImg = movieStore.movie.backdrop_path;
+  feedStore.articleMovieTitle = movieStore.movie.title;
+  feedStore.articleMovieOverview = movieStore.movie.overview;
+  router.push({ name: "FeedCreateView" });
+};
 </script>
 <style scoped>
 .detail-view {
@@ -108,7 +124,6 @@ const movie_like = () => {
   display: flex;
   flex-direction: column;
   margin-left: 200px;
-  border-bottom: 1px solid #1b1c1d;
 }
 .detail-container .movie-content {
   margin-top: 72px;
@@ -174,6 +189,22 @@ const movie_like = () => {
 .detail-container .movie-content .content-btn {
   margin-top: 8px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  color: #84868d;
+}
+.detail-container .movie-content .content-btn .article-btn {
+  display: flex;
+  margin-left: 500px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.detail-container .movie-content .content-btn .article-btn:hover {
+  transform: scale(1.1);
+  color: #eee;
 }
 .detail-container .movie-content .content-btn i {
   font-size: 30px;
@@ -181,12 +212,18 @@ const movie_like = () => {
 }
 .detail-container .movie-content .content-btn .bx-heart {
   color: #908c93;
+  transition: 0.3s;
 }
 .detail-container .movie-content .content-btn .bx-heart:hover {
-  background-color: #212120;
+  transform: scale(1.1);
+  color: #eee;
 }
 .detail-container .movie-content .content-btn .bxs-heart {
   color: #f82e62;
+  transition: 0.3s;
+}
+.detail-container .movie-content .content-btn .bxs-heart:hover {
+  transform: scale(1.1);
 }
 
 .review-container {
@@ -196,7 +233,9 @@ const movie_like = () => {
   font-size: 20px;
   font-weight: 700;
   line-height: 1.3em;
+  letter-spacing: 2px;
 }
+
 /* .review-container span {
   font-size: 15;
   font-weight: 400;

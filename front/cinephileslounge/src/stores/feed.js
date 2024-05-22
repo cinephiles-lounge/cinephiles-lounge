@@ -15,7 +15,10 @@ export const useFeedStore = defineStore(
     const subscribedArticles = ref(null); // 구독한사람의 글
     const popularArticles = ref(null); // 인기 게시글
     const isSubs = ref(false); // 구독 여부
-
+    const articleCreateId = ref(); // 피드 게시글 작성할 때 영화id 입력하기 위한 변수
+    const articleMovieImg = ref(); // 피드 게시글 작성할 때 영화 포스터 보여주기 위한 변수
+    const articleMovieTitle = ref(); // 피드 게시글 작성할 때 영화 제목 보여주기 위한 변수
+    const articleMovieOverview = ref(); // 피드 게시글 작성할 때 영화 내용 보여주기 위한 변수
     // 구독한 사람의 글 조회
     const getSubs = () => {
       axios({
@@ -93,11 +96,11 @@ export const useFeedStore = defineStore(
         });
     };
 
-    // 게시글 생성(수정해야됨 무비아이디)
+    // 게시글 생성
     const createArticle = (payload) => {
       axios({
         method: "post",
-        url: `${API_URL}/articles/create/${payload.movieId}/`,
+        url: `${API_URL}/articles/create/${articleCreateId.value}/`,
         data: {
           title: payload.title,
           content: payload.content,
@@ -108,7 +111,12 @@ export const useFeedStore = defineStore(
         },
       })
         .then((res) => {
-          router.push({ name: "FeedView" });
+          console.log(res.data.id);
+          router.push({
+            name: "FeedDetailView",
+            params: { article_pk: res.data.id },
+          });
+          // 생성한 글로 바로 이동
         })
         .catch((err) => {
           console.log(err);
@@ -201,6 +209,10 @@ export const useFeedStore = defineStore(
       popularArticles,
       createComment,
       subscribe,
+      articleCreateId,
+      articleMovieImg,
+      articleMovieTitle,
+      articleMovieOverview,
     };
   },
   { persist: true }
