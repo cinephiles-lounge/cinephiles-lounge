@@ -15,12 +15,26 @@
       :clearable="true"
     >
     </star-rating>
+    <div class="spoiler-btn">
+      <span> 스포일러가 있는 리뷰를 가려보세요 </span>
+      <i
+        v-if="!isSpoiler"
+        class="bx bx-droplet"
+        @click="isSpoiler = !isSpoiler"
+      ></i>
+      <i
+        v-if="isSpoiler"
+        class="bx bxs-droplet"
+        @click="isSpoiler = !isSpoiler"
+      ></i>
+    </div>
     <div class="review-userInput">
       <input
         class="review-userInput-text"
         type="text"
         v-model.trim="inputContent"
       />
+
       <input
         class="review-userInput-btn"
         @click.prevent="createShortReview"
@@ -42,6 +56,8 @@ import { useAccountStore } from "@/stores/account";
 import MovieDetailListItem from "@/components/MovieDetailListItem.vue";
 import axios from "axios";
 import StarRating from "vue-star-rating";
+
+const isSpoiler = ref(false);
 const userRating = ref(0);
 // 사용자가 입력한 별점 userRating에 저장
 const setRating = (rating) => {
@@ -76,6 +92,7 @@ const createShortReview = () => {
     data: {
       content: inputContent.value,
       rank: userRating.value,
+      is_spoiler: isSpoiler.value,
     },
     headers: {
       Authorization: `Token ${accountStore.token}`,
@@ -135,5 +152,18 @@ const delete_review = (reviewId) => {
   background-color: #f82e62;
   color: #eee;
   border: none;
+}
+.create-review-container .spoiler-btn {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.create-review-container .spoiler-btn i {
+  margin-left: 5px;
+  font-size: 25px;
+  transition: 0.3s;
+}
+.create-review-container .spoiler-btn i:hover {
+  transform: scale(1.2);
 }
 </style>
