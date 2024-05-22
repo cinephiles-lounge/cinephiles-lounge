@@ -117,7 +117,7 @@
 <script setup>
 import { useLoungeStore } from "@/stores/lounges";
 import { useAccountStore } from "@/stores/account";
-
+import { useFeedStore } from "@/stores/feed";
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
@@ -127,6 +127,7 @@ const route = useRoute();
 const router = useRouter();
 const content = ref(null);
 
+const feedStore = useFeedStore();
 const loungeStore = useLoungeStore();
 const accountStore = useAccountStore();
 
@@ -144,7 +145,7 @@ const isSubs = computed(() => {
 
 // 구독 & 구독취소(toggle)
 const subscribe = () => {
-  // feedStore.subscribe(feedStore.article.user.id, isSubs.value);
+  feedStore.subscribe(loungeStore.loungeArticleDetail.user.id, isSubs.value);
 };
 
 // 게시글 좋아요 확인
