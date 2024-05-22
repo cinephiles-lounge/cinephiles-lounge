@@ -8,8 +8,18 @@
         <p>{{ review.user.nickname }}</p>
         <div v-if="!isUpdate"><i class="bx bxs-star"></i>{{ review.rank }}</div>
       </div>
-      <div class="review-overview" v-if="!isUpdate">
+      <div class="review-overview" v-if="!isUpdate && !review.is_spoiler">
         <p>{{ review.content }}</p>
+      </div>
+      <div
+        class="review-overview"
+        :class="{ spoiler: !spoiler }"
+        v-if="!isUpdate && review.is_spoiler"
+      >
+        <p>{{ review.content }}</p>
+        <div class="spoiler-btn" v-if="!spoiler" @click="toggleSpoiler">
+          스포일러가 포함된 댓글입니다.
+        </div>
       </div>
       <i
         @click="isUpdate = !isUpdate"
@@ -121,6 +131,11 @@ const update_shortReview = () => {
       console.log(err);
     });
 };
+
+const spoiler = ref(false); // 스포 처리
+const toggleSpoiler = () => {
+  spoiler.value = !spoiler.value;
+};
 </script>
 <style scoped>
 .reviewItem-container {
@@ -161,7 +176,7 @@ const update_shortReview = () => {
   font-size: 15px;
   line-height: 1.33em;
   width: 100%;
-  color: #7c7b84;
+  /* color: #7c7b84; */
 }
 .reviewItem-container .reviewItem-img i {
   font-size: 40px;
@@ -209,5 +224,24 @@ const update_shortReview = () => {
   height: 40px;
   padding: 10px;
   cursor: pointer;
+}
+.review-overview {
+  position: relative;
+}
+.review-overview.spoiler p {
+  font-style: italic;
+  filter: blur(2.5px); /* 블러 처리 */
+}
+.review-overview .spoiler-btn {
+  position: absolute;
+  top: 0px;
+  left: 70px;
+  transition: 0.3s;
+  font-size: 15px;
+  color: #eee;
+  font-weight: 600;
+}
+.review-overview .spoiler-btn:hover {
+  transform: scale(1.05);
 }
 </style>
