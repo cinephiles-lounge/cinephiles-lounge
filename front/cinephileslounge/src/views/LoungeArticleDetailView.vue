@@ -2,6 +2,17 @@
   <div class="detail-container">
     <div class="article-container">
       <div class="content">
+        <button
+          class="back-to-lounge-btn"
+          @click="
+            router.push({
+              name: 'LoungeDetailView',
+              params: { loungePk: loungePk },
+            })
+          "
+        >
+          목록
+        </button>
         <div class="author">
           <i class="bx bxl-github"></i>
           <p>{{ loungeStore.loungeArticleDetail.user.nickname }}</p>
@@ -460,6 +471,25 @@ hr {
   transition: 0.3s;
 }
 .comment-container .comment-userInput .comment-userInput-btn:hover {
+  transform: scale(1.1);
+}
+
+/* 목록 버튼 */
+
+.back-to-lounge-btn {
+  height: 40px;
+  width: 70px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  border-radius: 5px;
+  background-color: #f82e62;
+  color: #eee;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-to-lounge-btn {
   transform: scale(1.1);
 }
 </style>
