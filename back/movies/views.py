@@ -194,7 +194,7 @@ def get_search(request):
               When(q2, then=Value(2)),
             )
         ).order_by('search_order')
-        serializer = MovieSerializer(results, many=True)
+        serializer = MovieSerializer(results[:20], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

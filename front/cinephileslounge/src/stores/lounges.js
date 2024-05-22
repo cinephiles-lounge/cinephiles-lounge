@@ -10,24 +10,133 @@ export const useLoungeStore = defineStore(
     const accountStore = useAccountStore();
 
     const loungeData = ref([]);
+    const loungeMovies = ref([]);
+    const loungeReviews = ref([]);
+    const loungeArticles = ref([]);
 
     const getLounge = function (loungePk) {
       axios({
         method: "get",
-        url: `${API_URL}/lounges/{loungePk}/`,
+        url: `${accountStore.API_URL}/lounges/${loungePk}/`,
         headers: {
           Authorization: `Token ${accountStore.token}`,
         },
       })
         .then((res) => {
-          subscribedArticles.value = res.data;
+          loungeData.value = res.data;
+        })
+        .then((res) => {
+          getMovies(loungePk);
+          getReviews(loungePk);
+          getArticles(loungePk);
         })
         .catch((err) => {
           console.log(err);
         });
     };
 
-    return { getLounge };
+    const getMovies = function (loungePk) {
+      axios({
+        method: "get",
+        url: `${accountStore.API_URL}/lounges/${loungePk}/movies/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const getReviews = function (loungePk) {
+      axios({
+        method: "get",
+        url: `${accountStore.API_URL}/lounges/${loungePk}/reviews/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeReviews.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const getArticles = function (loungePk) {
+      axios({
+        method: "get",
+        url: `${accountStore.API_URL}/lounges/${loungePk}/articles/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeArticles.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const deleteLounge = function () {
+      axios({
+        method: "delete",
+        url: `${accountStore.API_URL}/lounges/${loungeData.value.id}/update/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeData.value = [];
+          loungeMovies.value = [];
+          loungeReviews.value = [];
+          loungeArticles.value = [];
+          accountStore.getUserInfo();
+          console.log("삭제");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const leaveLounge = function () {
+      axios({
+        method: "post",
+        url: `${accountStore.API_URL}/lounges/${loungeData.value.id}/leave/`,
+        headers: {
+          Authorization: `Token ${accountStore.token}`,
+        },
+      })
+        .then((res) => {
+          loungeData.value = [];
+          loungeMovies.value = [];
+          loungeReviews.value = [];
+          loungeArticles.value = [];
+          accountStore.getUserInfo();
+          console.log("삭제");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    return {
+      loungeData,
+      loungeMovies,
+      loungeReviews,
+      loungeArticles,
+      getLounge,
+      getMovies,
+      getReviews,
+      getArticles,
+      deleteLounge,
+      leaveLounge,
+    };
   },
   { persist: true }
 );

@@ -16,8 +16,9 @@ export const useAccountStore = defineStore(
     const likedMovies = ref([]);
     const likedArticles = ref([]);
     const postedArticles = ref([]);
-    const joinedLounges = ref([]);
-    const managingLounges = ref([]);
+    const joinedLounges = ref([]); // 내가 생성한 + 내가 가입한 라운지
+    const managingLounges = ref([]);  // 내가 생성한 라운지
+    const nonManagingLounges = ref([]); // 내가 가입한 라운지
 
     const isLogin = computed(() => {
       if (token.value === null) {
@@ -99,6 +100,7 @@ export const useAccountStore = defineStore(
           postedArticles.value = res.data.posted_articles; // 내가 작성한 게시글들
           joinedLounges.value = res.data.joined_lounges; // 내가 가입한 라운지들
           managingLounges.value = res.data.managing_lounges; // 내가 관리하는 라운지들
+          nonManagingLounges.value = res.data.non_managing_lounges; // 관리자가 아닌 순수 회원으로만 있는 라운지들
         })
         .catch((err) => {
           console.log(err);
@@ -122,6 +124,7 @@ export const useAccountStore = defineStore(
       postedArticles,
       joinedLounges,
       managingLounges,
+      nonManagingLounges,
     };
   },
   { persist: true }

@@ -52,7 +52,13 @@ class LoungeSerializer(serializers.ModelSerializer):
     admin = SimpleUserSerializer(read_only=True)
     members = SimpleUserSerializer(read_only=True, many=True)
     lounge_article_set = LoungeArticleSerializer(read_only=True, many=True)
+    non_admin_members = serializers.SerializerMethodField()
 
     class Meta:
         model = Lounge
         fields = '__all__'
+
+    def get_non_admin_members(self, obj):
+        admin = obj.admin
+        non_admin_members = obj.members.exclude(id=admin.id)
+        return SimpleUserSerializer(non_admin_members, many=True).data

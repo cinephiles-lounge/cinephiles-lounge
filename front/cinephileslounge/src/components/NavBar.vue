@@ -43,10 +43,14 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { useAccountStore } from "@/stores/account";
+import { useLoungeStore } from "@/stores/lounges";
+import { useMovieStore } from "@/stores/movie";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
 const accountStore = useAccountStore();
+const loungeStore = useLoungeStore();
+const movieStore = useMovieStore();
 const router = useRouter();
 
 const isSticky = ref(false);
@@ -80,11 +84,17 @@ const logOut = () => {
       accountStore.userPk = ""; //유저 pk 초기화
       accountStore.subscriptions = []; // 내가 구독하는 사람들 초기화
       accountStore.subscribers = []; // 나를 구독한 사람들 초기화
-      accountStore.likedMovies = ref([]);
-      accountStore.likedArticles = ref([]);
-      accountStore.postedArticles = ref([]);
-      accountStore.joinedLounges = ref([]);
-      accountStore.managingLounges = ref([]);
+      accountStore.likedMovies = [];
+      accountStore.likedArticles = [];
+      accountStore.postedArticles = [];
+      accountStore.joinedLounges = [];
+      accountStore.managingLounges = [];
+      accountStore.nonManagingLounges = [];
+      loungeStore.loungeData = [];
+      loungeStore.loungeMovies = [];
+      loungeStore.loungeReviews = [];
+      loungeStore.loungeArticles = [];
+      movieStore.movie = [];
       router.push({ name: "HomeView" });
     })
     .catch((err) => {

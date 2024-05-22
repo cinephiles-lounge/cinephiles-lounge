@@ -49,7 +49,7 @@
 
     <div class="slide-container">
       <h3>
-        내가 가입한 라운지
+        내 라운지
         <button
           id="join-lounge-button"
           @click="switchMode('join'), toggleModal($event)"
@@ -64,10 +64,12 @@
         </button>
       </h3>
       <ul v-if="accountStore.joinedLounges" class="slide">
-        <!-- 내가 관리자인 라운지를 먼저 렌더링 -->
-        <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
-          {{ lounge.name }}
-        </li>
+        <LoungeCard
+          v-for="lounge in accountStore.joinedLounges"
+          :key="lounge.id"
+          :lounge="lounge"
+          @click="navigateToLoungeDetailView(lounge.id)"
+        />
       </ul>
       <p v-else>아직 가입한 라운지가 없습니다.</p>
     </div>
@@ -132,6 +134,7 @@ import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
 import { useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
+import LoungeCard from "@/components/Lounge/LoungeCard.vue";
 import axios from "axios";
 
 const router = useRouter();
@@ -206,6 +209,11 @@ const createLounge = function () {
       errorMessage.value = JSON.parse(err.request.response).message;
     });
 };
+
+// 라운지 카드 클릭하면 라운지 디테일 뷰로 route
+const navigateToLoungeDetailView = (loungePk) => {
+  router.push({ name: "LoungeDetailView", params: { loungePk: loungePk } });
+};
 </script>
 
 <style scoped>
@@ -257,6 +265,13 @@ h3 {
 
 .liked-movie-img {
   height: 300px;
+  transition: 0.3s;
+  cursor: pointer;
+  margin: 0 20px;
+}
+
+.liked-movie-img:hover {
+  transform: scale(1.1);
 }
 
 /* 각 슬라이드 */
