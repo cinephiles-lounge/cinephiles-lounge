@@ -26,9 +26,7 @@ def create_lounge(request):
     if request.method == 'POST':
         serializer = LoungeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            lounge_data = serializer.save(admin=request.user)
-            lounge = Lounge.objects.get(id=lounge_data.id)
-            lounge.members.add(request.user)
+            serializer.save(admin=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

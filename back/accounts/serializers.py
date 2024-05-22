@@ -5,6 +5,7 @@ from .models import User
 from movies.serializers import MovieSerializer
 from articles.serializers import ArticleSerializer
 from lounges.serializers import LoungeSerializer
+from lounges.models import Lounge
 
 class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,6 +45,7 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
     subscribers = SimpleUserSerializer(many=True, read_only=True)
     joined_lounges = LoungeSerializer(many=True, read_only=True)
     managing_lounges = LoungeSerializer(many=True, read_only=True)
+    
 
     class Meta:
         extra_fields = []
@@ -73,3 +75,4 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         # username(아이디), email은 수정 불가능
         read_only_fields = ('username', 'email',)
 
+        
