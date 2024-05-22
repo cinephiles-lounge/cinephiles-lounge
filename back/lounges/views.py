@@ -3,10 +3,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .models import *
 from .serializers import *
+from movies.models import Movie
 from movies.serializers import MovieSerializer
 from django.core.exceptions import ValidationError
-
+from django.db.models import Q, Count
 
 
 # 전체 라운지 목록 조회
@@ -26,9 +28,7 @@ def create_lounge(request):
     if request.method == 'POST':
         serializer = LoungeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            lounge_data = serializer.save(admin=request.user)
-            lounge = Lounge.objects.get(id=lounge_data.id)
-            lounge.members.add(request.user)
+            serializer.save(admin=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -92,7 +92,6 @@ def join(request):
             return Response(message, status=status.HTTP_404_NOT_FOUND)
             
 
-
 # 라운지 탈퇴
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
@@ -104,26 +103,163 @@ def leave(request, lounge_pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-# 라운지 회원들이 좋아요 누른 영화 목록 조회
+# 라운지 회원들이 좋아요 누른 영화 목록 조회 (회원 좋아요 순)
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def member_liked_movies(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
         members = lounge.members.all()
-
-        movies = []
-        movies_id_set = set()
-
-        for member in members:
-            person_movies = member.liked_movies.all()
-
-            for movie in person_movies:
-                curr_len = len(movies_id_set)
-                movies_id_set.add(movie)
-                if curr_len != len(movies_id_set):
-                    movies.append(movie)
-                    
-        serializer = MovieSerializer(movies, many=True)
+        member_liked_movies = Movie.objects.prefetch_related('liked_users').filter(liked_users__in=members).annotate(
+            member_like_count=Count('liked_users', filter=Q(liked_users__in=members))
+        ).order_by('-member_like_count')
+        serializer = MovieSerializer(member_liked_movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+#############################################
+#############################################
+#############################################
+
+
+# 라운지 게시글 전체 목록 조회
+@api_view(['GET'])
+def get_article_list(request, lounge_pk):
+    if request.method == 'GET':
+        lounge = Lounge.objects.get(pk=lounge_pk)
+        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+            lounge_articles = lounge.articles.all()
+            serializer = LoungeArticleSerializer(lounge_articles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
     
+
+# 라운지 게시글 생성
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def create_article(request, lounge_pk):
+    if request.method == 'POST':
+        lounge = Lounge.objects.get(pk=lounge_pk)
+        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+            serializer = LoungeArticleSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(user=request.user, lounge=lounge)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+# 라운지 게시글 조회
+@api_view(['GET'])
+def article_detail(request, lounge_article_pk):
+    if request.method == 'GET':
+        lounge_article = LoungeArticle.objects.get(pk=lounge_article_pk)
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+            serializer = LoungeArticleSerializer(lounge_article)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+# 게시글 수정, 삭제
+@permission_classes([IsAuthenticated])
+@api_view(['PUT', 'DELETE'])
+def article_update(request, article_pk):
+    lounge_article = LoungeArticle.objects.get(pk=article_pk)
+    if request.user.pk == lounge_article.user.pk:
+        if request.method == 'PUT':
+            serializer = LoungeArticleSerializer(lounge_article, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            lounge_article.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'message': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+# 게시글 좋아요
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def like_article(request, article_pk):
+    if request.method == 'POST':
+        lounge_article = LoungeArticle.objects.get(pk=article_pk)
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+            if lounge_article.liked_users.filter(pk=request.user.pk):
+                lounge_article.liked_users.remove(request.user)
+            else:
+                lounge_article.liked_users.add(request.user)
+            data = {
+                'like_count': lounge_article.liked_users.count()        
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+
+# # 댓글 작성
+# @permission_classes([IsAuthenticated])
+# @api_view(['POST'])
+# def create_comment(request, article_pk):
+#     if request.method == 'POST':
+#         article = Article.objects.get(pk=article_pk)
+#         serializer = CommentSerializer(data=request.data)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save(user=request.user, article=article)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+            
+
+# # 댓글 수정, 삭제
+# @permission_classes([IsAuthenticated])
+# @api_view(['PUT', 'DELETE'])
+# def update_comment(request, comment_pk):
+#     comment = Comment.objects.get(pk=comment_pk)
+#     if request.user.pk == comment.user.pk:
+#         if request.method == 'PUT':
+#             serializer = CommentSerializer(comment, data=request.data, partial=True)
+#             if serializer.is_valid(raise_exception=True):
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
+#         elif request.method == 'DELETE':
+#             comment.delete()
+#             return Response(status=status.HTTP_204_NO_CONTENT)
+#     else:
+#         message = {
+#             'message': '작성자만 접근이 가능합니다.'
+#         }
+#         return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
+# # 댓글 좋아요
+# @permission_classes([IsAuthenticated])
+# @api_view(['POST'])
+# def like_comment(request, comment_pk):
+#     if request.method == 'POST':
+#         comment = Comment.objects.get(pk=comment_pk)
+#         if comment.liked_users.filter(pk=request.user.pk).exists():
+#             comment.liked_users.remove(request.user)
+#         else:
+#             comment.liked_users.add(request.user)
+        
+#         data = {
+#             'like_count': comment.liked_users.count()
+#         }
+#         return Response(data, status=status.HTTP_200_OK)

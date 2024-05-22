@@ -89,7 +89,7 @@ def like_movie(request, movie_id):
         data = {
             'movie': movie.title,
             'like_count': movie.liked_users.count(),
-            'did_i_follow': movie.liked_users.filter(pk=request.user.pk).exists()
+            'did_i_like': movie.liked_users.filter(pk=request.user.pk).exists()
         }
         return Response(data, status=status.HTTP_200_OK)
         
@@ -135,20 +135,8 @@ def update_short_review(request, short_review_pk):
 def get_list_subscribing(request):
     if request.method == 'GET':
         subscriptions = request.user.subscriptions.all()
-
-        movies = []
-        movies_id_set = set()
-
-        for subscribing_user in subscriptions:
-            person_movies = subscribing_user.liked_movies.all()
-
-            for movie in person_movies:
-                curr_len = len(movies_id_set)
-                movies_id_set.add(movie)
-                if curr_len != len(movies_id_set):
-                    movies.append(movie)
-                    
-        serializer = MovieSerializer(movies, many=True)
+        subscribing_user_movies = Movie.objects.prefetch_related('liked_users').filter(liked_users__in=subscriptions)
+        serializer = MovieSerializer(subscribing_user_movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
