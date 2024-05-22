@@ -43,7 +43,7 @@
 
       <div class="lounge-article">
         <h1>라운지 전체 게시글</h1>
-        <ul v-if="loungeStore.loungeArticles" class="slide">
+        <ul v-if="loungeStore.loungeArticles">
           <li
             v-for="article in loungeStore.loungeArticles"
             :key="article.id"
@@ -73,13 +73,25 @@
         </div>
       </div>
 
-      <div class="member">
-        <h1>멤버</h1>
-        <div class="profile-container" v-for="member in loungeStore.loungeData.members" :key="member.id">
-          <i class="bx bxl-github"></i>
-          <p class="profile-name-p">
-            {{ member.nickname }}
-          </p>
+      <div class="info">
+        <div class="member">
+          <h1>멤버</h1>
+          <div class="profile-container" v-for="member in loungeStore.loungeData.non_admin_members" :key="member.id">
+            <i class="bx bxl-github"></i>
+            <p class="profile-name-p">
+              {{ member.nickname }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="setting">
+          <template v-if="loungeStore.loungeData.admin.id === accountStore.userId">
+            <button>수정</button>
+            <button>삭제</button>
+          </template>
+          <template v-else>
+            <button>탈퇴</button>
+          </template>
         </div>
       </div>
     </aside>
@@ -90,8 +102,10 @@
 import { useLoungeStore } from "@/stores/lounges";
 import { useRoute, useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
+import { useAccountStore } from "@/stores/account";
 
 const loungeStore = useLoungeStore();
+const accountStore = useAccountStore()
 const route = useRoute();
 const router = useRouter();
 
@@ -99,6 +113,17 @@ loungeStore.getLounge(route.params.loungePk);
 </script>
 
 <style scoped>
+header {
+  grid-area: header;
+}
+
+main {
+  grid-area: main;
+}
+
+aside {
+  grid-area: aside;
+}
 /* 전체 페이지 */
 .lounge-detail-page {
   padding-top: 80px;
@@ -106,6 +131,14 @@ loungeStore.getLounge(route.params.loungePk);
   min-height: 100vh;
   background-color: black;
   color: #fff;
+  display: grid;
+  grid-template-areas: 
+    "header header header header"
+    "main main main aside"
+    "main main main aside"
+    "main main main aside";
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 2fr 1fr 1fr 1fr;
 }
 
 /* 회원 좋아요 영화 */

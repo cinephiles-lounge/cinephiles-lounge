@@ -49,7 +49,7 @@
 
     <div class="slide-container">
       <h3>
-        내가 가입한 라운지
+        내 라운지
         <button
           id="join-lounge-button"
           @click="switchMode('join'), toggleModal($event)"
@@ -64,10 +64,6 @@
         </button>
       </h3>
       <ul v-if="accountStore.joinedLounges" class="slide">
-        <!-- 내가 관리자인 라운지를 먼저 렌더링 -->
-        <li v-for="lounge in accountStore.managingLounges" :key="lounge.id">
-          {{ lounge.name }}
-        </li>
         <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
           {{ lounge.name }}
         </li>

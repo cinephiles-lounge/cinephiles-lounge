@@ -11,11 +11,11 @@
         />
       </div>
     </div>
-    <div class="lounge-container" v-show="hasJoinedLounge">
+    <div class="lounge-container" v-show="hasNonManagingLounges">
       <h1>내가 가입한 라운지</h1>
       <div class="card-container">
         <LoungeCard
-          v-for="lounge in accountStore.joinedLounges"
+          v-for="lounge in accountStore.nonManagingLounges"
           :key="lounge.id"
           :lounge="lounge"
           @click="navigateToLoungeDetailView(lounge.id)"
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div v-show="!hasManagingLounge && !hasJoinedLounge">
-      <p>라운지를 만들어보세요.</p>
+      <p>나만의 라운지를 만들어보세요.</p>
     </div>
   </div>
 </template>
@@ -37,10 +37,10 @@ import { computed, ref } from "vue";
 const router = useRouter();
 const accountStore = useAccountStore();
 
-const hasJoinedLounge = computed(() => {
-  console.log(accountStore.joinedLounges)
-  if (accountStore.joinedLounges) {
-    return !!accountStore.joinedLounges.length
+const hasNonManagingLounges = computed(() => {
+  console.log(accountStore.nonManagingLounges)
+  if (accountStore.nonManagingLounges) {
+    return !!accountStore.nonManagingLounges.length
   }
   return false
 })

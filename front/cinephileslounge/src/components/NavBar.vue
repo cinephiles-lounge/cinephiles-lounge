@@ -85,6 +85,7 @@ const logOut = () => {
       accountStore.postedArticles = ref([]);
       accountStore.joinedLounges = ref([]);
       accountStore.managingLounges = ref([]);
+      accountStore.nonManagingLounges = ref([]);
       router.push({ name: "HomeView" });
     })
     .catch((err) => {
