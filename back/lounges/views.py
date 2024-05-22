@@ -215,23 +215,29 @@ def like_article(request, article_pk):
 
 
 
-# # 댓글 작성
-# @permission_classes([IsAuthenticated])
-# @api_view(['POST'])
-# def create_comment(request, article_pk):
-#     if request.method == 'POST':
-#         article = Article.objects.get(pk=article_pk)
-#         serializer = CommentSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save(user=request.user, article=article)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
+# 댓글 작성
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def create_comment(request, article_pk):
+    if request.method == 'POST':
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+            lounge_article = LoungeArticle.objects.get(pk=article_pk)
+            serializer = LoungeCommentSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(user=request.user, lounge_article=lounge_article)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
             
 
 # # 댓글 수정, 삭제
 # @permission_classes([IsAuthenticated])
 # @api_view(['PUT', 'DELETE'])
 # def update_comment(request, comment_pk):
-#     comment = Comment.objects.get(pk=comment_pk)
+#     lounge_comment = LoungeComment.objects.get(pk=comment_pk)
 #     if request.user.pk == comment.user.pk:
 #         if request.method == 'PUT':
 #             serializer = CommentSerializer(comment, data=request.data, partial=True)

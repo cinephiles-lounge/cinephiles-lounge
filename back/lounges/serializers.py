@@ -13,7 +13,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'nickname',)
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class LoungeCommentSerializer(serializers.ModelSerializer):
     class SimpleLoungeArticleSerializer(serializers.ModelSerializer):
         class Meta:
             model = LoungeArticle
@@ -37,7 +37,7 @@ class LoungeArticleSerializer(serializers.ModelSerializer):
         class Meta:
             model = LoungeComment
             fields = ('id', 'user', 'content', 'created_at', 'like_count',)
-    
+
     user = SimpleUserSerializer(read_only=True)
     lounge_comment_set = SimpleLoungeCommentSerializer(many=True, read_only=True)
     like_count = serializers.IntegerField(source='liked_users.count', read_only=True)

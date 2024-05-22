@@ -20,6 +20,13 @@ def get_movie_list(request):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def get_popular(request):
+    if request.method == 'GET':
+        movies = Movie.objects.all()
+        serializer = MovieSerializer(movies[:10], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # 현재 상영작 조회 (3위까지)
 @api_view(['GET'])
