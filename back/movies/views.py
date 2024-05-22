@@ -24,7 +24,7 @@ def get_movie_list(request):
 def get_popular(request):
     if request.method == 'GET':
         movies = Movie.objects.all()
-        serializer = MovieSerializer(movies[:10], many=True)
+        serializer = MovieSerializer(movies[:5], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
