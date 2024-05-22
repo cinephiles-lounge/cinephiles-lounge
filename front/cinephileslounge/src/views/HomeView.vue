@@ -17,7 +17,9 @@
                 {{ movie.overview }}
               </div>
               <div class="buttons">
-                <button>더보기</button>
+                <button @click="navigateToDetail(movie.movie_id)">
+                  더보기
+                </button>
                 <button>좋아요</button>
               </div>
             </div>
@@ -34,13 +36,14 @@
         </div>
       </div>
     </div>
-    <UpcommingMovies />
+    <MovieSlider :movies="movieStore.movieList" :title="'영화추천'" />
     <PlayingMovies
       v-for="(playingMovie, ranking) in playingStore.playingMovies"
       :playingMovie="playingMovie"
       :ranking="ranking"
       :key="playingMovie.id"
     />
+    <UpcommingMovies />
   </section>
 </template>
 
@@ -48,91 +51,52 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import UpcommingMovies from "@/components/UpcomingMovies.vue";
 import PlayingMovies from "@/components/PlayingMovies.vue";
+import MovieSlider from "@/components/MovieSlider/MovieSlider.vue";
 import { usePlayingMovieStore } from "@/stores/playingMovie";
-const playingStore = usePlayingMovieStore();
-playingStore.getPlayingMovies();
+import { useMovieStore } from "@/stores/movie";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
-const movies = [
-  {
-    id: 0,
-    title: "혹성탈출:새로운 시대",
-    overview:
-      "진화한 유인원과 퇴화된 인간들이 살아가는 땅. 유인원 리더 프록시무스는 완전한 군림을 위해 인간들을 사냥하며 자신의 제국을 건설한다. 한편, 또 다른 유인원 노아는 우연히 숨겨진 과거의 이야기와 시저의 가르침을 듣게 되고 인간과 유인원이 함께 할 새로운 세상을 꿈꾼다. 어느 날 그의 앞에 나타난 의문의 한 인간 소녀. 노아는 그녀와 함께 자유를 향한 여정을 시작하게 되는데…",
-    release_date: "2024-05-08",
-    vote_average: 7.171,
-    poster_path: "/plNOSbqkSuGEK2i15A5btAXtB7t.jpg",
-    backdrop_path: "/fypydCipcWDKDTTCoPucBsdGYXW.jpg",
-  },
-  {
-    id: 1,
-    title: "쿵푸팬더 4",
-    overview:
-      "마침내 내면의 평화… 냉면의 평화…가 찾아왔다고 믿는 용의 전사 ‘포’ 이젠 평화의 계곡의 영적 지도자가 되고, 자신을 대신할 후계자를 찾아야만 한다. “이제 용의 전사는 그만둬야 해요?” 용의 전사로의 모습이 익숙해지고 새로운 성장을 하기보다 지금 이대로가 좋은 ‘포’ 하지만 모든 쿵푸 마스터들의 능력을 그대로 복제하는 강력한 빌런 ‘카멜레온’이 나타나고 그녀를 막기 위해 정체를 알 수 없는 쿵푸 고수 ‘젠’과 함께 모험을 떠나게 되는데… 포는 가장 강력한 빌런과 자기 자신마저 뛰어넘고 진정한 변화를 할 수 있을까?",
-    release_date: "2024-03-02",
-    vote_average: 7.126,
-    poster_path: "/1ZNOOMmILNUzVYbzG1j7GYb5bEV.jpg",
-    backdrop_path: "/kYgQzzjNis5jJalYtIHgrom0gOx.jpg",
-  },
-  {
-    id: 2,
-    title: "인사이드 아웃2",
-    overview:
-      "13살이 된 라일리의 행복을 위해 매일 바쁘게 머릿속 감정 컨트롤 본부를 운영하는 ‘기쁨’, ‘슬픔’, ‘버럭’, ‘까칠’, ‘소심’. 그러던 어느 날, 낯선 감정인 ‘불안’, ‘당황’, ‘따분’, ‘부럽’이가 본부에 등장하고, 언제나 최악의 상황을 대비하며 제멋대로인 ‘불안’이와 기존 감정들은 계속 충돌한다. 결국 새로운 감정들에 의해 본부에서 쫓겨나게 된 기존 감정들은 다시 본부로 돌아가기 위해 위험천만한 모험을 시작하는데…",
-    release_date: "2024-06-06",
-    vote_average: 7.332,
-    poster_path: "/pmemGuhr450DK8GiTT44mgwWCP7.jpg",
-    backdrop_path: "/pI5jxew0I9kub4IXrtsOB8F40dw.jpg",
-  },
-  {
-    id: 3,
-    title: "이프: 상상의 친구",
-    overview:
-      "상상의 친구 ‘이프’를 볼 수 있는 능력을 지닌 한 소녀가 아이들에게 잊혀졌던 ‘이프’를 다시 되찾아주기 위해 마법 같은 모험을 시작하는 이야기를 그린 영화",
-    release_date: "2024-05-08",
-    vote_average: 7.711,
-    poster_path: "/9GAOhSzXjXJR4AxYCa2AMzMGPVg.jpg",
-    backdrop_path: "/jTWllMddJzCb7hBVNZICtgKhYM9.jpg",
-  },
-  {
-    id: 4,
-    title: "가필드 더 무비",
-    overview:
-      "세상귀찮 집냥이, 바쁘고 험난한 세상에 던져졌다! 집사 ‘존’과 반려견 ‘오디’를 기르며 평화로운 나날을 보내던 집냥이 ‘가필드’. 어느 날, 험악한 길냥이 무리에게 납치당해 냉혹한 거리로 던져진다. 돌봐주는 집사가 없는 집 밖 세상은 너무나도 정신없게 돌아가고 길에서 우연히 다시 만난 아빠 길냥이 ‘빅’은 오히려 ‘가필드’를 위기에 빠지게 하는데… 험난한 세상, 살아남아야 한다!",
-    release_date: "2024-04-30",
-    vote_average: 6.6,
-    poster_path: "/57g3pHYi3p0JNVO1LkcyYbeMDBf.jpg",
-    backdrop_path: "/vWzJDjLPmycnQ42IppEjMpIhrhc.jpg",
-  },
-];
+const movieStore = useMovieStore();
+const playingStore = usePlayingMovieStore();
+
+movieStore.getMovieList(); // 전체 영화 조회
+
+movieStore.getPopularMovie(); // 인기 상역작 1~5위 조회
+
+playingStore.getPlayingMovies(); // 현재 상영작 1,2,3 위 조회
+
+const movies = ref(movieStore.popularMovie);
+
 const currentIndex = ref(0); // 캐러셀 움직이기 위한 인덱스
 const timeRunning = ref(3000); // 애니메이션 실행되는 시간
-const timeAutoNext = ref(7000); // 다음 슬라이드로 이동하는 시간 간격
+const timeAutoNext = ref(5000); // 다음 슬라이드로 이동하는 시간 간격
 const carousel = ref(null); // 캐러셀 클래스 참조
 let runTimeOut = null; // 애니메이션 실행 후 클래스 제거하기 위한 타이머
 let runNextAuto = null; // 자동으로 다음 슬라이드로 이동하기 위한 타이머
 
 const displayedMovies = computed(() => {
   const start = currentIndex.value;
-  const end = movies.length;
-  return [...movies.slice(start, end), ...movies.slice(0, start)]; //
+  const end = movies.value.length;
+  return [...movies.value.slice(start, end), ...movies.value.slice(0, start)]; //
 });
 
 const posters = computed(() => {
   // 인덱스 1, 2, 3, 4, 0 순서대로 반환
   const start = currentIndex.value + 1;
-  const end = movies.length;
-  return [...movies.slice(start, end), ...movies.slice(0, start)];
+  const end = movies.value.length;
+  return [...movies.value.slice(start, end), ...movies.value.slice(0, start)];
 });
 
 const showSlider = (type) => {
   // 다음 버튼 클릭시
   if (type === "next") {
-    currentIndex.value = (currentIndex.value + 1) % movies.length; // 인덱스 +1
+    currentIndex.value = (currentIndex.value + 1) % movies.value.length; // 인덱스 +1
     carousel.value.classList.add("next"); //캐러셀에 next클래스 추가
   } else {
     // 이전 버튼 클릭시
     currentIndex.value =
-      (currentIndex.value - 1 + movies.length) % movies.length; // 인덱스 -1
+      (currentIndex.value - 1 + movies.length) % movies.value.length; // 인덱스 -1
     carousel.value.classList.add("prev"); //캐러셀에 prev클래스 추가
   }
 
@@ -160,6 +124,14 @@ onUnmounted(() => {
   clearTimeout(runTimeOut);
   clearTimeout(runNextAuto);
 });
+
+// 더보기 버튼 click -> 디테일 뷰로 이동
+const navigateToDetail = (movieId) => {
+  router.push({
+    name: "MovieDetailView",
+    params: { movie_id: movieId },
+  });
+};
 </script>
 
 <style scoped>
@@ -213,11 +185,17 @@ onUnmounted(() => {
   gap: 5px;
   margin-top: 20px;
 }
+
 .carousel .list .item .buttons button {
   border: none;
   background-color: #eee;
   letter-spacing: 3px;
   font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.carousel .list .item .buttons button:hover {
+  transform: scale(1.1);
 }
 .carousel .list .item .buttons button:nth-child(2) {
   background-color: transparent;

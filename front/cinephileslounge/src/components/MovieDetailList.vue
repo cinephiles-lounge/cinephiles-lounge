@@ -125,6 +125,7 @@ const delete_review = (reviewId) => {
   outline: none;
   color: #eee;
   font-size: 15px;
+  padding-left: 20px;
 }
 .create-review-container .review-userInput .review-userInput-btn {
   height: 50px;

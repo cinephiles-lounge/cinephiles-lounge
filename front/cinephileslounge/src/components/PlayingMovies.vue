@@ -13,19 +13,21 @@
         <div class="content-box">
           <div class="content-wrapper">
             <img
+              @click="navigateToDetail(playingMovie.movie_id)"
               :src="`https://image.tmdb.org/t/p/w1280/${playingMovie.poster_path}`"
               alt=""
             />
             <div class="content-text">
-              <h2>
-                <span>{{ ranking + 1 }}.</span>{{ playingMovie.title }}
+              <h2 class="black-han-sans-regular">
+                <span class="black-han-sans-regular">{{ ranking + 1 }}.</span
+                >{{ playingMovie.title }}
               </h2>
               <div class="des">
                 <p class="genre">{{ getGenres(playingMovie.genres) }}</p>
                 <p class="release_date">{{ playingMovie.release_date }}</p>
               </div>
               <div class="overview-box">
-                <p>"{{ playingMovie.overview }}"</p>
+                <p class=".hahmlet-tmp">"{{ playingMovie.overview }}"</p>
               </div>
               <p class="vote_average">
                 <i class="bx bxs-star"></i>
@@ -40,22 +42,35 @@
 </template>
 <script setup>
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 
 defineProps({
   playingMovie: Object,
   ranking: Number,
 });
+// 장르 언패킹
+const router = useRouter();
+
 const getGenres = (genres) => {
   let genreNames = genres.map((genre) => {
     return genre.name;
   });
   return genreNames.join(" ");
 };
+// 이미지 click -> 디테일 뷰로 이동
+const navigateToDetail = (movieId) => {
+  router.push({
+    name: "MovieDetailView",
+    params: { movie_id: movieId },
+  });
+};
 </script>
 <style scoped>
-@font-face {
-  font-family: "TiemposHeadline-Semibold";
-  src: url("@/assets/fonts/TiemposHeadline-Semibold.otf") format("opentype");
+@import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=DM+Serif+Display:ital@0;1&family=Honk&display=swap");
+.black-han-sans-regular {
+  font-family: "Black Han Sans", sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 main {
@@ -77,9 +92,10 @@ main {
 .playing-container .playing-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 .playing-container .playing-wrapper iframe {
-  width: 100%;
+  width: 70%;
   filter: brightness(1) contrast(1) saturate(1);
   border-radius: 20px;
   box-shadow: 0px 20px 48px rgba(0, 0, 0, 0.6);
@@ -112,6 +128,11 @@ main {
   filter: brightness(1) contrast(1) saturate(1);
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.6);
   border-radius: 8px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.playing-container .playing-wrapper .content-wrapper img:hover {
+  transform: scale(1.1);
 }
 .playing-container .playing-wrapper .content-wrapper .content-text {
   margin-left: 30px;
@@ -131,7 +152,6 @@ main {
   margin-top: -20px;
 }
 .playing-container .playing-wrapper .content-wrapper .content-text h2 span {
-  font-family: TiemposHeadline-Semibold, Georgia, serif;
   font-weight: 400;
   font-size: 40px;
   line-height: 1em;
