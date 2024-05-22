@@ -17,7 +17,7 @@ export const useAccountStore = defineStore(
     const likedArticles = ref([]);
     const postedArticles = ref([]);
     const joinedLounges = ref([]); // 내가 생성한 + 내가 가입한 라운지
-    const managingLounges = ref([]);  // 내가 생성한 라운지
+    const managingLounges = ref([]); // 내가 생성한 라운지
     const nonManagingLounges = ref([]); // 내가 가입한 라운지
 
     const isLogin = computed(() => {
@@ -39,6 +39,7 @@ export const useAccountStore = defineStore(
           username: payload.username,
           password1: payload.password1,
           password2: payload.password2,
+          nickname: payload.nickname,
         },
       })
         .then((res) => {

@@ -14,7 +14,7 @@
           </div>
         </div>
         <div class="content-overview">
-          <p>{{ movieStore.movie.overview }}</p>
+          <p>{{ truncateOverview(movieStore.movie.overview, 400) }}</p>
         </div>
         <div class="content-btn">
           <i v-if="!isLiked" @click="movie_like" class="bx bx-heart"></i>
@@ -60,6 +60,14 @@ const movieId = ref(route.params.movie_id);
 movieStore.getMovieDetail(movieId.value);
 const genres = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
 const reviews = ref();
+
+// 줄거리가 길면 400글자에서 자르기
+const truncateOverview = (overview, maxLength) => {
+  return overview.length > maxLength
+    ? overview.substring(0, maxLength) + "..."
+    : overview;
+};
+
 // 좋아요 눌렀는지 확인
 const isLiked = computed(() => {
   if (!movieStore.movie.liked_users) return false; // 좋아요 누른 유저가 아무도 없으면 false
