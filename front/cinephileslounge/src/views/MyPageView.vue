@@ -65,6 +65,9 @@
       </h3>
       <ul v-if="accountStore.joinedLounges" class="slide">
         <!-- 내가 관리자인 라운지를 먼저 렌더링 -->
+        <li v-for="lounge in accountStore.managingLounges" :key="lounge.id">
+          {{ lounge.name }}
+        </li>
         <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
           {{ lounge.name }}
         </li>
@@ -257,6 +260,13 @@ h3 {
 
 .liked-movie-img {
   height: 300px;
+  transition: 0.3s;
+  cursor: pointer;
+  margin: 0 20px;
+}
+
+.liked-movie-img:hover {
+  transform: scale(1.1);
 }
 
 /* 각 슬라이드 */
