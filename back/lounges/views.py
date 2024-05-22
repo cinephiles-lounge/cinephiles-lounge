@@ -219,6 +219,7 @@ def like_article(request, article_pk):
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def create_comment(request, article_pk):
+    lounge_article = LoungeArticle.objects.get(pk=article_pk)
     if request.method == 'POST':
         if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
             lounge_article = LoungeArticle.objects.get(pk=article_pk)
@@ -233,39 +234,22 @@ def create_comment(request, article_pk):
             return Response(message, status=status.HTTP_403_FORBIDDEN)
             
 
-# # 댓글 수정, 삭제
-# @permission_classes([IsAuthenticated])
-# @api_view(['PUT', 'DELETE'])
-# def update_comment(request, comment_pk):
-#     lounge_comment = LoungeComment.objects.get(pk=comment_pk)
-#     if request.user.pk == comment.user.pk:
-#         if request.method == 'PUT':
-#             serializer = CommentSerializer(comment, data=request.data, partial=True)
-#             if serializer.is_valid(raise_exception=True):
-#                 serializer.save()
-#                 return Response(serializer.data, status=status.HTTP_200_OK)
-#         elif request.method == 'DELETE':
-#             comment.delete()
-#             return Response(status=status.HTTP_204_NO_CONTENT)
-#     else:
-#         message = {
-#             'message': '작성자만 접근이 가능합니다.'
-#         }
-#         return Response(message, status=status.HTTP_403_FORBIDDEN)
-
-
-# # 댓글 좋아요
-# @permission_classes([IsAuthenticated])
-# @api_view(['POST'])
-# def like_comment(request, comment_pk):
-#     if request.method == 'POST':
-#         comment = Comment.objects.get(pk=comment_pk)
-#         if comment.liked_users.filter(pk=request.user.pk).exists():
-#             comment.liked_users.remove(request.user)
-#         else:
-#             comment.liked_users.add(request.user)
-        
-#         data = {
-#             'like_count': comment.liked_users.count()
-#         }
-#         return Response(data, status=status.HTTP_200_OK)
+# 댓글 수정, 삭제
+@permission_classes([IsAuthenticated])
+@api_view(['PUT', 'DELETE'])
+def update_comment(request, comment_pk):
+    lounge_comment = LoungeComment.objects.get(pk=comment_pk)
+    if request.user.pk == lounge_comment.user.pk:
+        if request.method == 'PUT':
+            serializer = LoungeCommentSerializer(lounge_comment, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            lounge_comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        message = {
+            'message': '작성자만 접근이 가능합니다.'
+        }
+        return Response(message, status=status.HTTP_403_FORBIDDEN)

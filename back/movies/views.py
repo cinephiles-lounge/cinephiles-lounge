@@ -20,6 +20,8 @@ def get_movie_list(request):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+# 영화 순위 5회까지 조회
 @api_view(['GET'])
 def get_popular(request):
     if request.method == 'GET':
