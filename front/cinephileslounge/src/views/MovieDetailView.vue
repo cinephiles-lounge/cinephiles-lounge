@@ -44,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useMovieStore } from "@/stores/movie";
 import { useAccountStore } from "@/stores/account";
@@ -58,8 +58,11 @@ const route = useRoute();
 const router = useRouter();
 const movieId = ref(route.params.movie_id);
 movieStore.getMovieDetail(movieId.value);
-const genres = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
 const reviews = ref();
+const genres = ref();
+onMounted(() => {
+  genres.value = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
+});
 
 // 줄거리가 길면 400글자에서 자르기
 const truncateOverview = (overview, maxLength) => {
