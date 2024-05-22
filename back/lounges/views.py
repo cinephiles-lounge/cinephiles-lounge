@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import *
 from .serializers import *
+from articles.models import Article
+from articles.serializers import ArticleSerializer
 from movies.models import Movie
 from movies.serializers import MovieSerializer
 from django.core.exceptions import ValidationError
@@ -122,13 +124,29 @@ def member_liked_movies(request, lounge_pk):
 #############################################
 
 
+# 라운지 회원들이 작성한 영화 리뷰 목록 조회
+@api_view(['GET'])
+def get_review_list(request, lounge_pk):
+    if request.method == 'GET':
+        lounge = Lounge.objects.get(pk=lounge_pk)
+        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+            articles = Article.objects.filter(user__in=lounge.members.all()).order_by('-created_at')
+            serializer = ArticleSerializer(articles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        else:
+            message = {
+                'message': '라운지 회원만 접근 가능한 페이지입니다.'
+            }
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+
+
 # 라운지 게시글 전체 목록 조회
 @api_view(['GET'])
 def get_article_list(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
         if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
-            lounge_articles = lounge.articles.all()
+            lounge_articles = lounge.articles.all().order_by('-created_at')
             serializer = LoungeArticleSerializer(lounge_articles, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK) 
         else:
