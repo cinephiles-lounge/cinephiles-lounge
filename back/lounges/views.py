@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import *
+from movies.models import Movie
 from movies.serializers import MovieSerializer
 from django.core.exceptions import ValidationError
-
+from django.db.models import Q, Count
 
 
 # 전체 라운지 목록 조회
@@ -102,26 +103,16 @@ def leave(request, lounge_pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-# 라운지 회원들이 좋아요 누른 영화 목록 조회
+# 라운지 회원들이 좋아요 누른 영화 목록 조회 (회원 좋아요 순)
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def member_liked_movies(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
         members = lounge.members.all()
-
-        movies = []
-        movies_id_set = set()
-
-        for member in members:
-            person_movies = member.liked_movies.all()
-
-            for movie in person_movies:
-                curr_len = len(movies_id_set)
-                movies_id_set.add(movie)
-                if curr_len != len(movies_id_set):
-                    movies.append(movie)
-                    
-        serializer = MovieSerializer(movies, many=True)
+        member_liked_movies = Movie.objects.prefetch_related('liked_users').filter(liked_users__in=members).annotate(
+            member_like_count=Count('liked_users', filter=Q(liked_users__in=members))
+        ).order_by('-member_like_count')
+        serializer = MovieSerializer(member_liked_movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
