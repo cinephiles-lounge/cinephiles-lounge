@@ -135,17 +135,25 @@ const loungeArticlePk = route.params.loungeArticlePk;
 const loungePk = route.params.loungePk;
 
 // 구독 확인
-const isSubs = computed(() => {
-  if (!accountStore.subscriptions) return false; // 내가 구독하는 사람이 아무도 없으면 false
-  return accountStore.subscriptions.some(
-    // 현재 게시글 작성자를 구독하고 있으면 true
-    (user) => user.id === loungeStore.loungeArticleDetail.user.id
-  );
-});
+const isSubs = ref(
+  accountStore.subscriptions && userId in accountStore.subscriptions
+);
 
 // 구독 & 구독취소(toggle)
 const subscribe = () => {
-  feedStore.subscribe(loungeStore.loungeArticleDetail.user.id, isSubs.value);
+  axios({
+    method: "post",
+    url: `${accountStore.API_URL}/accounts/subscribe/${loungeStore.loungeArticleDetail.user.id}/`,
+    headers: {
+      Authorization: `Token ${accountStore.token}`,
+    },
+  })
+    .then((res) => {
+      accountStore.getUserInfo();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 // 게시글 좋아요 확인
