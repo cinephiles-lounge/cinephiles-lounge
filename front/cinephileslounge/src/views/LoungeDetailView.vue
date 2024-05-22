@@ -42,7 +42,18 @@
       </div>
 
       <div class="lounge-article">
-        <h1>라운지 전체 게시글</h1>
+        <div class="lounge-article-header">
+          <h1>라운지 전체 게시글</h1>
+          <button
+            @click="
+              router.push({
+                name: 'LoungeArticleCreateView',
+              })
+            "
+          >
+            생성
+          </button>
+        </div>
         <ul v-if="loungeStore.loungeArticles">
           <li
             v-for="article in loungeStore.loungeArticles"
@@ -50,8 +61,10 @@
             :article="article"
             @click="
               router.push({
-                name: 'FeedDetailView',
-                params: { article_pk: article.id },
+                name: 'LoungeArticleDetailView',
+                params: {
+                  loungeArticlePk: article.id,
+                },
               })
             "
           >
@@ -76,16 +89,22 @@
       <div class="info">
         <div class="member">
           <h1>멤버</h1>
-          <div class="profile-container" v-for="member in loungeStore.loungeData.non_admin_members" :key="member.id">
+          <div
+            class="profile-container"
+            v-for="member in loungeStore.loungeData.non_admin_members"
+            :key="member.id"
+          >
             <i class="bx bxl-github"></i>
             <p class="profile-name-p">
               {{ member.nickname }}
             </p>
           </div>
         </div>
-        
+
         <div class="setting">
-          <template v-if="loungeStore.loungeData.admin.id === accountStore.userPk">
+          <template
+            v-if="loungeStore.loungeData.admin.id === accountStore.userPk"
+          >
             <button @click="toggleModal">수정</button>
             <button @click="deleteLounge">삭제</button>
           </template>
@@ -143,7 +162,7 @@ const route = useRoute();
 const router = useRouter();
 
 const loungeStore = useLoungeStore();
-const accountStore = useAccountStore()
+const accountStore = useAccountStore();
 
 loungeStore.getLounge(route.params.loungePk);
 
@@ -161,7 +180,7 @@ const toggleModal = function () {
 
 // 라운지 수정
 const updateLounge = function () {
-  if (window.confirm('수정하시겠습니까?')) {
+  if (window.confirm("수정하시겠습니까?")) {
     axios({
       method: "put",
       url: `${accountStore.API_URL}/lounges/${loungeStore.loungeData.id}/update/`,
@@ -174,33 +193,35 @@ const updateLounge = function () {
       },
     })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         loungeStore.loungeData = res.data;
-        console.log(loungeStore.loungeData)
-        return res
+        console.log(loungeStore.loungeData);
+        return res;
       })
       .then((res) => {
         toggleModal();
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       });
   }
 };
 
+// 라운지 삭제
 const deleteLounge = function () {
-  if (window.confirm('라운지를 삭제하시겠습니까?')) {
+  if (window.confirm("라운지를 삭제하시겠습니까?")) {
     loungeStore.deleteLounge();
     router.push({ name: "LoungeView" });
   }
-}
+};
 
+// 라운지 탈퇴
 const leaveLounge = function () {
-  if (window.confirm('라운지를 탈퇴하시겠습니까?')) {
+  if (window.confirm("라운지를 탈퇴하시겠습니까?")) {
     loungeStore.leaveLounge();
     router.push({ name: "LoungeView" });
   }
-}
+};
 </script>
 
 <style scoped>
@@ -223,7 +244,7 @@ aside {
   background-color: black;
   color: #fff;
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "header header header header"
     "main main main aside"
     "main main main aside"
@@ -251,15 +272,20 @@ ul.slide {
 /* 라운지 전체 게시글 */
 
 .lounge-article {
-  background-color:white;
+  background-color: white;
   opacity: 0.9;
   color: black;
   border-radius: 10px;
   padding: 20px;
 }
 
+.lounge-article-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .member-info-container {
-  background-color:white;
+  background-color: white;
   opacity: 0.9;
   color: black;
   border-radius: 10px;

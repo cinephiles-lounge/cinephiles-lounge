@@ -10,6 +10,8 @@ import FeedCreateView from "@/views/FeedCreateView.vue";
 import MyPageView from "@/views/MyPageView.vue";
 import LoungeView from "@/views/LoungeView.vue";
 import LoungeDetailView from "@/views/LoungeDetailView.vue";
+import LoungeArticleCreateView from "@/views/LoungeArticleCreateView.vue";
+import LoungeArticleDetailView from "@/views/LoungeArticleDetailView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,6 +85,21 @@ const router = createRouter({
       //   //   return { name: "LogInView" };
       //   }
       // },
+    },
+    {
+      path: "/lounge/:loungePk/article/create",
+      name: "LoungeArticleCreateView",
+      component: LoungeArticleCreateView,
+    },
+    {
+      path: "/lounge/:loungePk/article/:loungeArticlePk",
+      name: "LoungeArticleDetailView",
+      component: LoungeArticleDetailView,
+    },
+    {
+      path: "/lounge/:loungePk/article/update/:loungeArticlePk",
+      name: "LoungeArticleUpdateView",
+      component: LoungeArticleCreateView,
     },
   ],
 });
