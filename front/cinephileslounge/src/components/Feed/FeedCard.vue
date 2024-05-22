@@ -9,7 +9,7 @@
         :style="{
           whiteSpace: article.movie.title.length < 8 ? 'nowrap' : 'nomal',
           left: article.movie.title.lengh < 8 ? '40%' : '50%',
-          top: article.movie.title.length < 8 ? '' : '5%',
+          top: article.movie.title.length < 8 ? '' : '40%',
         }"
         class="song-myung-regular"
       >

@@ -7,6 +7,21 @@ export const useMovieStore = defineStore(
   () => {
     const API_URL = "http://127.0.0.1:8000";
     const accountStore = useAccountStore();
+
+    // 전체 영화 조회
+    const allMovies = ref();
+    const getAllMovies = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/movies/list/`,
+      })
+        .then((res) => {
+          allMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     // 좋아요 기반 콘텐츠 추천
     const likeMovies = ref();
     const getLikeMovies = () => {
@@ -131,6 +146,8 @@ export const useMovieStore = defineStore(
       romanceMovies,
       getNewMovies,
       newMovies,
+      getAllMovies,
+      allMovies,
     };
   },
   { persist: true }
