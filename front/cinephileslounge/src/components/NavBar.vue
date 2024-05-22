@@ -3,7 +3,11 @@
     <div class="nav-content">
       <div class="nav-left">
         <div class="logo">
-          <RouterLink :to="{ name: 'HomeView' }">CinePhile Lounge</RouterLink>
+          <RouterLink
+            :to="{ name: 'HomeView' }"
+            class="dm-serif-display-regular-italic"
+            >CinePhile Lounge</RouterLink
+          >
         </div>
         <ul class="nav-links">
           <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
@@ -95,6 +99,16 @@ const logOut = () => {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "TiemposHeadline-Semibold";
+  src: url("@/assets/fonts/TiemposHeadline-Semibold.otf") format("opentype");
+}
+
+.dm-serif-display-regular-italic {
+  font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: italic;
+}
 nav {
   position: fixed;
   left: 0;
@@ -116,6 +130,7 @@ nav .nav-content {
 }
 nav .nav-content .nav-left {
   display: flex;
+  align-items: center;
 }
 nav .nav-content .nav-right {
   display: flex;

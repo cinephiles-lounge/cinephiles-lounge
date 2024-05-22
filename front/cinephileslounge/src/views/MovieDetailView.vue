@@ -6,6 +6,7 @@
           <h2>{{ movieStore.movie.title }}</h2>
           <div class="content-des">
             <span v-if="movieStore.movie.vote_average">
+              <i class="bx bxs-star"></i>
               {{ movieStore.movie.vote_average.toFixed(1) }}
             </span>
             <span>{{ movieStore.movie.release_date }}</span>
@@ -235,13 +236,4 @@ const navigateToCreateArticle = () => {
   line-height: 1.3em;
   letter-spacing: 2px;
 }
-
-/* .review-container span {
-  font-size: 15;
-  font-weight: 400;
-  line-height: 1.33em;
-  color: #babac1;
-  margin-left: 6px;
-  display: inline-block;
-}  일단 보류 리뷰 개수*/
 </style>

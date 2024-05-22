@@ -13,5 +13,6 @@ import NavBar from "./components/NavBar.vue";
 main {
   background-color: #000;
   color: #eee;
+  width: 100vw;
 }
 </style>
