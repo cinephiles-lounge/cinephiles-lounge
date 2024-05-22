@@ -205,8 +205,9 @@ def get_recommendation_weather(request):
 @api_view(['GET'])
 def get_search(request):
     if request.method == 'GET':
-        q1 = Q(title__contains=request.GET.get('q'))
-        q2 = Q(overview__contains=request.GET.get(['q']))
+        keyword = request.GET.get('q')
+        q1 = Q(title__contains=keyword)
+        q2 = Q(overview__contains=keyword)
         results = Movie.objects.filter(q1 | q2).annotate(
           search_order=Case(
               When(q1, then=Value(1)),
