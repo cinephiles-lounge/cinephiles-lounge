@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.set_db),
+    path('popular/', views.get_popular),
     path('genre/', views.get_genre),
     path('list/', views.get_movie_list),
     path('playing/', views.get_playing),
