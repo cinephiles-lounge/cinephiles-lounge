@@ -131,7 +131,7 @@ def member_liked_movies(request, lounge_pk):
 def get_review_list(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
-        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+        if lounge.members.filter(pk=request.user.pk).exists():
             articles = Article.objects.filter(user__in=lounge.members.all()).order_by('-created_at')
             serializer = ArticleSerializer(articles, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK) 
@@ -147,7 +147,7 @@ def get_review_list(request, lounge_pk):
 def get_article_list(request, lounge_pk):
     if request.method == 'GET':
         lounge = Lounge.objects.get(pk=lounge_pk)
-        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+        if lounge.members.filter(pk=request.user.pk).exists():
             lounge_articles = lounge.articles.all().order_by('-created_at')
             serializer = LoungeArticleSerializer(lounge_articles, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK) 
@@ -164,7 +164,7 @@ def get_article_list(request, lounge_pk):
 def create_article(request, lounge_pk):
     if request.method == 'POST':
         lounge = Lounge.objects.get(pk=lounge_pk)
-        if lounge.members.filter(pk=request.user.pk).exists() or lounge.admin.pk == request.user.pk:
+        if lounge.members.filter(pk=request.user.pk).exists():
             serializer = LoungeArticleSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save(user=request.user, lounge=lounge)
@@ -181,7 +181,7 @@ def create_article(request, lounge_pk):
 def article_detail(request, lounge_article_pk):
     if request.method == 'GET':
         lounge_article = LoungeArticle.objects.get(pk=lounge_article_pk)
-        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists():
             serializer = LoungeArticleSerializer(lounge_article)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
@@ -218,7 +218,7 @@ def article_update(request, article_pk):
 def like_article(request, article_pk):
     if request.method == 'POST':
         lounge_article = LoungeArticle.objects.get(pk=article_pk)
-        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists():
             if lounge_article.liked_users.filter(pk=request.user.pk):
                 lounge_article.liked_users.remove(request.user)
             else:
@@ -241,7 +241,7 @@ def like_article(request, article_pk):
 def create_comment(request, article_pk):
     lounge_article = LoungeArticle.objects.get(pk=article_pk)
     if request.method == 'POST':
-        if lounge_article.lounge.members.filter(pk=request.user.pk).exists() or lounge_article.lounge.admin.pk == request.user.pk:
+        if lounge_article.lounge.members.filter(pk=request.user.pk).exists():
             lounge_article = LoungeArticle.objects.get(pk=article_pk)
             serializer = LoungeCommentSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
