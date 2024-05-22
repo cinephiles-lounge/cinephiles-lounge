@@ -64,9 +64,12 @@
         </button>
       </h3>
       <ul v-if="accountStore.joinedLounges" class="slide">
-        <li v-for="lounge in accountStore.joinedLounges" :key="lounge.id">
-          {{ lounge.name }}
-        </li>
+        <LoungeCard
+          v-for="lounge in accountStore.joinedLounges"
+          :key="lounge.id"
+          :lounge="lounge"
+          @click="navigateToLoungeDetailView(lounge.id)"
+        />
       </ul>
       <p v-else>아직 가입한 라운지가 없습니다.</p>
     </div>
@@ -131,6 +134,7 @@ import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
 import { useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
+import LoungeCard from "@/components/Lounge/LoungeCard.vue";
 import axios from "axios";
 
 const router = useRouter();
@@ -204,6 +208,11 @@ const createLounge = function () {
     .catch((err) => {
       errorMessage.value = JSON.parse(err.request.response).message;
     });
+};
+
+// 라운지 카드 클릭하면 라운지 디테일 뷰로 route
+const navigateToLoungeDetailView = (loungePk) => {
+  router.push({ name: "LoungeDetailView", params: { loungePk: loungePk } });
 };
 </script>
 

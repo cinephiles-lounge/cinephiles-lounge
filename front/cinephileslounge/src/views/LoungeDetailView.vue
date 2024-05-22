@@ -85,7 +85,7 @@
         </div>
         
         <div class="setting">
-          <template v-if="loungeStore.loungeData.admin.id === accountStore.userId">
+          <template v-if="loungeStore.loungeData.admin.id === accountStore.userPk">
             <button>수정</button>
             <button>삭제</button>
           </template>
