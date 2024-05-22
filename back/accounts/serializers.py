@@ -45,7 +45,7 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
     subscribers = SimpleUserSerializer(many=True, read_only=True)
     joined_lounges = LoungeSerializer(many=True, read_only=True)
     managing_lounges = LoungeSerializer(many=True, read_only=True)
-    
+    non_managing_lounges = serializers.SerializerMethodField()
 
     class Meta:
         extra_fields = []
@@ -69,10 +69,14 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
             'subscribers', 
             'joined_lounges', 
             'managing_lounges', 
+            'non_managing_lounges',
             *extra_fields
         )
 
         # username(아이디), email은 수정 불가능
         read_only_fields = ('username', 'email',)
 
+    def get_non_managing_lounges(self, obj):
+        non_managing_lounges = obj.joined_lounges.exclude(admin=obj)
+        return LoungeSerializer(non_managing_lounges, many=True).data
         
