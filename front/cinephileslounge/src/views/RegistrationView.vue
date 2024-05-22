@@ -9,26 +9,26 @@
             v-model.trim="username"
             id="username"
             type="text"
-            placeholder="이름 (2자 이상)"
+            placeholder="아이디 (4자 이상)"
             :style="{
               border: usernameState ? '1px solid #48484b' : '1px solid #e73e3e',
             }"
             autocomplete="username"
           />
         </label>
-        <!-- <label class="email-wrapper" for="email">
+        <label class="nickname-wrapper" for="nickname">
           <input
-            @input="emailCheck"
-            v-model.trim="email"
-            id="email"
+            @input="nicknameCheck"
+            v-model.trim="nickname"
+            id="nickname"
             type="text"
-            placeholder="이메일 (example@gmail.com)"
+            placeholder="닉네임 (ex. nickname)"
             :style="{
-              border: emailState ? '1px solid #48484b' : '1px solid #e73e3e',
+              border: nicknameState ? '1px solid #48484b' : '1px solid #e73e3e',
             }"
-            autocomplete="email"
+            autocomplete="nickname"
           />
-        </label> -->
+        </label>
         <label class="pwd-wrapper" for="password">
           <input
             @input="passwordCheck"
@@ -71,7 +71,6 @@
           </div>
         </div>
         <div
-        
           :style="{ opacity: buttonActive ? '1' : '0.3' }"
           class="btn-wrapper"
         >
@@ -84,18 +83,17 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import axios from 'axios'
 import { useAccountStore } from "@/stores/account";
-const accountStore = useAccountStore()
+const accountStore = useAccountStore();
 const username = ref("");
-// const email = ref("");
+const nickname = ref("");
 const password = ref("");
 const password2 = ref("");
 const firstCheckBox = ref(false);
 const secondCheckBox = ref(false);
 
 const usernameState = ref(false);
-// const emailState = ref(false);
+const nicknameState = ref(false);
 const passwordState = ref(false);
 const password2State = ref(false);
 
@@ -108,14 +106,14 @@ const usernameCheck = () => {
   }
 };
 
-// 이메일 @, . 포함 입력 -> border #e73e3e -> #48484b
-// const emailCheck = () => {
-//   if (email.value.includes("@") && email.value.includes(".")) {
-//     emailState.value = true;
-//   } else {
-//     emailState.value = false;
-//   }
-// };
+// 닉네임 입력 -> border #e73e3e -> #48484b
+const nicknameCheck = () => {
+  if (nickname.value.length >= 1) {
+    nicknameState.value = true;
+  } else {
+    nicknameState.value = false;
+  }
+};
 
 // 비밀번호 8글자 이상 입력 -> border #e73e3e -> #48484b
 const passwordCheck = () => {
@@ -135,11 +133,11 @@ const password2Check = () => {
   }
 };
 
-// 이름, 이메일, 비밀번호, 체크박스 모두 형식에 맞으면 로그인 버튼 활성화
+// 이름, 닉네임, 비밀번호, 체크박스 모두 형식에 맞으면 로그인 버튼 활성화
 const buttonActive = computed(() => {
   return (
     usernameState &&
-    // emailState.value &&
+    nicknameState.value &&
     passwordState.value &&
     password2State.value &&
     firstCheckBox.value &&
@@ -148,15 +146,15 @@ const buttonActive = computed(() => {
 });
 
 // 회원가입
-const signUp = ()=>{
+const signUp = () => {
   const payload = {
-    username : username.value,
+    username: username.value,
     password1: password.value,
-    password2: password2.value
-  }
-  accountStore.signUp(payload)
-}
-
+    password2: password2.value,
+    nickname: nickname.value,
+  };
+  accountStore.signUp(payload);
+};
 </script>
 
 <style scoped>

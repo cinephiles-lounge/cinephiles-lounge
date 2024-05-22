@@ -36,7 +36,16 @@
         </div>
       </div>
     </div>
-    <MovieSlider :movies="movieStore.movieList" :title="'영화추천'" />
+    <MovieSlider
+      v-if="movieStore.likeMovies && movieStore.likeMovies.length > 0"
+      :movies="movieStore.likeMovies"
+      :title="`${accountStore.userNickname}님이 좋아할 만한 영화`"
+    />
+    <MovieSlider
+      v-if="movieStore.subsMovies && movieStore.subsMovies.length > 0"
+      :movies="movieStore.subsMovies"
+      :title="`${accountStore.userNickname}님이 구독한 유저가 좋아하는 영화`"
+    />
     <PlayingMovies
       v-for="(playingMovie, ranking) in playingStore.playingMovies"
       :playingMovie="playingMovie"
@@ -55,15 +64,15 @@ import MovieSlider from "@/components/MovieSlider/MovieSlider.vue";
 import { usePlayingMovieStore } from "@/stores/playingMovie";
 import { useMovieStore } from "@/stores/movie";
 import { useRouter } from "vue-router";
+import { useAccountStore } from "@/stores/account";
 const router = useRouter();
-
+const accountStore = useAccountStore();
 const movieStore = useMovieStore();
 const playingStore = usePlayingMovieStore();
 
-movieStore.getMovieList(); // 전체 영화 조회
-
+movieStore.getLikeMovies(); // 좋아요 기반 영화 조회
+movieStore.getSubsMovies(); // 구독 기반 영화 조회
 movieStore.getPopularMovie(); // 인기 상역작 1~5위 조회
-
 playingStore.getPlayingMovies(); // 현재 상영작 1,2,3 위 조회
 
 const movies = ref(movieStore.popularMovie);
