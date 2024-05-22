@@ -1,38 +1,58 @@
 <template>
   <div class="create-container">
-    <h1>
-      {{ isEditMode ? "글 수정 페이지" : "글 생성 페이지" }}
-    </h1>
-    <form @submit.prevent="isEditMode ? updateArticle() : createArticle()">
-      <label for="title">제목 : </label>
-      <input type="text" id="title" v-model.trim="title" />
-      <star-rating
-        @update:rating="setRating"
-        :increment="0.5"
-        :max-rating="5"
-        :rounded-corners="true"
-        :inline="true"
-        :show-rating="false"
-        :active-color="['#f82e62']"
-        :active-border-color="['#f82e62']"
-        :border-width="1"
-        :star-size="24"
-        :active-on-click="true"
-        :clearable="true"
-      >
-      </star-rating
-      ><br />
-      <label for="content">내용</label>
-      <textarea
-        id="content"
-        v-model.trim="content"
-        cols="30"
-        rows="10"
-      ></textarea
-      ><br />
-      <input type="submit" :value="isEditMode ? '수정' : '생성'" />
-    </form>
-    <button v-if="isEditMode" @click="cancelUpdate">취소</button>
+    <div class="userInput">
+      <form @submit.prevent="isEditMode ? updateArticle() : createArticle()">
+        <label for="title"> </label>
+        <input type="text" id="title" v-model.trim="title" />
+        <star-rating
+          @update:rating="setRating"
+          :increment="0.5"
+          :max-rating="5"
+          :rounded-corners="true"
+          :inline="true"
+          :show-rating="false"
+          :active-color="['#f82e62']"
+          :active-border-color="['#f82e62']"
+          :border-width="1"
+          :star-size="24"
+          :active-on-click="true"
+          :clearable="true"
+        >
+        </star-rating
+        ><br />
+        <label for="content"></label>
+        <textarea
+          id="content"
+          v-model.trim="content"
+          cols="60"
+          rows="10"
+        ></textarea
+        ><br />
+        <div class="btn-wrapper">
+          <input
+            class="create-btn"
+            type="submit"
+            :value="isEditMode ? '수정' : '생성'"
+          />
+          <button @click="cancelUpdate" class="cancel-btn">취소</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="movie-container">
+      <div class="movie-title">
+        <h1>
+          {{ feedStore.articleMovieTitle }}
+        </h1>
+      </div>
+      <img
+        :src="`https://image.tmdb.org/t/p/w1280/${feedStore.articleMovieImg}`"
+        alt=""
+      />
+      <div class="movie-overview">
+        {{ feedStore.articleMovieOverview }}
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -67,39 +87,130 @@ const setRating = (rating) => {
   userRating.value = rating;
 };
 
-// 게시글 생성(movie_id 수정해야됨)
+// 게시글 생성
 const createArticle = () => {
   const payload = {
     title: title.value,
     content: content.value,
     rank: userRating.value,
-    movieId: 808, //이거 검색으로 할지? 아직 미정
   };
   feedStore.createArticle(payload);
 };
 
-// 게시글 수정(movie_id 수정해야됨)
+// 게시글 수정
 const updateArticle = () => {
   const payload = {
     title: title.value,
     content: content.value,
     rank: userRating.value,
     article_pk: route.params.article_pk,
-    movieId: 808,
   };
   feedStore.updateArticle(payload);
 };
 
 // 게시글 수정 취소시 게시글 디테일 페이지로 이동
 const cancelUpdate = () => {
-  router.push({
-    name: "FeedDetailView",
-    params: { article_pk: route.params.article_pk },
-  });
+  if (isEditMode.value) {
+    router.push({
+      name: "FeedDetailView",
+      params: { article_pk: route.params.article_pk },
+    });
+  } else {
+    router.push({ name: "FeedView" });
+  }
 };
 </script>
 <style scoped>
 .create-container {
-  margin-top: 50px;
+  padding: 100px;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+.movie-container {
+  display: flex;
+  flex-direction: column;
+  color: #eee;
+  margin-left: 60px;
+  margin-top: 20px;
+}
+.movie-container img {
+  width: 800px;
+  border-radius: 10px;
+}
+.movie-container .movie-overview {
+  max-width: 800px;
+  margin-top: 30px;
+  color: #7c7b84;
+  font-size: 15px;
+  letter-spacing: 1px;
+  line-height: 20px;
+}
+.movie-container h1 {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.userInput {
+  margin: 20px;
+}
+.userInput form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.userInput input {
+  width: 750px;
+  height: 30px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  background-color: #222326;
+  border: none;
+  color: #eee;
+  padding: 5px;
+}
+.userInput textarea {
+  height: 515px;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  background-color: #222326;
+  border: none;
+  color: #eee;
+  padding: 10px;
+}
+.userInput .btn-wrapper {
+  display: flex;
+}
+.userInput .btn-wrapper .create-btn {
+  height: 50px;
+  width: 90px;
+  font-size: 15px;
+  border-radius: 5px;
+  background-color: #f82e62;
+  color: #eee;
+  border: none;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.userInput .btn-wrapper .cancel-btn {
+  height: 50px;
+  width: 90px;
+  font-size: 15px;
+  border-radius: 5px;
+  background-color: #262626;
+  color: #eee;
+  border: none;
+  margin-left: 5px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.userInput .btn-wrapper .create-btn:hover {
+  transform: scale(1.1);
+}
+.userInput .btn-wrapper .cancel-btn:hover {
+  transform: scale(1.1);
 }
 </style>

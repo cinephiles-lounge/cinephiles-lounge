@@ -117,7 +117,7 @@ const delete_review = (reviewId) => {
 
 .create-review-container .review-userInput .review-userInput-text {
   height: 50px;
-  width: 500px;
+  width: 100%;
   border: none;
   border-radius: 5px;
   margin-right: 13px;

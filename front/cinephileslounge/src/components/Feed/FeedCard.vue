@@ -5,7 +5,16 @@
         :src="`https://image.tmdb.org/t/p/w1280/${article.movie.backdrop_path}`"
         alt=""
       />
-      <p class="song-myung-regular">{{ article.movie.title }}</p>
+      <p
+        :style="{
+          whiteSpace: article.movie.title.length < 8 ? 'nowrap' : 'nomal',
+          left: article.movie.title.lengh < 8 ? '40%' : '50%',
+          top: article.movie.title.length < 8 ? '' : '5%',
+        }"
+        class="song-myung-regular"
+      >
+        {{ article.movie.title }}
+      </p>
     </div>
     <div class="movie-content">
       <div class="movie-content-title">{{ article.title }}</div>
@@ -86,7 +95,6 @@ const formatTimeDifference = (dateString) => {
   bottom: 25px;
   left: 50%; /* 부모의 왼쪽에서 50% 위치 */
   transform: translateX(-50%); /* 자신의 너비의 50%만큼 왼쪽으로 이동 */
-  white-space: nowrap;
   font-size: 40px;
 }
 .subs-container .movie-content {
