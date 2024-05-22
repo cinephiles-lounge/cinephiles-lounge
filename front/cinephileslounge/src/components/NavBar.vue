@@ -98,6 +98,7 @@ const logOut = () => {
       loungeStore.loungeMovies = [];
       loungeStore.loungeReviews = [];
       loungeStore.loungeArticles = [];
+      loungeStore.loungeArticleDetail = [];
       movieStore.movie = [];
       router.push({ name: "HomeView" });
     })
