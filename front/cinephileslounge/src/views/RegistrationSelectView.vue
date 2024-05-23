@@ -13,7 +13,7 @@
           v-for="movie in movieStore.allMovies"
           :key="movie.id"
           :movie="movie"
-        />
+        /> 
       </ul>
     </div>
   </div>

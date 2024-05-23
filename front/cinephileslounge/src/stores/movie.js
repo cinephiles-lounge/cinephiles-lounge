@@ -1,12 +1,15 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
+import { useRouter } from "vue-router";
+
 import axios from "axios";
 export const useMovieStore = defineStore(
   "movie",
   () => {
     const API_URL = "http://127.0.0.1:8000";
     const accountStore = useAccountStore();
+    const router = useRouter()
 
     // 전체 영화 조회
     const allMovies = ref();
@@ -22,6 +25,7 @@ export const useMovieStore = defineStore(
           console.log(err);
         });
     };
+
     // 좋아요 기반 콘텐츠 추천
     const likeMovies = ref();
     const getLikeMovies = () => {
@@ -39,6 +43,7 @@ export const useMovieStore = defineStore(
           console.log(err);
         });
     };
+
     // 구독한 사람이 좋아요 누른 영화 조회
     const subsMovies = ref();
     const getSubsMovies = () => {
@@ -56,6 +61,7 @@ export const useMovieStore = defineStore(
           console.log(err);
         });
     };
+
     // 최신 영화 조회
     const newMovies = ref();
     const getNewMovies = () => {
@@ -130,6 +136,27 @@ export const useMovieStore = defineStore(
           console.log(err);
         });
     };
+
+    // 날씨 기반 영화 추천
+    const weatherRecommendMovies = ref([]);
+    const recommendMovieByWeather = function (lat, lon) {
+      axios({
+        method: "get",
+        url: `${accountStore.API_URL}/movies/recommend/weather/`,
+        params: { lat, lon }
+      })
+        .then((res) => {
+          weatherRecommendMovies.value = res.data;
+        })
+        .then((res) => {
+          router.push({ name: 'WeatherRecommendView' })
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+
     return {
       API_URL,
       movie,
@@ -148,6 +175,8 @@ export const useMovieStore = defineStore(
       newMovies,
       getAllMovies,
       allMovies,
+      weatherRecommendMovies,
+      recommendMovieByWeather,
     };
   },
   { persist: true }
