@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'lounges',
     'movies',
     'rest_framework',
-    'drf_spectacular',
     'django_extensions',
     'corsheaders',
     'rest_framework.authtoken',
@@ -90,7 +89,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
@@ -185,14 +183,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
-}
 
 # 실제 미디어 파일들이 위치하는 디렉토리의 절대 경로
 MEDIA_ROOT = BASE_DIR / 'media'
