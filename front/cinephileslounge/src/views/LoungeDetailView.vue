@@ -1,23 +1,31 @@
 <template>
   <div class="lounge-detail-page">
-    <header class="member-movies-container">
-      <h1>{{ loungeStore.loungeData.name }}의 회원들이 좋아하는 영화</h1>
-      <ul v-if="loungeStore.loungeMovies" class="slide">
-        <li v-for="movie in loungeStore.loungeMovies" :key="movie.movie_id">
-          <img
-            class="liked-movie-img"
-            @click="
-              router.push({
-                name: 'MovieDetailView',
-                params: { movie_id: movie.movie_id },
-              })
-            "
-            :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-          />
-        </li>
+    <MovieSlider
+      v-if="loungeStore.loungeMovies && loungeStore.loungeMovies.length > 0"
+      :movies="loungeStore.loungeMovies"
+      :title="`${loungeStore.loungeData.name}의 회원들이 좋아하는 영화`"
+    />
+
+    <section class="current-review-container">
+      <header>
+        <h1>
+          {{ loungeStore.loungeData.name }}의 회원들이 가장 최근에 작성한 영화
+        </h1>
+      </header>
+      <ul class="article-card-wrapper">
+        <LoungeArticleCard
+          v-for="article in loungeStore.loungeReviews"
+          :key="article.id"
+          :article="article"
+          @click="
+            router.push({
+              name: 'FeedDetailView',
+              params: { article_pk: article.id },
+            })
+          "
+        />
       </ul>
-      <p v-else>아직 좋아요를 누른 영화가 없습니다.</p>
-    </header>
+    </section>
 
     <main classs="member-articles-container">
       <div class="review">
@@ -157,7 +165,8 @@ import { useRoute, useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
 import { useAccountStore } from "@/stores/account";
 import axios from "axios";
-
+import MovieSlider from "@/components/MovieSlider/MovieSlider.vue";
+import LoungeArticleCard from "@/components/Lounge/LoungeArticleCard.vue";
 const route = useRoute();
 const router = useRouter();
 
@@ -225,17 +234,6 @@ const leaveLounge = function () {
 </script>
 
 <style scoped>
-header {
-  grid-area: header;
-}
-
-main {
-  grid-area: main;
-}
-
-aside {
-  grid-area: aside;
-}
 /* 전체 페이지 */
 .lounge-detail-page {
   padding-top: 80px;
@@ -243,30 +241,11 @@ aside {
   min-height: 100vh;
   background-color: black;
   color: #fff;
-  display: grid;
-  grid-template-areas:
-    "header header header header"
-    "main main main aside"
-    "main main main aside"
-    "main main main aside";
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 2fr 1fr 1fr 1fr;
 }
 
-/* 회원 좋아요 영화 */
-.liked-movie-img {
-  height: 300px;
-  transition: 0.3s;
-  cursor: pointer;
-  margin: 0 20px;
-}
-
-.liked-movie-img:hover {
-  transform: scale(1.1);
-}
-
-ul.slide {
-  display: flex;
+/* 회원들이 가장 최근에 작성한 리뷰 */
+.current-review-container {
+  margin: 30px 65px;
 }
 
 /* 라운지 전체 게시글 */
