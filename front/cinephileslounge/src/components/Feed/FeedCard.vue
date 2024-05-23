@@ -11,7 +11,7 @@
           left: article.movie.title.lengh < 8 ? '40%' : '50%',
           top: article.movie.title.length < 8 ? '' : '40%',
         }"
-        class="song-myung-regular"
+        class="black-han-sans-regular"
       >
         {{ article.movie.title }}
       </p>
@@ -57,9 +57,9 @@ const formatTimeDifference = (dateString) => {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Song+Myung&display=swap");
-.song-myung-regular {
-  font-family: "Song Myung", serif;
+@import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap");
+.black-han-sans-regular {
+  font-family: "Black Han Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
 }

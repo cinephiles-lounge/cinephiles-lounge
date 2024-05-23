@@ -13,7 +13,9 @@
           <li><RouterLink :to="{ name: 'HomeView' }">홈</RouterLink></li>
           <li><RouterLink :to="{ name: 'FeedView' }">피드</RouterLink></li>
           <li><RouterLink :to="{ name: 'LoungeView' }">라운지</RouterLink></li>
-          <li><a href="#">검색</a></li>
+          <li>
+            <RouterLink :to="{ name: 'SearchMovieView' }">검색</RouterLink>
+          </li>
         </ul>
       </div>
       <div class="nav-right">
