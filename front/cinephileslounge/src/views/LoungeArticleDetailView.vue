@@ -135,9 +135,16 @@ const loungeArticlePk = route.params.loungeArticlePk;
 const loungePk = route.params.loungePk;
 
 // 구독 확인
-const isSubs = ref(
-  accountStore.subscriptions && userId in accountStore.subscriptions
-);
+const isSubs = ref(false)
+
+if (accountStore.subscriptions.length > 0) {
+  for (const user of accountStore.subscriptions) {
+    if (user.id == loungeStore.loungeArticleDetail.user.id) {
+      isSubs.value = true;
+      break;
+    }
+  }
+}
 
 // 구독 & 구독취소(toggle)
 const subscribe = () => {
@@ -149,6 +156,7 @@ const subscribe = () => {
     },
   })
     .then((res) => {
+      isSubs.value = !isSubs.value;
       accountStore.getUserInfo();
     })
     .catch((err) => {

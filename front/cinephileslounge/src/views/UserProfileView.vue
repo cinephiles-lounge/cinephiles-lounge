@@ -21,7 +21,7 @@
       <h3 v-if="isMyProfile">내가 좋아요 누른 영화</h3>
       <h3 v-else>{{ currentUser.nickname }}님이 좋아요 누른 영화</h3>
       <ul v-if="currentUser.liked_movies" class="slide">
-        <li v-for="movie in likedMovies" :key="movie.movie_id">
+        <li v-for="movie in currentUser.liked_movies" :key="movie.movie_id">
           <img
             class="liked-movie-img"
             @click="
@@ -40,7 +40,7 @@
     <div class="slide-container">
       <h3 v-if="isMyProfile">내가 작성한 글</h3>
       <h3 v-else>{{ currentUser.nickname }}님이 작성한 글</h3>
-      <ul v-if="postedArticles" class="slide">
+      <ul v-if="currentUser.posted_articles.length" class="slide">
         <FeedCard
           v-for="article in currentUser.posted_articles"
           :key="article.id"
@@ -139,8 +139,8 @@
 </template>
 
 <script setup>
-import { RouterLink, useRoute } from "vue-router";
-import { computed, ref } from "vue";
+import { RouterLink, useRoute, onBeforeRouteUpdate } from "vue-router";
+import { computed, ref, watch } from "vue";
 import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
 import { useFeedStore } from "@/stores/feed";
@@ -153,42 +153,51 @@ const route = useRoute();
 const router = useRouter();
 
 const accountStore = useAccountStore();
-const feedStore = useFeedStore();
 
 const userId = route.params.userId;
-const currentUser = ref({});
+const currentUser = ref({});  // 해당 페이지에서 렌더링할 유저
 
 // 내 정보 초기화
 accountStore.getUserInfo();
 
-const likedMovies = accountStore.likedMovies;
-const postedArticles = accountStore.postedArticles;
-
 // 내 프로필로 들어왔는지 다른 유저의 프로필로 들어왔는지 여부를 반환
 const isMyProfile = computed(() => {
-  return !userId || userId === accountStore.userPk;
+  return route.params.userId == accountStore.userPk;
 });
 
-// 다른 유저의 프로필로 들어왔으면 해당 프로필에서 렌더링할 currentUser에 데이터 넣어주기
-if (userId && userId !== accountStore.userPk) {
+// currentUser를 불러오는 해주는 함수
+const getCurrentUser = function (userId) {
   axios({
-    method: "get",
-    url: `${accountStore.API_URL}/accounts/${userId}/`,
+  method: "get",
+  url: `${accountStore.API_URL}/accounts/${userId}/`,
+})
+  .then((res) => {
+    currentUser.value = res.data;
   })
-    .then((res) => {
-      currentUser.value = res.data;
-      likedMovies = ref(res.data.liked_movies);
-      postedArticles = ref(res.data.posted_articles);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
+// 해당 프로필에서 렌더링할 currentUser에 데이터 넣어주기
+getCurrentUser(userId);
+
+// 현재 유저 페이지에서 다른 유저 페이지로 가면서 컴포넌트 재사용 되더라도 라우트 업데이트 감지하여 currentUser 업데이트
+onBeforeRouteUpdate((to, from) => {
+  getCurrentUser(to.params.userId);
+})
+
 // 구독 확인
-const isSubs = ref(
-  accountStore.subscriptions && userId in accountStore.subscriptions
-);
+const isSubs = ref(false)
+
+if (accountStore.subscriptions.length > 0) {
+  for (const user of accountStore.subscriptions) {
+    if (user.id == userId) {
+      isSubs.value = true;
+      break;
+    }
+  }
+}
 
 // 구독 & 구독취소(toggle)
 const subscribe = () => {
@@ -280,6 +289,8 @@ const createLounge = function () {
 const navigateToLoungeDetailView = (loungePk) => {
   router.push({ name: "LoungeDetailView", params: { loungePk: loungePk } });
 };
+
+
 </script>
 
 <style scoped>

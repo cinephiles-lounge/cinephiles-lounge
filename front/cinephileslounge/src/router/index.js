@@ -57,11 +57,6 @@ const router = createRouter({
       component: FeedCreateView,
     },
     {
-      path: "/mypage",
-      name: "MyProfileView",
-      component: UserProfileView,
-    },
-    {
       path: "/user/:userId",
       name: "UserProfileView",
       component: UserProfileView,
