@@ -1,6 +1,6 @@
 <template>
   <li class="container">
-    <img src="@/assets/lounge.png" alt="" />
+    <i class="bx bx-ghost"></i>
     <p>{{ lounge.name }}</p>
   </li>
 </template>
@@ -18,8 +18,8 @@ img {
 
 .container {
   list-style-type: none;
-  width: 330px;
-  height: 280px;
+  width: 230px;
+  height: 180px;
   background-color: #fff;
   color: black;
   border-radius: 10px;
@@ -34,5 +34,8 @@ img {
   z-index: 1;
   transform: scale(1.15);
   filter: brightness(70%);
+}
+i {
+  font-size: 60px;
 }
 </style>

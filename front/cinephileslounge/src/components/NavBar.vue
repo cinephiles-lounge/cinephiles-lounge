@@ -6,7 +6,7 @@
           <RouterLink
             :to="{ name: 'HomeView' }"
             class="dm-serif-display-regular-italic"
-            >CinePhile Lounge</RouterLink
+            >CinePhile's Lounge</RouterLink
           >
         </div>
         <ul class="nav-links">
@@ -28,7 +28,13 @@
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
           <li v-if="accountStore.isLogin">
-            <RouterLink :to="{ name: 'UserProfileView', params: { userId: accountStore.userPk } }">내 프로필</RouterLink>
+            <RouterLink
+              :to="{
+                name: 'UserProfileView',
+                params: { userId: accountStore.userPk },
+              }"
+              >내 프로필</RouterLink
+            >
           </li>
         </ul>
       </div>
