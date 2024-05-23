@@ -12,7 +12,6 @@ defineProps({
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Song+Myung&display=swap");
 img {
   width: 300px;
 }

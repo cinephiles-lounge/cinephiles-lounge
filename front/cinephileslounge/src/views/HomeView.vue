@@ -39,7 +39,7 @@
     <MovieSlider
       v-if="movieStore.newMovies && movieStore.newMovies.length > 0"
       :movies="movieStore.newMovies"
-      :title="'신작 영화 추천'"
+      :title="'새로 개봉한 영화'"
     />
     <MovieSlider
       v-if="movieStore.likeMovies && movieStore.likeMovies.length > 0"
@@ -79,11 +79,11 @@
       </button>
       <div class="modal-wrap" v-show="isModalOpen" @click="toggleModal">
         <div class="modal-container" @click.stop="">
-          <p class="weather-loc">현재 위치의 날씨에</p> 
+          <p class="weather-loc">현재 위치의 날씨에</p>
           <p>어울리는 영화들을 고르는 중이에요</p>
           <div class="loading-container">
             <div class="loading"></div>
-            <div id="loading-text">불러오는 중</div>  
+            <div id="loading-text">불러오는 중</div>
           </div>
         </div>
       </div>
@@ -187,8 +187,9 @@ const toggleModal = function () {
 };
 
 // 날씨
-function fail(err) { // 위치 정보를 가져오는데 실패했을 때 호출되는 콜백 함수
-    alert('현위치를 찾을 수 없습니다.');
+function fail(err) {
+  // 위치 정보를 가져오는데 실패했을 때 호출되는 콜백 함수
+  alert("현위치를 찾을 수 없습니다.");
 }
 
 const getWeatherRecommendation = function () {
@@ -196,12 +197,11 @@ const getWeatherRecommendation = function () {
   navigator.geolocation.getCurrentPosition((position) => {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
-    
+
     movieStore.recommendMovieByWeather(lat, lon);
   }, fail);
-}
+};
 </script>
-
 
 <style scoped>
 /* 캐러셀 */

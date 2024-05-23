@@ -28,6 +28,7 @@
 
       <div class="movie-video">
         <iframe
+          v-if="movieStore.movie.trailer_key"
           :src="`https://www.youtube.com/embed/${movieStore.movie.trailer_key}?autoplay=1&controls=0&loop=1&playlist=${movieStore.movie.trailer_key}&mute=1`"
           allow="autoplay"
         ></iframe>
@@ -44,8 +45,13 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import {
+  useRoute,
+  useRouter,
+  onBeforeRouteUpdate,
+  onBeforeRouteLeave,
+} from "vue-router";
 import { useMovieStore } from "@/stores/movie";
 import { useAccountStore } from "@/stores/account";
 import { useFeedStore } from "@/stores/feed";
@@ -65,7 +71,9 @@ const genres = ref();
 onMounted(() => {
   genres.value = movieStore.movie.genres.map((item) => item.name).join(" · "); // 장르 이름만 뽑아서 공백으로 구분
 });
-
+onUnmounted(() => {
+  movieStore.movie.trailer_key = "";
+});
 // 줄거리가 길면 400글자에서 자르기
 const truncateOverview = (overview, maxLength) => {
   return overview.length > maxLength
