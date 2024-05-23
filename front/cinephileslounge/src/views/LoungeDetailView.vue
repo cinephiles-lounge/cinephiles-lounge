@@ -10,6 +10,11 @@
       <header>
         <h1>
           {{ loungeStore.loungeData.name }}의 회원들이 가장 최근에 작성한 영화
+          리뷰
+          <div class="icon-box">
+            <i @click="copyToClipboard" class="bx bx-copy"></i>
+            <i @click="settingState = !settingState" class="bx bx-cog"></i>
+          </div>
         </h1>
       </header>
       <ul class="article-card-wrapper">
@@ -17,42 +22,16 @@
           v-for="article in loungeStore.loungeReviews"
           :key="article.id"
           :article="article"
-          @click="
-            router.push({
-              name: 'FeedDetailView',
-              params: { article_pk: article.id },
-            })
-          "
         />
       </ul>
     </section>
 
-    <main classs="member-articles-container">
-      <div class="review">
-        <h1>
-          {{ loungeStore.loungeData.name }}의 회원들이 가장 최근에 작성한 영화
-          리뷰
-        </h1>
-        <ul v-if="loungeStore.loungeReviews" class="slide">
-          <FeedCard
-            v-for="article in loungeStore.loungeReviews"
-            :key="article.id"
-            :article="article"
-            @click="
-              router.push({
-                name: 'FeedDetailView',
-                params: { article_pk: article.id },
-              })
-            "
-          />
-        </ul>
-        <p v-else>아직 작성한 영화 리뷰가 없습니다.</p>
-      </div>
-
+    <main class="member-articles-container">
+      <h1>라운지 전체 게시글</h1>
       <div class="lounge-article">
         <div class="lounge-article-header">
-          <h1>라운지 전체 게시글</h1>
           <button
+            class="article-create-btn"
             @click="
               router.push({
                 name: 'LoungeArticleCreateView',
@@ -64,6 +43,7 @@
         </div>
         <ul v-if="loungeStore.loungeArticles">
           <li
+            class="lounge-article-item"
             v-for="article in loungeStore.loungeArticles"
             :key="article.id"
             :article="article"
@@ -76,14 +56,22 @@
               })
             "
           >
-            {{ article.title }}
+            <div class="article-content">
+              {{ article.title }}
+              <div class="author">
+                <i class="bx bxl-github"></i>
+                {{ article.user.nickname }}<span> | </span>
+                {{ formatTimeDifference(article.created_at) }}
+              </div>
+            </div>
           </li>
         </ul>
         <p v-else>아직 작성한 게시글이 없습니다.</p>
       </div>
     </main>
 
-    <aside class="member-info-container">
+    <aside v-if="settingState" class="member-info-container">
+      <div @click="settingState = !settingState" class="x-btn">X</div>
       <div class="admin">
         <h1>관리자</h1>
         <div class="profile-container">
@@ -175,6 +163,21 @@ const accountStore = useAccountStore();
 
 loungeStore.getLounge(route.params.loungePk);
 
+// 클립보드 기능
+const copyToClipboard = () => {
+  navigator.clipboard
+    .writeText(loungeStore.loungeData.uuid)
+    .then(() => {
+      alert("주소가 클립보드에 복사되었습니다.");
+    })
+    .catch((err) => {
+      console.error("클립보드 복사 실패:", err);
+    });
+};
+
+// 회원관리 모달 변수
+const settingState = ref(false);
+
 // 모달 변수
 const isModalOpen = ref(false);
 const loungeName = ref(loungeStore.loungeData.name);
@@ -231,6 +234,23 @@ const leaveLounge = function () {
     router.push({ name: "LoungeView" });
   }
 };
+
+// 시간 포멧팅 함수
+const formatTimeDifference = (dateString) => {
+  const now = new Date(); //현재시간
+  const date = new Date(dateString); //게시글 작성시간
+  const diff = (now - date) / 1000; // 초 단위 차이
+
+  if (diff < 60) {
+    return `${Math.floor(diff)}초 전`;
+  } else if (diff < 3600) {
+    return `${Math.floor(diff / 60)}분 전`;
+  } else if (diff < 86400) {
+    return `${Math.floor(diff / 3600)}시간 전`;
+  } else {
+    return `${Math.floor(diff / 86400)}일 전`;
+  }
+};
 </script>
 
 <style scoped>
@@ -241,18 +261,44 @@ const leaveLounge = function () {
   min-height: 100vh;
   background-color: black;
   color: #fff;
+  padding-bottom: 100px;
 }
 
 /* 회원들이 가장 최근에 작성한 리뷰 */
 .current-review-container {
   margin: 30px 65px;
 }
-
+.current-review-container .article-card-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.member-articles-container h1,
+.current-review-container header h1 {
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  position: relative;
+}
 /* 라운지 전체 게시글 */
-
+.member-articles-container {
+  margin: 30px 65px;
+  max-width: 1440px;
+}
+.member-articles-container .lounge-article-item {
+  border-bottom: 1px solid #e5e5e5;
+  height: 30px;
+}
+.article-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 11px;
+  margin-left: 5px;
+}
 .lounge-article {
-  background-color: white;
-  opacity: 0.9;
+  background-color: rgb(212, 210, 210);
   color: black;
   border-radius: 10px;
   padding: 20px;
@@ -262,16 +308,69 @@ const leaveLounge = function () {
   display: flex;
   justify-content: space-between;
 }
+.lounge-article-header .article-create-btn {
+  background-color: #f82e62;
+  color: #eee;
+  outline: none;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  width: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 5px;
+}
+/* copy, setting 버튼 */
+.icon-box {
+  position: absolute;
+  justify-content: flex-end;
+  font-size: 25px;
+  top: 0px;
+  right: 140px;
+}
+.icon-box i {
+  cursor: pointer;
+  transition: 0.3s;
+}
+.icon-box i:hover {
+  transform: scale(1.1);
+}
 
+.bx-cog {
+  margin-left: 10px;
+}
+/* 회원관리 */
 .member-info-container {
+  width: 200px;
+  top: 200px;
+  right: 50px;
+  position: fixed;
   background-color: white;
-  opacity: 0.9;
   color: black;
   border-radius: 10px;
   padding: 20px;
   margin: 10px;
 }
-
+.member-info-container .x-btn {
+  position: absolute;
+  top: 15px;
+  right: 18px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.menber-info-container .x-btn:hover {
+  transform: scale(1.1);
+}
+.member-info-container .profile-container {
+  display: flex;
+  margin-top: 3px;
+}
+.admin {
+  margin-bottom: 10px;
+}
+.setting {
+  margin-top: 10px;
+}
 /* 모달 */
 
 /* dimmed */

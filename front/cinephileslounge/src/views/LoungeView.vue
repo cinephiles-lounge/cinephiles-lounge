@@ -38,20 +38,20 @@ const router = useRouter();
 const accountStore = useAccountStore();
 
 const hasNonManagingLounges = computed(() => {
-  console.log(accountStore.nonManagingLounges)
+  console.log(accountStore.nonManagingLounges);
   if (accountStore.nonManagingLounges) {
-    return !!accountStore.nonManagingLounges.length
+    return !!accountStore.nonManagingLounges.length;
   }
-  return false
-})
+  return false;
+});
 
 const hasManagingLounge = computed(() => {
-  console.log(accountStore.managingLounges)
+  console.log(accountStore.managingLounges);
   if (accountStore.managingLounges) {
-    return !!accountStore.managingLounges.length
+    return !!accountStore.managingLounges.length;
   }
-  return false
-})
+  return false;
+});
 
 const navigateToLoungeDetailView = (loungePk) => {
   router.push({ name: "LoungeDetailView", params: { loungePk: loungePk } });
@@ -61,15 +61,27 @@ const navigateToLoungeDetailView = (loungePk) => {
 <style scoped>
 .lounge-page {
   padding-top: 80px;
-  width: 100vw;
+  margin-left: 150px;
+  margin-right: 150px;
+
   min-height: 100vh;
   background-color: black;
   color: #fff;
 }
 
 .card-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 40px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.lounge-container {
+  margin-bottom: 50px;
+}
+.lounge-container h1 {
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 700;
+  margin-bottom: 5px;
 }
 </style>
