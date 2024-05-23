@@ -117,7 +117,7 @@ export const useMovieStore = defineStore(
     };
 
     // 영화 디테일 조회
-    const movie = ref();
+    const movie = ref({});
     const getMovieDetail = (movieId) => {
       axios({
         method: "get",

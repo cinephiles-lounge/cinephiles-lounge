@@ -15,7 +15,15 @@
         </button>
         <div class="author">
           <i class="bx bxl-github"></i>
-          <p>{{ loungeStore.loungeArticleDetail.user.nickname }}</p>
+          <p
+            @click="
+              accountStore.navigateToUserProfile(
+                loungeStore.loungeArticleDetail.user.id
+              )
+            "
+          >
+            {{ loungeStore.loungeArticleDetail.user.nickname }}
+          </p>
           <p>
             {{
               formatTimeDifference(loungeStore.loungeArticleDetail.created_at)
@@ -94,7 +102,11 @@
           </div>
           <div class="comment-content">
             <div class="comment-header">
-              <span class="comment-nickname">{{ comment.user.nickname }}</span>
+              <span
+                class="comment-nickname"
+                @click="accountStore.navigateToUserProfile(comment.user.id)"
+                >{{ comment.user.nickname }}</span
+              >
               <span class="writed-at">{{
                 formatTimeDifference(comment.created_at)
               }}</span>
@@ -135,7 +147,7 @@ const loungeArticlePk = route.params.loungeArticlePk;
 const loungePk = route.params.loungePk;
 
 // 구독 확인
-const isSubs = ref(false)
+const isSubs = ref(false);
 
 if (accountStore.subscriptions.length > 0) {
   for (const user of accountStore.subscriptions) {

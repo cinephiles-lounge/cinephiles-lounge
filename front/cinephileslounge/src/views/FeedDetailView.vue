@@ -4,7 +4,13 @@
       <div class="content">
         <div class="author">
           <i class="bx bxl-github"></i>
-          <p>{{ feedStore.article.user.nickname }}</p>
+          <p
+            @click="
+              accountStore.navigateToUserProfile(feedStore.article.user.id)
+            "
+          >
+            {{ feedStore.article.user.nickname }}
+          </p>
           <p>
             {{ formatTimeDifference(feedStore.article.created_at) }}
           </p>
@@ -89,7 +95,11 @@
           </div>
           <div class="comment-content">
             <div class="comment-header">
-              <span class="comment-nickname">{{ comment.user.nickname }}</span>
+              <span
+                class="comment-nickname"
+                @click="accountStore.navigateToUserProfile(comment.user.id)"
+                >{{ comment.user.nickname }}</span
+              >
               <span class="writed-at">{{
                 formatTimeDifference(comment.created_at)
               }}</span>

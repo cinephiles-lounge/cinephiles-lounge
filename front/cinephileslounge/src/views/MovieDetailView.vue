@@ -45,7 +45,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
 import { useMovieStore } from "@/stores/movie";
 import { useAccountStore } from "@/stores/account";
 import { useFeedStore } from "@/stores/feed";
@@ -57,7 +57,9 @@ const feedStore = useFeedStore();
 const route = useRoute();
 const router = useRouter();
 const movieId = ref(route.params.movie_id);
+
 movieStore.getMovieDetail(movieId.value);
+
 const reviews = ref();
 const genres = ref();
 onMounted(() => {
