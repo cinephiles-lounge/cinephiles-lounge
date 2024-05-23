@@ -461,7 +461,7 @@ const getWeatherRecommendation = function () {
   display: block;
   font-size: 40px;
   position: fixed;
-  top: 70px;
+  top: 90px;
   right: 70px;
   width: 60px;
   height: 60px;
@@ -478,7 +478,7 @@ const getWeatherRecommendation = function () {
 .weather-btn::before {
   display: block;
   position: fixed;
-  top: 70px;
+  top: 90px;
   right: 70px;
   width: 60px;
   height: 60px;
