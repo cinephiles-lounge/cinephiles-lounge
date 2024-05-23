@@ -9,7 +9,7 @@ export const useMovieStore = defineStore(
   () => {
     const API_URL = "http://127.0.0.1:8000";
     const accountStore = useAccountStore();
-    const router = useRouter()
+    const router = useRouter();
 
     // 전체 영화 조회
     const allMovies = ref();
@@ -107,6 +107,21 @@ export const useMovieStore = defineStore(
         });
     };
 
+    // 공포 영화 조회
+    const horrorMovies = ref();
+    const getHorrorMovies = () => {
+      axios({
+        method: "get",
+        url: `${API_URL}/movies/genre/27/`,
+      })
+        .then((res) => {
+          horrorMovies.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     // 인기 상영작 1~5위 조회
     const popularMovie = ref();
     const getPopularMovie = () => {
@@ -143,19 +158,18 @@ export const useMovieStore = defineStore(
       axios({
         method: "get",
         url: `${accountStore.API_URL}/movies/recommend/weather/`,
-        params: { lat, lon }
+        params: { lat, lon },
       })
         .then((res) => {
           weatherRecommendMovies.value = res.data;
         })
         .then((res) => {
-          router.push({ name: 'WeatherRecommendView' })
+          router.push({ name: "WeatherRecommendView" });
         })
         .catch((err) => {
           console.log(err);
         });
-    }
-
+    };
 
     return {
       API_URL,
@@ -177,6 +191,8 @@ export const useMovieStore = defineStore(
       allMovies,
       weatherRecommendMovies,
       recommendMovieByWeather,
+      getHorrorMovies,
+      horrorMovies,
     };
   },
   { persist: true }

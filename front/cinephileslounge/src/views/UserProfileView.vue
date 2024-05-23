@@ -96,8 +96,10 @@
               <p v-show="errorMessage">{{ errorMessage }}</p>
 
               <div class="modal-btn">
-                <button type="submit">가입</button>
-                <button @click.prevent="toggleModal">닫기</button>
+                <button class="create-btn" type="submit">가입</button>
+                <button class="cancel-btn" @click.prevent="toggleModal">
+                  닫기
+                </button>
               </div>
             </form>
           </template>
@@ -127,8 +129,10 @@
               <p v-show="errorMessage">{{ errorMessage }}</p>
 
               <div class="modal-btn">
-                <button type="submit">생성</button>
-                <button @click.prevent="toggleModal">닫기</button>
+                <button class="create-btn" type="submit">생성</button>
+                <button class="cancel-btn" @click.prevent="toggleModal">
+                  닫기
+                </button>
               </div>
             </form>
           </template>
@@ -389,13 +393,28 @@ h3 {
   align-items: center;
 }
 
+/* 모달 */
+
+/* dimmed */
+.modal-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* modal or popup */
 .modal-container {
-  color: black;
+  color: #eee;
   position: relative;
-  height: 200px;
+  height: 300px;
   width: 300px;
-  background: #fff;
+  background: #262626;
   border-radius: 10px;
   box-sizing: border-box;
   display: flex;
@@ -403,7 +422,11 @@ h3 {
   align-items: center;
   justify-content: center;
 }
-
+.modal-container textarea {
+  height: 150px;
+  width: 250px;
+  padding-left: 5px;
+}
 .modal-input {
   display: flex;
   flex-direction: column;
@@ -411,7 +434,19 @@ h3 {
   justify-content: center;
   margin: 3px;
 }
-
+textarea:focus,
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+#name {
+  margin: 5px 0px;
+  width: 250px;
+  padding-left: 5px;
+}
+#description {
+  margin: 5px 0px;
+}
 .modal-btn {
   display: flex;
   justify-content: center;
@@ -420,16 +455,32 @@ h3 {
 .modal-btn > button {
   margin: 5px;
 }
-
-button {
-  width: 200px;
-  height: 37px;
-  background-color: transparent;
-  border: none;
+.modal-btn .create-btn {
+  background-color: #f82e62;
   color: #eee;
-  font-size: 18px;
+  outline: none;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  width: 50px;
   cursor: pointer;
   transition: 0.3s;
-  color: #babac1;
+  margin-left: 5px;
+}
+.modal-btn .cancel-btn {
+  background-color: #a49fa1;
+  color: #eee;
+  outline: none;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  width: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 5px;
+}
+.modal-btn .create-btn:hover,
+.modal-btn .cancel-btn:hover {
+  transform: scale(1.1);
 }
 </style>
