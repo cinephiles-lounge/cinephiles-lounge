@@ -72,18 +72,20 @@ def recommend_by_weather(weather_id):
     )
 
     response = completion.choices[0].message.content
-    print(response)
-
     response = response.split('\n')
 
     recommended_movies = []
     recommended_movies_ids = []
 
     for movie_title in response:
-        movie_title = movie_title[2:]
+        if not movie_title:
+            continue
+        for idx in range(len(movie_title)):
+            if movie_title[idx].isalpha():
+                movie_title = movie_title[idx:]
+                break
         url = f"https://api.themoviedb.org/3/search/movie?query={movie_title}&include_adult=true&language=ko-KR&page=1"
         response = requests.get(url, headers=headers).json().get('results')
-        print(response)
         if response:
             result_movie = response[0]
             recommended_movies.append(result_movie)
