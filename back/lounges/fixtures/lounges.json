@@ -1,1 +1,1 @@
-[{"model": "lounges.lounge", "pk": 1, "fields": {"name": "어두운 영화를 좋아하는 사람들의 모임", "admin": 2, "description": "밝고 행복한 영화 좀 보라는 주변 잔소리 지겨우시죠? 우리끼리 즐겨봐요", "uuid": "1dd93402-cdf1-49b7-ac05-cc5b03489b4c", "members": [1, 2, 3]}}]
+[{"model": "lounges.lounge", "pk": 1, "fields": {"name": "어두운 영화 매니아들", "admin": 2, "description": "밝고 행복한 영화 좀 보라는 주변 잔소리 지겨우시죠? 우리끼리 즐겨봐요", "uuid": "1dd93402-cdf1-49b7-ac05-cc5b03489b4c", "members": [1, 2, 3]}}]
