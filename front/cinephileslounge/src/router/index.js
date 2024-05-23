@@ -14,6 +14,8 @@ import LoungeArticleCreateView from "@/views/LoungeArticleCreateView.vue";
 import LoungeArticleDetailView from "@/views/LoungeArticleDetailView.vue";
 import RegistrationSelectView from "@/views/RegistrationSelectView.vue";
 import SearchMovieView from "@/views/SearchMovieView.vue";
+import WeatherRecommendView from "@/views/WeatherRecommendView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -111,6 +113,11 @@ const router = createRouter({
       path: "/search",
       name: "SearchMovieView",
       component: SearchMovieView,
+    },
+    {
+      path: "/recommend/",
+      name: "WeatherRecommendView",
+      component: WeatherRecommendView,
     },
   ],
 });
