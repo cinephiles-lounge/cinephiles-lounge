@@ -5,6 +5,7 @@
         <div class="author">
           <i class="bx bxl-github"></i>
           <p
+            class="article-user"
             @click="
               accountStore.navigateToUserProfile(feedStore.article.user.id)
             "
@@ -469,5 +470,16 @@ hr {
 }
 .comment-container .comment-userInput .comment-userInput-btn:hover {
   transform: scale(1.1);
+}
+.detail-container .article-container .article-user {
+  cursor: pointer;
+  transition: 0.3s;
+}
+.detail-container .article-container .article-user:hover {
+  transform: scale(1.1);
+}
+.comment-nickname {
+  cursor: pointer;
+  transition: 0.3s;
 }
 </style>

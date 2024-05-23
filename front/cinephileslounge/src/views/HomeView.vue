@@ -36,7 +36,7 @@
         </div>
       </div>
     </div>
-    <MovieSlider
+    <NewMovieSlider
       v-if="movieStore.newMovies && movieStore.newMovies.length > 0"
       :movies="movieStore.newMovies"
       :title="'새로 개봉한 영화'"
@@ -60,6 +60,11 @@
       v-if="movieStore.romanceMovies && movieStore.romanceMovies.length > 0"
       :movies="movieStore.romanceMovies"
       :title="'로맨스 영화 추천'"
+    />
+    <MovieSlider
+      v-if="movieStore.horrorMovies && movieStore.horrorMovies.length > 0"
+      :movies="movieStore.horrorMovies"
+      :title="'공포 영화 추천'"
     />
     <PlayingMovies
       v-for="(playingMovie, ranking) in playingStore.playingMovies"
@@ -96,6 +101,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import UpcommingMovies from "@/components/UpcomingMovies.vue";
 import PlayingMovies from "@/components/PlayingMovies.vue";
 import MovieSlider from "@/components/MovieSlider/MovieSlider.vue";
+import NewMovieSlider from "@/components/MovieSlider/NewMovieSlider/NewMovieSlider.vue";
 import { usePlayingMovieStore } from "@/stores/playingMovie";
 import { useMovieStore } from "@/stores/movie";
 import { useRouter } from "vue-router";
@@ -113,6 +119,7 @@ movieStore.getPopularMovie(); // 인기 상역작 1~5위 조회
 playingStore.getPlayingMovies(); // 현재 상영작 1,2,3 위 조회
 movieStore.getComedyMovies(); // 코미디 영화 조회
 movieStore.getRomanceMovies(); // 로맨스 영화 조회
+movieStore.getHorrorMovies(); // 공포 영화 조회
 const movies = ref(movieStore.popularMovie);
 
 const currentIndex = ref(0); // 캐러셀 움직이기 위한 인덱스
@@ -459,19 +466,20 @@ const getWeatherRecommendation = function () {
 .weather-btn {
   z-index: 200;
   display: block;
-  font-size: 40px;
+  font-size: 30px;
   position: fixed;
   top: 90px;
   right: 70px;
   width: 60px;
   height: 60px;
-  background: linear-gradient(to bottom, #fd82a1 0%, #f82e62 100%);
+  /* background: linear-gradient(to bottom, #fd82a1 0%, #f82e62 100%); */
+  background-color: #eee;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   line-height: 20px;
   text-align: center;
   text-decoration: none;
-  color: white;
+  color: #646464;
   border: none;
 }
 

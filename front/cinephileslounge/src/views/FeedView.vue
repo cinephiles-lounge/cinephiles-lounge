@@ -3,14 +3,20 @@
     <div class="card">
       <h1>구독한 사람의 글</h1>
       <button
-        v-if="feedStore.subscribedArticles.length >= 1"
+        v-if="
+          feedStore.subscribedArticles &&
+          feedStore.subscribedArticles.length >= 1
+        "
         class="prev-button"
         @click="prevSlide('subscribed')"
       >
         <
       </button>
       <div
-        v-if="feedStore.subscribedArticles.length >= 1"
+        v-if="
+          feedStore.subscribedArticles &&
+          feedStore.subscribedArticles.length >= 1
+        "
         class="slider-wrapper"
       >
         <div class="slider-container">
@@ -175,6 +181,7 @@ const formatTimeDifference = (dateString) => {
   background-color: black;
   padding-left: 150px;
   padding-right: 150px;
+  padding-bottom: 100px;
 }
 .feed .card {
   margin-bottom: 32px;

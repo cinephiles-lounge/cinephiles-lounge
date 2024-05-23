@@ -3,13 +3,19 @@
     <div class="userInput">
       <form @submit.prevent="isEditMode ? updateArticle() : createArticle()">
         <label for="title"> </label>
-        <input type="text" id="title" v-model.trim="title" />
+        <input
+          type="text"
+          id="title"
+          v-model.trim="title"
+          placeholder="제목을 입력해주세요"
+        />
         <label for="content"></label>
         <textarea
           id="content"
           v-model.trim="content"
           cols="60"
           rows="10"
+          placeholder="내용을 입력해주세요"
         ></textarea
         ><br />
         <div class="btn-wrapper">
@@ -143,5 +149,8 @@ const cancelUpdate = () => {
 }
 .userInput .btn-wrapper .cancel-btn:hover {
   transform: scale(1.1);
+}
+#title {
+  padding-left: 10px;
 }
 </style>
