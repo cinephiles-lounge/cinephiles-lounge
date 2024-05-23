@@ -1,7 +1,7 @@
 <template>
   <li class="movie-img">
     <img
-      @click="isSelected = !isSelected"
+      @click="likeMovie"
       :class="{ selected: isSelected }"
       :src="`https://image.tmdb.org/t/p/w1280/${movie.poster_path}`"
       alt=""
@@ -11,10 +11,33 @@
 
 <script setup>
 import { ref } from "vue";
-defineProps({
+import { useAccountStore } from "@/stores/account";
+import { useRouter } from "vue-router";
+import axios from "axios";
+const props = defineProps({
   movie: Object,
 });
-const isSelected = ref(false);
+const accountStore = useAccountStore();
+const router = useRouter();
+const isSelected = ref(false); // 영화 선택 여부
+
+const likeMovie = () => {
+  isSelected.value = !isSelected.value; // 영화 선택 상태 toggle
+  // 영화 좋아요 toggle
+  axios({
+    method: "post",
+    url: `${accountStore.API_URL}/movies/${props.movie.movie_id}/like/`,
+    headers: {
+      Authorization: `Token ${accountStore.token}`,
+    },
+  })
+    .then((res) => {
+      console.log("좋아요성공");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 </script>
 
 <style scoped>

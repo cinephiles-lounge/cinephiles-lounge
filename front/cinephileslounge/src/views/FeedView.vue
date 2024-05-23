@@ -2,7 +2,13 @@
   <div class="feed">
     <div class="card">
       <h1>구독한 사람의 글</h1>
-      <button class="prev-button" @click="prevSlide('subscribed')"><</button>
+      <button
+        v-if="feedStore.subscribedArticles.length >= 1"
+        class="prev-button"
+        @click="prevSlide('subscribed')"
+      >
+        <
+      </button>
       <div
         v-if="feedStore.subscribedArticles.length >= 1"
         class="slider-wrapper"
@@ -20,7 +26,13 @@
           </div>
         </div>
       </div>
-      <button class="next-button" @click="nextSlide('subscribed')">></button>
+      <button
+        v-if="feedStore.subscribedArticles.length >= 1"
+        class="next-button"
+        @click="nextSlide('subscribed')"
+      >
+        >
+      </button>
       <div v-if="feedStore.subscribedArticles.length == 0">
         <h1>아직 구독한 사람이 없습니다.</h1>
       </div>
