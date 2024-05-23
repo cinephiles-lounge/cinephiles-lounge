@@ -286,7 +286,7 @@ const formatTimeDifference = (dateString) => {
 /* 라운지 전체 게시글 */
 .member-articles-container {
   margin: 30px 65px;
-  max-width: 1440px;
+  width: 95%;
 }
 .member-articles-container .lounge-article-item {
   border-bottom: 1px solid #e5e5e5;

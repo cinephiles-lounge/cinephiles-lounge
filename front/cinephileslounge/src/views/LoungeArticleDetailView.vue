@@ -302,6 +302,7 @@ const formatTimeDifference = (dateString) => {
 }
 .detail-container .article-container .content {
   z-index: 1;
+  width: 1560px;
 }
 .detail-container .article-container .content h1 {
   font-size: 40px;
@@ -345,6 +346,7 @@ const formatTimeDifference = (dateString) => {
   justify-content: space-between;
   align-items: center;
 }
+
 .detail-container .article-container .content .like-count .article-btn button {
   background-color: #f82e62;
   margin-right: 10px;

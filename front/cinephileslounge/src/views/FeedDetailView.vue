@@ -351,7 +351,7 @@ const formatTimeDifference = (dateString) => {
   align-items: center;
 }
 .detail-container .article-container .content .btn-wrapper button {
-  width: 314px;
+  width: 515px;
   height: 37px;
   background-color: transparent;
   border: none;
