@@ -176,7 +176,7 @@ def get_recommendation_like(request):
         liked_movies = request.user.liked_movies.all()
         recommendation_indices = recommend_by_likes(liked_movies)
         recommendation = Movie.objects.filter(id__in=recommendation_indices).exclude(id__in=liked_movies)
-        serializer = MovieSerializer(recommendation.order_by('?')[:10], many=True)
+        serializer = MovieSerializer(recommendation.order_by('?')[:20], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
