@@ -118,6 +118,10 @@ export const useAccountStore = defineStore(
         });
     };
 
+    const navigateToUserProfile = function (userId) {
+      router.push({ name: "UserProfileView", params: { userId: userId } });
+    };
+
     return {
       signUp,
       logIn,
@@ -136,6 +140,7 @@ export const useAccountStore = defineStore(
       joinedLounges,
       managingLounges,
       nonManagingLounges,
+      navigateToUserProfile,
     };
   },
   { persist: true }

@@ -5,7 +5,7 @@
     </div>
     <div class="reviewItem">
       <div class="review-writer">
-        <p>{{ review.user.nickname }}</p>
+        <p @click="accountStore.navigateToUserProfile(review.user.id)">{{ review.user.nickname }}</p>
         <div v-if="!isUpdate"><i class="bx bxs-star"></i>{{ review.rank }}</div>
       </div>
       <div class="review-overview" v-if="!isUpdate && !review.is_spoiler">
