@@ -13,6 +13,7 @@ import LoungeDetailView from "@/views/LoungeDetailView.vue";
 import LoungeArticleCreateView from "@/views/LoungeArticleCreateView.vue";
 import LoungeArticleDetailView from "@/views/LoungeArticleDetailView.vue";
 import RegistrationSelectView from "@/views/RegistrationSelectView.vue";
+import SearchMovieView from "@/views/SearchMovieView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -110,6 +111,11 @@ const router = createRouter({
       path: "/registration/selectMovie",
       name: "RegistrationSelectView",
       component: RegistrationSelectView,
+    },
+    {
+      path: "/search",
+      name: "SearchMovieView",
+      component: SearchMovieView,
     },
   ],
 });
