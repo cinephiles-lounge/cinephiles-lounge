@@ -100,6 +100,7 @@ const logOut = () => {
       loungeStore.loungeArticles = [];
       loungeStore.loungeArticleDetail = [];
       movieStore.movie = [];
+      movieStore.likeMovies = [];
       router.push({ name: "HomeView" });
     })
     .catch((err) => {

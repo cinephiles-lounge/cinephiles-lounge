@@ -148,14 +148,14 @@ import { useRouter } from "vue-router";
 import FeedCard from "@/components/Feed/FeedCard.vue";
 import LoungeCard from "@/components/Lounge/LoungeCard.vue";
 import axios from "axios";
-
+import MovieSlider from "@/components/MovieSlider/MovieSlider.vue";
 const route = useRoute();
 const router = useRouter();
 
 const accountStore = useAccountStore();
 
 const userId = route.params.userId;
-const currentUser = ref({});  // 해당 페이지에서 렌더링할 유저
+const currentUser = ref({}); // 해당 페이지에서 렌더링할 유저
 
 // 내 정보 초기화
 accountStore.getUserInfo();
@@ -168,16 +168,16 @@ const isMyProfile = computed(() => {
 // currentUser를 불러오는 해주는 함수
 const getCurrentUser = function (userId) {
   axios({
-  method: "get",
-  url: `${accountStore.API_URL}/accounts/${userId}/`,
-})
-  .then((res) => {
-    currentUser.value = res.data;
+    method: "get",
+    url: `${accountStore.API_URL}/accounts/${userId}/`,
   })
-  .catch((err) => {
-    console.log(err);
-  });
-}
+    .then((res) => {
+      currentUser.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // 해당 프로필에서 렌더링할 currentUser에 데이터 넣어주기
 getCurrentUser(userId);
@@ -185,10 +185,10 @@ getCurrentUser(userId);
 // 현재 유저 페이지에서 다른 유저 페이지로 가면서 컴포넌트 재사용 되더라도 라우트 업데이트 감지하여 currentUser 업데이트
 onBeforeRouteUpdate((to, from) => {
   getCurrentUser(to.params.userId);
-})
+});
 
 // 구독 확인
-const isSubs = ref(false)
+const isSubs = ref(false);
 
 if (accountStore.subscriptions.length > 0) {
   for (const user of accountStore.subscriptions) {
@@ -289,14 +289,12 @@ const createLounge = function () {
 const navigateToLoungeDetailView = (loungePk) => {
   router.push({ name: "LoungeDetailView", params: { loungePk: loungePk } });
 };
-
-
 </script>
 
 <style scoped>
 /* 최상위 div */
 .my-page {
-  padding-top: 80px;
+  padding: 100px 150px;
   width: 100vw;
   min-height: 100vh;
   background-color: black;
@@ -336,8 +334,14 @@ h3 {
 .slide-container {
   margin: 50px 0;
   width: 100%;
+  overflow: hidden;
 }
-
+.slide-container h3 {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 /* 내가 좋아요 한 영화 목록 */
 
 .liked-movie-img {
@@ -364,8 +368,10 @@ h3 {
   color: #fff;
   background-color: transparent;
   border: none;
-  margin-left: 10px;
   font-size: 20px;
+  padding: 0;
+  width: 22px;
+  margin-left: 5px;
 }
 
 /* 모달 */
