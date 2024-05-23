@@ -26,10 +26,12 @@ const navigateToDetail = (movieId) => {
 <style scoped>
 .card-container .card-movie-img {
   width: 190px;
+  min-height: 285px;
   margin: 0px 6px;
   border-radius: 5px;
   transition: 0.3s;
   cursor: pointer;
+  object-fit: cover;
 }
 .card-container .card-movie-img:hover {
   transform: scale(1.1);

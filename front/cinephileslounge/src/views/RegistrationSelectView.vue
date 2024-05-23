@@ -3,8 +3,8 @@
     <div class="btn-wrapper">
       <h1>관심있는 영화를 선택해주세요</h1>
       <div>
-        <button class="select-btn">선택완료</button>
-        <button class="cancel-btn">건너뛰기</button>
+        <button @click="navigateToHome" class="select-btn">선택완료</button>
+        <button @click="navigateToHome" class="cancel-btn">건너뛰기</button>
       </div>
     </div>
     <div class="movie-wrapper">
@@ -21,14 +21,19 @@
 <script setup>
 import { useMovieStore } from "@/stores/movie";
 import AllMovies from "@/components/AllMovies.vue";
+import { useRouter } from "vue-router";
 const movieStore = useMovieStore();
+const router = useRouter();
+const navigateToHome = () => {
+  router.push({ name: "HomeView" });
+};
 </script>
 <style scoped>
 .movie-container {
   background-color: #000;
-  width: 100%;
+  max-width: 1440px;
   min-height: 100vh;
-  padding-top: 70px;
+  padding-top: 90px;
   padding-left: 150px;
   padding-right: 150px;
   position: flex;
@@ -38,12 +43,12 @@ const movieStore = useMovieStore();
   display: flex;
   justify-content: space-between;
   margin-bottom: 32px;
+  margin-right: 100px;
 }
 .movie-container .btn-wrapper h1 {
-  margin-left: 60px;
+  margin-left: 100px;
 }
 .movie-container .btn-wrapper .cancel-btn {
-  margin-right: 35px;
   margin-left: 7px;
   background-color: #4c4b4b;
 }
