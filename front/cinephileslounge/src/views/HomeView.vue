@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="container">
+    <div class="container" v-if="isDataLoaded">
       <div ref="carousel" class="carousel">
         <div class="list">
           <div class="item" v-for="movie in displayedMovies" :key="movie.id">
@@ -120,16 +120,21 @@ playingStore.getPlayingMovies(); // 현재 상영작 1,2,3 위 조회
 movieStore.getComedyMovies(); // 코미디 영화 조회
 movieStore.getRomanceMovies(); // 로맨스 영화 조회
 movieStore.getHorrorMovies(); // 공포 영화 조회
-const movies = ref(movieStore.popularMovie);
-
 const currentIndex = ref(0); // 캐러셀 움직이기 위한 인덱스
 const timeRunning = ref(3000); // 애니메이션 실행되는 시간
 const timeAutoNext = ref(5000); // 다음 슬라이드로 이동하는 시간 간격
 const carousel = ref(null); // 캐러셀 클래스 참조
 let runTimeOut = null; // 애니메이션 실행 후 클래스 제거하기 위한 타이머
 let runNextAuto = null; // 자동으로 다음 슬라이드로 이동하기 위한 타이머
+const isDataLoaded = ref(false);
+onMounted(() => {
+  movieStore.getPopularMovie();
+  isDataLoaded.value = true;
+});
 
+const movies = computed(() => movieStore.popularMovie || []); // popularMovie에 값이 들어오기 전에는 빈배열 반환해서 에러 방지
 const displayedMovies = computed(() => {
+  if (!movies.value.length) return []; //movies.value.length가 0이면 빈배열 반환해서 슬라이싱 오류 방지
   const start = currentIndex.value;
   const end = movies.value.length;
   return [...movies.value.slice(start, end), ...movies.value.slice(0, start)]; //
@@ -137,6 +142,7 @@ const displayedMovies = computed(() => {
 
 const posters = computed(() => {
   // 인덱스 1, 2, 3, 4, 0 순서대로 반환
+  if (!movies.value.length) return [];
   const start = currentIndex.value + 1;
   const end = movies.value.length;
   return [...movies.value.slice(start, end), ...movies.value.slice(0, start)];

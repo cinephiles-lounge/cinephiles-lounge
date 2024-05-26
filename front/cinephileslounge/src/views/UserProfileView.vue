@@ -72,7 +72,7 @@
           <i class="bx bx-add-to-queue"></i>
         </button>
       </h3>
-      <ul v-if="accountStore.joinedLounges" class="slide">
+      <ul v-if="accountStore.joinedLounges" class="lounge-slide">
         <LoungeCard
           v-for="lounge in accountStore.joinedLounges"
           :key="lounge.id"
@@ -363,6 +363,8 @@ h3 {
 
 .slide {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 /* 라운지 */
@@ -377,7 +379,11 @@ h3 {
   width: 22px;
   margin-left: 5px;
 }
-
+.lounge-slide {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
 /* 모달 */
 
 /* dimmed */
