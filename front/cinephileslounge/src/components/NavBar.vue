@@ -27,14 +27,8 @@
             <RouterLink :to="{ name: 'RegistrationView' }">회원가입</RouterLink>
           </li>
           <li v-if="accountStore.isLogin" @click="logOut">로그아웃</li>
-          <li v-if="accountStore.isLogin">
-            <RouterLink
-              :to="{
-                name: 'UserProfileView',
-                params: { userId: accountStore.userPk },
-              }"
-              >내 프로필</RouterLink
-            >
+          <li v-if="accountStore.isLogin" @click="navigateToProfile">
+            내 프로필
           </li>
         </ul>
       </div>
@@ -44,7 +38,7 @@
 
 <script setup>
 // 로그인하면 회원가입버튼 안보이고 마이페이지랑 알람 뜨도록
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { useAccountStore } from "@/stores/account";
 import { useLoungeStore } from "@/stores/lounges";
@@ -107,6 +101,13 @@ const logOut = () => {
       console.log("로그아웃 실패");
       console.log(err);
     });
+};
+
+const navigateToProfile = () => {
+  router.push({
+    name: "UserProfileView",
+    params: { userId: accountStore.userPk },
+  });
 };
 </script>
 

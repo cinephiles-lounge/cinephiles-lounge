@@ -12,7 +12,7 @@ export const useMovieStore = defineStore(
     const router = useRouter();
 
     // 전체 영화 조회
-    const allMovies = ref();
+    const allMovies = ref([]);
     const getAllMovies = () => {
       axios({
         method: "get",
@@ -27,7 +27,7 @@ export const useMovieStore = defineStore(
     };
 
     // 좋아요 기반 콘텐츠 추천
-    const likeMovies = ref();
+    const likeMovies = ref([]);
     const getLikeMovies = () => {
       axios({
         method: "get",
@@ -45,7 +45,7 @@ export const useMovieStore = defineStore(
     };
 
     // 구독한 사람이 좋아요 누른 영화 조회
-    const subsMovies = ref();
+    const subsMovies = ref([]);
     const getSubsMovies = () => {
       axios({
         method: "get",
@@ -63,7 +63,7 @@ export const useMovieStore = defineStore(
     };
 
     // 최신 영화 조회
-    const newMovies = ref();
+    const newMovies = ref([]);
     const getNewMovies = () => {
       axios({
         method: "get",
@@ -78,7 +78,7 @@ export const useMovieStore = defineStore(
     };
 
     // 코미디 영화 조회
-    const comedyMovies = ref();
+    const comedyMovies = ref([]);
     const getComedyMovies = () => {
       axios({
         method: "get",
@@ -93,7 +93,7 @@ export const useMovieStore = defineStore(
     };
 
     // 로맨스 영화 조회
-    const romanceMovies = ref();
+    const romanceMovies = ref([]);
     const getRomanceMovies = () => {
       axios({
         method: "get",
@@ -108,7 +108,7 @@ export const useMovieStore = defineStore(
     };
 
     // 공포 영화 조회
-    const horrorMovies = ref();
+    const horrorMovies = ref([]);
     const getHorrorMovies = () => {
       axios({
         method: "get",
@@ -123,7 +123,7 @@ export const useMovieStore = defineStore(
     };
 
     // 인기 상영작 1~5위 조회
-    const popularMovie = ref();
+    const popularMovie = ref([]);
     const getPopularMovie = () => {
       axios({
         method: "get",
