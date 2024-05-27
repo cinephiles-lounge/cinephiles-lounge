@@ -86,10 +86,3 @@ def get_managing_lounges(request):
         serializer = LoungeSerializer(lounges, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-# 유저를 구독하는 사람들 + 유저가 구독하는 사람들 리스트 조회
-@permission_classes([IsAuthenticated])
-@api_view(['GET'])
-def get_subscription_list(request):
-    if request.method == 'GET':
-        pass

@@ -119,12 +119,7 @@ def member_liked_movies(request, lounge_pk):
         ).order_by('-member_like_count')
         serializer = MovieSerializer(member_liked_movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-#############################################
-#############################################
-#############################################
-
+    
 
 # 라운지 회원들이 작성한 영화 리뷰 목록 조회
 @api_view(['GET'])

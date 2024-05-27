@@ -9,7 +9,6 @@ urlpatterns = [
     path('<int:lounge_pk>/update/', views.update_lounge),
     path('<int:lounge_pk>/leave/', views.leave),
     path('<int:lounge_pk>/movies/', views.member_liked_movies),
-    ########## lounge article ############ 
     path('<int:lounge_pk>/reviews/', views.get_review_list),
     path('<int:lounge_pk>/articles/', views.get_article_list),
     path('<int:lounge_pk>/articles/create/', views.create_article),

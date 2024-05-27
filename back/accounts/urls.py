@@ -8,5 +8,4 @@ urlpatterns = [
     path('liked_movies/', views.liked_movies),
     path('lounges/', views.get_joined_lounges),
     path('lounges/admin/', views.get_managing_lounges),
-    path('sublist/', views.get_subscription_list),
 ]
