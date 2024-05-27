@@ -89,7 +89,6 @@ def get_upcoming(request):
 
         upcoming_movies = Movie.objects.filter(movie_id__in=upcoming_movies_ids)
         serializer = MovieSerializer(upcoming_movies, many=True)
-        # print(upcoming_movies.count())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -224,16 +223,12 @@ def get_search(request):
 ####################################################
 
 
-
-# 한 페이지 당 영화 20개씩 리턴
-# 초당 요청 max: around 50
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 @api_view(['POST'])
 def set_db(request):
     if request.method == 'POST':
         did_create = False
 
-        # 1~50 페이지 요청 == 1000개 영화 저장
         for i in range(1, 251):
             url = f'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=ko-KR&page={i}&sort_by=popularity.desc'
             response = requests.get(url, headers=headers).json()
@@ -246,7 +241,7 @@ def set_db(request):
 
 # 장르 정보 불러오기
 # DB에 장르 데이터가 없을때만 저장함
-# @permission_classes([IsAdminUser])
+@permission_classes([IsAdminUser])
 @api_view(['POST'])
 def get_genre(request):
     if request.method == 'POST':
