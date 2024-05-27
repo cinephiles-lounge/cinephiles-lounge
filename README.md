@@ -204,6 +204,7 @@ def recommend_by_weather(weather_id):
 - 추천이 끝나면 새로운 영화 목록 페이지로 렌더링 되어 포스터 클릭 시 영화 디테일 페이지 이동 가능하도록 구현
 
 <img src="assets/screenshots/09-weather.png" />
+<img src="assets/screenshots/10-weather-result.png" />
 
   <br>
   <br>
